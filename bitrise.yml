@@ -141,6 +141,9 @@ workflows:
       the XcodeGen spec, builds the SuperCraftOS app for iOS device (unsigned), and
       exports a production-ready .ipa. Intended for local `bitrise run` on macOS.
     steps:
+      - git-clone@8:
+          repository: https://github.com/cryptostoner94/opencode-supercraftos.git
+          clone_dir: /home/bitrise/project
       - script@1:
           title: Debug checkout directory
           inputs:
