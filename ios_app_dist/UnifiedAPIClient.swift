@@ -62,12 +62,6 @@ struct UnifiedAPIClient {
 
 // MARK: - Response Models
 
-struct UnifiedReasoningResponse: Codable {
-    let reasoning: UnifiedReasoning?
-    let execution_time_ms: Int?
-    let model_used: String?
-}
-
 struct UnifiedReasoning: Codable {
     let intent: String?
     let query: String?
@@ -75,6 +69,12 @@ struct UnifiedReasoning: Codable {
     let analysis: String?
     let confidence: Double?
     let timestamp: String?
+}
+
+struct UnifiedReasoningResponse: Codable {
+    let reasoning: UnifiedReasoning?
+    let execution_time_ms: Int?
+    let model_used: String?
 }
 
 struct UnifiedSearchResponse: Codable {
@@ -109,7 +109,7 @@ func unifiedSearch(query: String, topK: Int = 5) async throws -> [String: String
     return [
         "query": query,
         "entries": response.entries.joined(separator: ","),
-        "metadata": response.metadata?.merging([:]) { $1 } ?? [:]
+        "metadata_keys": response.metadata?.map { $0.key }.joined(separator: ",") ?? ""
     ]
 }
 
@@ -133,14 +133,4 @@ func unifiedHealth() async throws -> [String: String] {
 
     let data = try await client.data("/api/v1/unified/health/detailed")
     return [:]
-}
-
-/// Unified reasoning response model
-struct UnifiedReasoning: Codable {
-    let intent: String?
-    let query: String?
-    let retrieved_context: [String]
-    let analysis: String?
-    let confidence: Double?
-    let timestamp: String?
 }
