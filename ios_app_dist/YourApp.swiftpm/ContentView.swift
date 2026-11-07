@@ -4,7 +4,7 @@ import SceneKit
 import UIKit
 
 // iOS 17+. Present ContentView() in the app target's WindowGroup.
-private enum ConsoleStyle {
+enum ConsoleStyle {
     static let background = Color(red: 0.035, green: 0.055, blue: 0.086)
     static let panel = Color(red: 0.067, green: 0.106, blue: 0.161)
     static let pink = Color(red: 0.52, green: 0.93, blue: 0.81)
@@ -181,7 +181,7 @@ struct ContentView: View {
                         switch selection {
                         case .tasks: AutonomousTasksView(store: store, onCreate: { sheet = .compose })
                         case .memory: LearningView(store: store)
-                        case .digital_me: EmptyView()
+                        case .digital_me: DigitalMeView(store: store)
                         case .quests: QuestOperationsView(store: store)
                         case .workflows: workflows
                         case .integrations: integrations

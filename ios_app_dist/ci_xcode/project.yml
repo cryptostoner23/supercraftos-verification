@@ -42,6 +42,7 @@ targets:
       - path: ../YourApp.swiftpm/QuestOperationsView.swift
       - path: ../YourApp.swiftpm/ShortcutActions.swift
       - path: ../YourApp.swiftpm/UnifiedAPIClient.swift
+      - path: ../YourApp.swiftpm/DigitalMeView.swift
       - path: Assets.xcassets
         buildPhase: resources
       - path: PrivacyInfo.xcprivacy
