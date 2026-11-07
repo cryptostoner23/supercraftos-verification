@@ -229,6 +229,7 @@ workflows:
             - distribution_method: development
             - automatic_code_signing: apple-id
             - register_test_devices: "yes"
+            - verbose_log: yes
       - deploy-to-bitrise-io@2:
           inputs:
             - is_compress: true
