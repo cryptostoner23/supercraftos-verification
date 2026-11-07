@@ -550,7 +550,9 @@ final class BackendStore: ObservableObject {
                 connection = try BackendConnection(address: connection.origin, accessKey: saved)
             }
             guard !connection.accessKey.isEmpty else { throw BackendError.authenticationRequired }
-            try CredentialStore.save(connection.accessKey, origin: connection.origin)
+            // Keychain may be unavailable on cloud simulators; the connection still works
+            // because the access key is carried in the BackendClient's bearer credential.
+            try? CredentialStore.save(connection.accessKey, origin: connection.origin)
             self.clearState()
             self.backend = connection.origin
             self.addBookmark(connection.origin)
