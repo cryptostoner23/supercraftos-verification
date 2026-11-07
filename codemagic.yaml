@@ -1,0 +1,88 @@
+# Codemagic CI for SuperCraftOS iOS app.
+#
+# The app ships as an *unsigned* release build. You sign it locally with your
+# own iCloud Apple ID via Sideloadly (see docs/FREE_APPLE_INSTALL.md). This
+# mirrors the Bitrise pipeline (bitrise.yml) so either CI can produce the same
+# artifacts.
+#
+# Artifacts produced:
+#   * SuperCraftOS-unsigned.ipa        — device build, payload .app, unsigned
+#   * SuperCraftOS-iOS-Simulator.app.zip — simulator build, unsigned
+#   * SuperCraftOS-WithKeyboard-unsigned.ipa — device build incl. keyboard ext
+
+workflows:
+  ios-unsigned-device:
+    name: iOS unsigned device IPA (for local Sideloadly signing)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: latest
+      cocoapods: default
+      vars:
+        WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+        SCHEME: SuperCraftOS
+        SDK: iphoneos
+    scripts:
+      - name: Package Swift app bundle
+        script: |
+          python3 scripts/package_ipad.py
+      - name: Install XcodeGen and generate Xcode project
+        script: |
+          if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+          python3 scripts/xcode_project.py
+      - name: Build unsigned device app
+        script: |
+          set -euo pipefail
+          DERIVED="$CM_BUILD_DIR/build/PersonalDevice"
+          xcodebuild -project "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
+            -sdk "$SDK" -destination 'generic/platform=iOS' \
+            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+          APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
+          test -d "$APP"
+          mkdir -p "$CM_BUILD_DIR/build/Artifacts"
+          ditto "$APP" "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-iOS-Device-unsigned.app.zip"
+      - name: Create unsigned production IPA
+        script: |
+          set -euo pipefail
+          APP="$CM_BUILD_DIR/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app"
+          test -d "$APP"
+          IPA_DIR="$CM_BUILD_DIR/build/IPA-Staging"
+          rm -rf "$IPA_DIR"
+          mkdir -p "$IPA_DIR/Payload"
+          cp -R "$APP" "$IPA_DIR/Payload/"
+          cd "$IPA_DIR"
+          zip -r "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-unsigned.ipa" Payload
+          test -f "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-unsigned.ipa"
+    artifacts:
+      - build/Artifacts/*.ipa
+      - build/Artifacts/*.zip
+
+  ios-simulator:
+    name: iOS simulator build (unsigned)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      xcode: latest
+      cocoapods: default
+      vars:
+        WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+        SCHEME: SuperCraftOS
+        SDK: iphonesimulator
+    scripts:
+      - name: Install XcodeGen and generate Xcode project
+        script: |
+          if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+          python3 scripts/xcode_project.py
+      - name: Build unsigned simulator app
+        script: |
+          set -euo pipefail
+          DERIVED="$CM_BUILD_DIR/build/Simulator"
+          xcodebuild -project "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
+            -sdk "$SDK" -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+          APP="$DERIVED/Build/Products/Release-iphonesimulator/SuperCraftOS.app"
+          test -d "$APP"
+          mkdir -p "$CM_BUILD_DIR/build/Artifacts"
+          ditto "$APP" "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-iOS-Simulator.app.zip"
+    artifacts:
+      - build/Artifacts/*.zip
