@@ -137,9 +137,10 @@ workflows:
                 python3 -m pytest backend/tests/ -v
 
   primary:
-    description: Primary local Bitrise CLI workflow. Generates the Xcode project from
-      the XcodeGen spec, builds the SuperCraftOS app for iOS device (unsigned), and
-      exports a production-ready .ipa. Intended for local `bitrise run` on macOS.
+    description: Primary Bitrise CLI workflow. Generates the Xcode project from
+      the XcodeGen spec, builds and code-signs the SuperCraftOS app for iOS device
+      using your connected Apple ID (iCloud), and exports a signed production-ready
+      .ipa ready for Sideloadly installation.
     steps:
       - git-clone@8:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
@@ -160,34 +161,14 @@ workflows:
                 set -euo pipefail
                 if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
                 python3 scripts/xcode_project.py
-      - script@1:
-          title: Build unsigned iOS device app
+      - xcode-archive@4:
           inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
-                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
-                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
-                test -d "$APP"
-                mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
-                ditto "$APP" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS-iOS-Device-unsigned.app.zip"
-      - script@1:
-          title: Create unsigned production IPA
-          inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
-                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
-                test -d "$APP"
-                IPA_DIR="$BITRISE_SOURCE_DIR/build/IPA-Staging"
-                rm -rf "$IPA_DIR"
-                mkdir -p "$IPA_DIR/Payload"
-                cp -R "$APP" "$IPA_DIR/Payload/"
-                cd "$IPA_DIR"
-                zip -r "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" Payload
-                test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+            - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+            - scheme: SuperCraftOS
+            - configuration: Release
+            - sdk: iphoneos
+            - automatic_code_signing: apple-id
+            - distribution_method: development
       - deploy-to-bitrise-io@2:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
@@ -199,7 +180,6 @@ workflows:
                 set -euo pipefail
                 IPA="$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
                 test -f "$IPA"
-                REVYL_API_KEY="f3ded9b73f0ed8f6c0ea2716a080aa4bd4d1dcbde75e6b599781c8d8b84b3afa16e3a40a705481dd7678c402267a81ed"
                 REVYL_APP_ID="017e6103-7dbe-4ba3-a910-88575e966048"
                 FILE_SIZE=$(stat -f%z "$IPA")
                 UPLOAD_RESP=$(curl -s -X POST -H "Authorization: Bearer $REVYL_API_KEY" -H "Content-Type: application/json" -d "{\"filename\":\"SuperCraftOS.json\",\"content_type\":\"application/octet-stream\",\"file_size\":$FILE_SIZE}" "https://backend.revyl.ai/api/v1/files/upload-url")
