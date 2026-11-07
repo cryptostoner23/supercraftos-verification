@@ -140,7 +140,8 @@ workflows:
     description: Primary Bitrise CLI workflow. Generates the Xcode project from
       the XcodeGen spec, builds the SuperCraftOS app for iOS device (unsigned), and
       exports a production-ready unsigned .ipa ready for Sideloadly signing with
-      your connected iCloud Apple ID.
+      your connected iCloud Apple ID. Uses Bitrise Build Cache for Xcode to speed up
+      repeated builds.
     steps:
       - git-clone@8:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
@@ -161,6 +162,8 @@ workflows:
                 set -euo pipefail
                 if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
                 python3 scripts/xcode_project.py
+      - activate-build-cache-for-xcode@1:
+          title: Activate Bitrise Build Cache for Xcode
       - script@1:
           title: Build unsigned iOS device app
           inputs:
@@ -216,6 +219,8 @@ workflows:
                 python3 scripts/package_ipad.py
                 if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
                 xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
+      - activate-build-cache-for-xcode@1:
+          title: Activate Bitrise Build Cache for Xcode
       - script@1:
           title: Archive the app with automatic signing
           inputs:
