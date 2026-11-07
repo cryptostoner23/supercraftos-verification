@@ -1,0 +1,31 @@
+[Unit]
+Description=SuperCraftOS local control center
+Wants=network-online.target supercraftos-worker.service
+After=network-online.target supercraftos-worker.service
+
+[Service]
+Type=simple
+User=supercraftos
+Group=supercraftos
+WorkingDirectory=/root/SuperCraftOS
+EnvironmentFile=/etc/supercraftos.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=TIKTOKEN_CACHE_DIR=/root/SuperCraftOS/data/tiktoken-cache
+# Override any .env value so only the independent worker claims jobs.
+ExecStart=/usr/bin/env SUPERCRAFTOS_EMBEDDED_WORKER=0 /root/SuperCraftOS/.venv/bin/python /root/SuperCraftOS/main.py app --host 127.0.0.1 --port 8787
+Restart=on-failure
+RestartSec=5s
+KillSignal=SIGINT
+KillMode=control-group
+TimeoutStopSec=30s
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=tmpfs
+BindReadOnlyPaths=/root/SuperCraftOS
+MemoryMax=1G
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target

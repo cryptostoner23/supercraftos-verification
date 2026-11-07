@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "supercraft-v4-route-verifier"
+version = "1.0.0"
+description = "Read-only quote replay and hook permission receipts"
+requires-python = ">=3.10"
+dependencies = []
+[project.scripts]
+v4-route-verify = "route_verifier.__main__:main"
+[tool.setuptools.packages.find]
+include = ["route_verifier*"]

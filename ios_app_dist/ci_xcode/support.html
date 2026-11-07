@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperCraftOS — Support</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; background:#f6f6f8; color:#1c1c1e;
+         font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  @media (prefers-color-scheme: dark) { body { background:#121016; color:#f2f2f7; } }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 6px; }
+  .lede { color:#8a8a92; margin: 0 0 32px; font-size: 15px; }
+  h2 { font-size: 18px; font-weight: 700; margin: 34px 0 8px; }
+  p, li { margin: 0 0 12px; }
+  ul { padding-left: 22px; }
+  .box { background:#fff; border:1px solid #e2e2e6; border-radius:14px; padding: 18px 20px; }
+  @media (prefers-color-scheme: dark) { .box { background:#1e1b24; border-color:#2f2b38; } }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SuperCraftOS Support</h1>
+  <p class="lede">SuperCraftOS iOS app, version 1.0 (1)</p>
+
+  <div class="box">
+    <p><b>SuperCraftOS is a control surface for an agent system that you run.</b>
+    The app connects to your own SuperCraftOS control center. Everything it
+    shows comes from that server.</p>
+  </div>
+
+  <h2>First run</h2>
+  <ol>
+    <li>Open the app. It is already pointed at your control center.</li>
+    <li>If you run the control center somewhere else, open <b>Connection</b>,
+      enter the address, and tap <b>Save and connect</b>.</li>
+    <li>Your address is saved as a bookmark, so you can switch between a public
+      host and one on your local network with one tap.</li>
+  </ol>
+
+  <h2>The app shows no data</h2>
+  <ul>
+    <li>Check the backend address in <b>Connection</b>.</li>
+    <li>Check that the control center is running and reachable over
+      <code>https</code>.</li>
+    <li>A <code>http</code> address is only accepted for the local network, by
+      design. A public address must be <code>https</code>.</li>
+  </ul>
+
+  <h2>Adding the custom keyboard</h2>
+  <ol>
+    <li>Settings &gt; General &gt; Keyboard &gt; Keyboards &gt; Add New Keyboard
+      &gt; SuperCraftOS.</li>
+    <li>Switch to it with the globe key.</li>
+    <li>Turn on <b>Allow Full Access</b>. Apple requires it for any keyboard that
+      uses the network, and the keyboard talks to your own agent.</li>
+  </ol>
+
+  <h2>The keyboard says the backend is not configured</h2>
+  <p>The keyboard's backend address is fixed when the app is built. Connect the
+  app first, and if you need a different address, rebuild the app with
+  <code>SUPERCRAFTOS_BACKEND_URL</code> set to it.</p>
+
+  <h2>Privacy</h2>
+  <p>See the <a href="/privacy">privacy policy</a>. The app collects no data and
+  sends everything only to the server you configured.</p>
+
+  <h2>Getting help</h2>
+  <p>Include the app version, your device model, and the address of your control
+  center if the problem is a connection problem. The full source and the build
+  and release instructions are in the project repository.</p>
+</div>
+</body>
+</html>

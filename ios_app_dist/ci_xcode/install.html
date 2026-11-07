@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Install SuperCraftOS</title>
+<style>
+  :root { font-family: -apple-system, system-ui, sans-serif; }
+  body { margin: 0; padding: max(24px, env(safe-area-inset-top)) 20px 48px; line-height: 1.45; }
+  main { max-width: 520px; margin: auto; }
+  h1 { font-size: 27px; margin: 0 0 10px; }
+  p { margin: 0 0 18px; }
+  button, .button { display: block; width: 100%; box-sizing: border-box; border: 0; border-radius: 12px; padding: 16px; font: inherit; font-weight: 700; background: #196be5; color: white; text-align: center; text-decoration: none; cursor: pointer; }
+  button:disabled { opacity: .55; cursor: wait; }
+  .secondary { background: #e9eef7; color: #182333; }
+  .panel { border: 1px solid #aab4c1; border-radius: 12px; padding: 16px; margin: 18px 0; }
+  .panel p:last-child { margin-bottom: 0; }
+  label { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
+  input { width: 23px; height: 23px; flex: none; }
+  .error { color: #b42318; }
+  .muted { opacity: .78; font-size: 14px; }
+  ol { padding-left: 24px; }
+  li { margin: 0 0 12px; }
+  a { overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Install SuperCraftOS</h1>
+  <p>For iPhone and iPad running iOS 17 or later. This free-account build needs SideStore to sign it for your device.</p>
+  <section class="panel" aria-label="Set up SideStore">
+    <strong>1. Set up SideStore</strong>
+    <p>Open the SideInstaller setup site and follow its profile and installation steps. Return here when SideStore opens on this device. SideInstaller is a separate third-party project and its certificate may be rejected by iOS.</p>
+    <a class="button" href="https://sideinstaller.net/">Open SideInstaller setup</a>
+    <p class="muted">If that route fails, use <a href="https://docs.sidestore.io/docs/installation/prerequisites">SideStore's official setup</a>; it requires a computer once and LocalDevVPN.</p>
+  </section>
+
+  <section class="panel" aria-label="Install app">
+    <strong>2. Install SuperCraftOS</strong>
+    <label><input id="confirmed" type="checkbox"> SideStore opens and is signed in on this device</label>
+    <button id="install" type="button" disabled>Checking the app…</button>
+    <p id="status" role="status" aria-live="polite" class="muted">Checking the current device build.</p>
+  </section>
+
+  <section class="panel">
+    <strong>What happens after tapping Install</strong>
+    <p>SideStore downloads the IPA, asks for Apple Account access if needed, signs it for this device, and starts installation. Confirm any iOS prompts. Return to SideStore to see the result; this web page cannot read it.</p>
+    <p class="muted">Being signed in to iCloud does not grant a website code-signing access. No Apple password or device profile is requested by this page. Free personal provisioning expires after seven days and needs refresh.</p>
+  </section>
+  <p class="muted"><a href="/ios/FREE_APPLE_INSTALL.md">Installation help</a> · <a href="/ios/SuperCraftOS-iOS-Device-unsigned.ipa">Download the unsigned IPA</a></p>
+</main>
+<script>
+(() => {
+  const ipa = `${location.origin}/ios/SuperCraftOS-iOS-Device-unsigned.ipa`;
+  const button = document.getElementById('install');
+  const confirmed = document.getElementById('confirmed');
+  const status = document.getElementById('status');
+  let ready = false;
+
+  async function checkBuild() {
+    try {
+      const response = await fetch(ipa, { method: 'HEAD', cache: 'no-store' });
+      const bytes = Number(response.headers.get('content-length'));
+      if (!response.ok || !Number.isFinite(bytes) || bytes < 100000) throw new Error('The device IPA is unavailable.');
+      ready = true;
+      button.disabled = !confirmed.checked;
+      button.textContent = 'Install SuperCraftOS';
+      status.textContent = 'Device build ready. Confirm SideStore is installed to continue.';
+    } catch (_) {
+      ready = false;
+      button.disabled = true;
+      button.textContent = 'Installation unavailable';
+      status.className = 'error';
+      status.textContent = 'The app download could not be verified. Please try this page again later.';
+    }
+  }
+
+  function startInstall() {
+    if (!ready || !confirmed.checked) return;
+    status.className = 'muted';
+    status.textContent = 'Opening SideStore. Follow its signing and installation prompts.';
+    location.href = `sidestore://install?url=${encodeURIComponent(ipa)}`;
+  }
+
+  confirmed.addEventListener('change', () => {
+    button.disabled = !ready || !confirmed.checked;
+  });
+  button.addEventListener('click', startInstall);
+  checkBuild();
+})();
+</script>
+</body>
+</html>

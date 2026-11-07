@@ -1,0 +1,31 @@
+[Unit]
+Description=SuperCraftOS durable job worker
+Wants=network-online.target
+Requires=docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+User=supercraftos
+Group=supercraftos
+SupplementaryGroups=docker
+WorkingDirectory=/root/SuperCraftOS
+EnvironmentFile=/etc/supercraftos.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=TIKTOKEN_CACHE_DIR=/root/SuperCraftOS/data/tiktoken-cache
+ExecStart=/root/SuperCraftOS/.venv/bin/python /root/SuperCraftOS/main.py worker
+Restart=on-failure
+RestartSec=5s
+KillMode=control-group
+TimeoutStopSec=30s
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=tmpfs
+BindReadOnlyPaths=/root/SuperCraftOS
+MemoryMax=1G
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target

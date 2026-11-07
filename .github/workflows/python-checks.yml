@@ -1,0 +1,65 @@
+name: Offline Python checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate Compose configuration without credentials
+        run: |
+          cp .env.example .env
+          docker compose config --quiet
+      - name: Build Python 3.12 release image from pinned requirements
+        run: docker build --tag supercraftos-ci:${{ github.sha }} .
+      - name: Run core checks with no external network or provider secrets
+        run: |
+          docker run --rm --init --network none --memory 2g --cpus 2 \
+            --env AUTO_UPGRADE=0 --env SYNC_CAPABILITIES=0 \
+            --entrypoint python supercraftos-ci:${{ github.sha }} \
+            .github/ci/offline_checks.py
+
+  swift-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build the App Playground archive
+        run: python3 scripts/package_ipad.py
+      - name: Compile and test the shared Swift networking and models
+        run: |
+          docker run --rm --network none --memory 2g --cpus 2 \
+            -v "$PWD:/src" -w /src swift:6.0.3 \
+            swift test --package-path swift-verification -j 2
+      - name: Ensure packaged sources are current
+        run: git diff --exit-code -- ios_app_dist swift-verification/Sources/ControlCore
+
+  apple-ui:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Type-check the complete SwiftUI app against the iOS Simulator SDK
+        run: |
+          xcrun --sdk iphonesimulator swiftc -typecheck -parse-as-library \
+            -swift-version 5 -target arm64-apple-ios17.0-simulator \
+            -sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+            ios_app_dist/*.swift ios_app_dist/YourApp.swiftpm/App.swift
