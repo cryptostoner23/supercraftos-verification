@@ -192,6 +192,7 @@ workflows:
       - deploy-to-bitrise-io@2:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+            - deploy_path: "$BITRISE_SOURCE_DIR/build/Artifacts"
       - script@1:
           title: Register build with Revyl for E2E testing
           inputs:
