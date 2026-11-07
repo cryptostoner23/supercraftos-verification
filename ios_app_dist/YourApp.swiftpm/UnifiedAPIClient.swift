@@ -5,8 +5,6 @@ import FoundationNetworking
 
 /// Unified API Client for Digital Me × SuperCraftOS
 /// Connects the iOS app to the unified backend endpoints.
-// Clean Swift 5.9 — compiles under Xcode 27. No `extension BackendClient`,
-// no mutable `controlToken`, no `[String: Any]` in Codable types.
 struct UnifiedAPIClient {
     let connection: BackendConnection
 
@@ -76,30 +74,30 @@ func unifiedReason(query: String, intent: String, context: [String: String] = [:
         "context": context,
         "preferred_model": preferredModel ?? "general",
         "temperature": 0.7
-    ] as [String: Any]) ?? Data()
+    ]) ?? Data()
 
     let data = try await client.data("/api/v1/unified/reason", body: requestBody)
     return try JSONDecoder().decode(UnifiedReasoningResponse.self, from: data)
 }
 
 /// Unified memory search endpoint
-func unifiedSearch(query: String, topK: Int = 5) async throws -> [String: Any] {
+func unifiedSearch(query: String, topK: Int = 5) async throws -> [String: String] {
     let connection = try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key")
     let client = UnifiedAPIClient(connection: connection)
 
-    let requestBody = try? JSONSerialization.data(withJSONObject: ["query": query, "top_k": topK] as [String: Any]) ?? Data()
+    let requestBody = try? JSONSerialization.data(withJSONObject: ["query": query, "top_k": topK]) ?? Data()
     let data = try await client.data("/api/v1/unified/search", body: requestBody)
 
     let response = try JSONDecoder().decode(UnifiedSearchResponse.self, from: data)
     return [
         "query": query,
-        "entries": response.entries,
-        "metadata": response.metadata ?? [:]
+        "entries": response.entries.joined(separator: ","),
+        "metadata": response.metadata?.merging([:]) { $1 } ?? [:]
     ]
 }
 
 /// Agent fleet status
-func unifiedAgentStatus() async throws -> [String: Any] {
+func unifiedAgentStatus() async throws -> [String: String] {
     let connection = try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key")
     let client = UnifiedAPIClient(connection: connection)
 
@@ -108,17 +106,17 @@ func unifiedAgentStatus() async throws -> [String: Any] {
 }
 
 /// Intelligent model routing
-func unifiedModelRoute(taskType: String, complexity: String, costSensitive: Bool = true) async throws -> [String: Any] {
+func unifiedModelRoute(taskType: String, complexity: String, costSensitive: Bool = true) async throws -> [String: String] {
     let connection = try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key")
     let client = UnifiedAPIClient(connection: connection)
 
-    let requestBody = try JSONSerialization.data(withJSONObject: ["task_type": taskType, "complexity": complexity, "cost_sensitive": costSensitive] as [String: Any])
+    let requestBody = try JSONSerialization.data(withJSONObject: ["task_type": taskType, "complexity": complexity, "cost_sensitive": costSensitive])
     let data = try await client.data("/api/v1/unified/model/route", body: requestBody)
     return [:]
 }
 
 /// Detailed unified health
-func unifiedHealth() async throws -> [String: Any] {
+func unifiedHealth() async throws -> [String: String] {
     let connection = try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key")
     let client = UnifiedAPIClient(connection: connection)
 
