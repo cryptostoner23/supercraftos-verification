@@ -170,3 +170,53 @@ workflows:
               title: "SuperCraftOS-ipa-release.zip"
               project: "SuperCraftOS"
               version: "1.0.0"
+
+  primary:
+    description: Primary local Bitrise CLI workflow. Generates the Xcode project from
+      the XcodeGen spec, builds the SuperCraftOS app for iOS device (unsigned), and
+      exports a production-ready .ipa. Intended for local `bitrise run` on macOS.
+    steps:
+      - script@1:
+          title: Package Swift app bundle
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                python3 scripts/package_ipad.py
+      - script@1:
+          title: Install XcodeGen and generate the Xcode project
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+                python3 scripts/xcode_project.py
+      - script@1:
+          title: Build unsigned iOS device app
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
+                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
+                test -d "$APP"
+                mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
+                ditto "$APP" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS-iOS-Device-unsigned.app.zip"
+      - script@1:
+          title: Export production IPA
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
+                xcodebuild -exportArchive -archivePath "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive" -exportPath "$BITRISE_SOURCE_DIR/build/Artifacts" -exportOptionsPlist ios_app_dist/ci_xcode/ExportOptions-development.plist
+                mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
+                ditto "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+                test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+      - deploy-to-bitrise-io@2:
+          inputs:
+            - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+              title: "SuperCraftOS.ipa"
+              project: "SuperCraftOS"
+              version: "1.0.0"

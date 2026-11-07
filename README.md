@@ -66,6 +66,47 @@ See `/root/REVYL_TESTING.md` for the 25-journey E2E test plan.
 | `.revyl/config.yaml` | Revyl build configuration |
 | `bitrise.yml` | CI/CD pipeline |
 
+## iOS Build via Bitrise CLI
+
+All iOS automation runs through the official Bitrise CLI (`bitrise run --config bitrise.yml --workflow <workflow>`). **These steps require macOS** (Xcode toolchain, `xcodebuild`, `xcodegen`, `bitrise`) and cannot run on Linux.
+
+Available workflows:
+
+| Workflow | Purpose |
+|----------|---------|
+| `primary` | Generate Xcode project from XcodeGen spec, build unsigned iOS device app, export production `.ipa` |
+| `personal_device` | Build standalone unsigned iOS device app for local private provisioning / Sideloadly |
+| `run_tests` | Build for simulator + device, run Swift package and UI tests |
+| `mission_acceptance` | Compile mission workspace, drive app screens on iPad/iPhone with offline fixtures |
+| `ipa_release` | Build and export unsigned iOS `.ipa` |
+| `live_backend_contract` | Read-only backend gateway smoke tests |
+
+Example (macOS only):
+```bash
+bitrise run --config bitrise.yml --workflow primary
+```
+
+Continuous polling until the signed/unsigned `.ipa` is produced (macOS, 110s max sleep interval):
+```bash
+while true; do
+    if bitrise run --config bitrise.yml --workflow primary 2>&1 | grep -qE "SUCCESS|The export completed"; then
+        break
+    fi
+    sleep 110
+done
+```
+
+Verify a delivered `.ipa` / `.app.zip` bundle:
+```bash
+.venv/bin/python scripts/verify_ios_artifacts.py <app.zip>
+```
+
+## Architecture Boundaries
+
+- **No e-commerce**: The application structure contains no shops, carts, checkouts, or payment components.
+- **CrossX Campaigns**: Video/quest workflows are nested under CrossX Campaigns (`QuestOperationsView.swift`); `FAY` is not a main module.
+- **Keyboard extension**: Deliberately not embedded by default. Activate with `python3 scripts/xcode_project.py --embed-keyboard`.
+
 ## Commit History
 
 1. `bedb81d` — Add provisioned access key in Info.plist for simulator Keychain bypass
