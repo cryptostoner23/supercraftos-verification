@@ -1,6 +1,9 @@
 format_version: '26'
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: ios
+meta:
+  bitrise.io:
+    stack: osx-xcode-latest-stable
 
 workflows:
   personal_device:
@@ -138,6 +141,19 @@ workflows:
       the XcodeGen spec, builds the SuperCraftOS app for iOS device (unsigned), and
       exports a production-ready .ipa. Intended for local `bitrise run` on macOS.
     steps:
+      - script@1:
+          title: Debug checkout directory
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                echo "BITRISE_SOURCE_DIR=$BITRISE_SOURCE_DIR"
+                pwd
+                ls -la
+                echo "=== scripts dir ==="
+                ls -la scripts/ 2>/dev/null || echo "no scripts directory"
+                echo "=== find package_ipad ==="
+                find . -name "package_ipad.py" -maxdepth 4 2>/dev/null || echo "not found"
       - script@1:
           title: Package Swift app bundle
           inputs:
