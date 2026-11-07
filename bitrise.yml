@@ -189,7 +189,13 @@ workflows:
                 cd "$IPA_DIR"
                 zip -r "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" Payload
                 test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+      - script@1:
+          title: Copy IPA to deploy directory
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                cp "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" "$BITRISE_DEPLOY_DIR/"
       - deploy-to-bitrise-io@2:
           inputs:
-            - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
             - is_compress: true
