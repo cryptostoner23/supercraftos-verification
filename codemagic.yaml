@@ -1,4 +1,5 @@
 # Codemagic CI for SuperCraftOS iOS app.
+# Build marker: fresh build on current main (includes DigitalMeView + AppleNotesView).
 #
 # The app ships as an *unsigned* release build. You sign it locally with your
 # own iCloud Apple ID via Sideloadly (see docs/FREE_APPLE_INSTALL.md). This
