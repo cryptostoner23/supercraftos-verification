@@ -188,3 +188,9 @@ workflows:
                 cd "$IPA_DIR"
                 zip -r "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" Payload
                 test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+      - deploy-to-bitrise-io@2:
+          inputs:
+            - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+              title: "SuperCraftOS.ipa"
+              project: "SuperCraftOS"
+              version: "1.0.0"
