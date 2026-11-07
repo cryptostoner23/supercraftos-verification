@@ -192,19 +192,3 @@ workflows:
       - deploy-to-bitrise-io@2:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
-            - deploy_path: "$BITRISE_SOURCE_DIR/build/Artifacts"
-      - script@1:
-          title: Register build with Revyl for E2E testing
-          inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                IPA="$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
-                test -f "$IPA"
-                REVYL_APP_ID="017e6103-7dbe-4ba3-a910-88575e966048"
-                FILE_SIZE=$(stat -f%z "$IPA")
-                UPLOAD_RESP=$(curl -s -X POST -H "Authorization: Bearer $REVYL_API_KEY" -H "Content-Type: application/json" -d "{\"filename\":\"SuperCraftOS.json\",\"content_type\":\"application/octet-stream\",\"file_size\":$FILE_SIZE}" "https://backend.revyl.ai/api/v1/files/upload-url")
-                UPLOAD_ID=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['file']['id'])")
-                UPLOAD_URL=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['upload_url'])")
-                curl -s -X PUT -H "Content-Type: application/octet-stream" -T "$IPA" "$UPLOAD_URL" > /dev/null
-                curl -s -X POST -H "Authorization: Bearer $REVYL_API_KEY" -H "Content-Type: application/json" -d "{\"upload_id\":\"$UPLOAD_ID\",\"version\":\"1.0.0\"}" "https://backend.revyl.ai/api/v1/apps/$REVYL_APP_ID/builds"
