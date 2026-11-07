@@ -204,7 +204,7 @@ workflows:
             - is_compress: true
 
   signed_development:
-    description: Build and export a signed development IPA using a free personal Apple ID via Manage iOS Code Signing + Xcode Archive & Export.
+    description: Build and export a signed development IPA using your free personal iCloud Apple ID. Installs directly on registered devices without TestFlight or the App Store.
     steps:
       - git-clone@8:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
@@ -235,7 +235,6 @@ workflows:
             - scheme: SuperCraftOS
             - distribution_method: development
             - automatic_code_signing: yes
-            - export_development_team: "$DEVELOPMENT_TEAM"
             - register_test_devices: "true"
             - output_directory: $BITRISE_SOURCE_DIR/build
       - script@1:
