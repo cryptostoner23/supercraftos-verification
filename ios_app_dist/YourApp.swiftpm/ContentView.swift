@@ -14,13 +14,14 @@ private enum ConsoleStyle {
 }
 
 enum ConsoleScreen: String, CaseIterable, Identifiable {
-    case mission = "Mission", tasks = "Tasks", memory = "Memory", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts"
+    case mission = "Mission", tasks = "Tasks", memory = "Memory", digital_me = "Digital Me", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts"
     var id: String { rawValue }
     var icon: String {
         switch self {
         case .mission: return "point.3.connected.trianglepath.dotted"
         case .tasks: return "checklist"
         case .memory: return "brain"
+        case .digital_me: return "laptop.compute"
         case .quests: return "map"
         case .products: return "cube.transparent"
         case .platforms: return "square.grid.3x3"
@@ -180,6 +181,7 @@ struct ContentView: View {
                         switch selection {
                         case .tasks: AutonomousTasksView(store: store, onCreate: { sheet = .compose })
                         case .memory: LearningView(store: store)
+                        case .digital_me: EmptyView()
                         case .quests: QuestOperationsView(store: store)
                         case .workflows: workflows
                         case .integrations: integrations
@@ -226,6 +228,7 @@ struct ContentView: View {
         case .tools: return "Run installed capabilities and inspect their live responses."
         case .quests: return "Discover and execute supported reward actions."
         case .memory: return "Review the decisions and evidence the system has retained."
+        case .digital_me: return "Manage your identity, memories, reasoning and plans."
         case .workflows: return "Open durable plans, checkpoints and completed artifacts."
         case .integrations: return "Inspect recorded provider health and connection evidence."
         case .registrations: return "Track account setup and verification outcomes."

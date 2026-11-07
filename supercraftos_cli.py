@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse, unquote, parse_qs
 from platform_registry import catalog, refresh as refresh_platforms
+import digital_me
 from capability_engine import refresh_policy
 from product_design import build_product, screen_product, product_file, interpret_idea, product_tools
 from grant_workflow import grant_catalog, screen_grants, draft_grant_application, approve_grant_application, submit_grant_application, grant_submission_history, grant_tools, saved_grant_applications
@@ -291,7 +292,10 @@ class Handler(BaseHTTPRequestHandler):
                   '/api/grants/packages': saved_grant_applications,
                   "/api/integrations": lambda: {"integrations": integration_rows()},
                   "/api/registrations": lambda: {"registrations": registration_rows()},
-                  "/api/workflows": lambda: {"workflows": workflow_rows()}}
+                  "/api/workflows": lambda: {"workflows": workflow_rows()},
+                  "/api/digital_me/profile": lambda: (lambda dm: dm.api_profile_get())(__import__('digital_me')),
+                  "/api/digital_me/memory": lambda: (lambda dm: dm.api_memory_get())(__import__('digital_me')),
+                  "/api/digital_me/reasoning": lambda: {"status": "ready"}}
         if path in routes:
             try: value = routes[path]()
             except (OSError, ValueError, TypeError, AttributeError): return self.send_json({"error": "state_unavailable"}, 503)
@@ -351,6 +355,10 @@ class Handler(BaseHTTPRequestHandler):
                 except Conflict as exc:
                     return self.send_json({'error': str(exc)}, 409)
                 return self.send_json(public_job(job), 202)
+            if path == '/api/digital_me/memory':
+                if 'entry' in payload:
+                    return self.send_json(digital_me.api_memory_post(payload['entry']))
+                return self.send_json({'error': 'missing entry in payload'})
             if path == '/api/agent/memory/forget':
                 return self.send_json({'forgotten': job_store().forget_lesson(payload.get('id'))})
             if path.startswith('/api/quests/'):
@@ -415,6 +423,20 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/grants/submission-history':
                 try: return self.send_json(grant_submission_history(payload))
                 except ValueError as exc: return self.send_json({'error': 'grant_history_failed', 'detail': str(exc)}, 400)
+            if path == "/api/digital_me/profile": return self.send_json(digital_me.api_profile_get())
+            if path == "/api/digital_me/memory":
+                if "entry" in payload:
+                    return self.send_json(digital_me.api_memory_post(payload["entry"]))
+                return self.send_json({"error": "missing entry in payload"})
+            if path == "/api/digital_me/reasoning":
+                return self.send_json(digital_me.api_reasoning_post(payload))
+            if path == "/api/digital_me/planning":
+                return self.send_json(digital_me.api_planning_post(payload))
+            if path == "/api/digital_me/planning/{}":
+                parts = path.strip("/").split("/")
+                if len(parts) == 5 and parts[3] == "planning" and len(parts) == 5:
+                    return self.send_json(digital_me.api_planning_get(parts[4]))
+                return self.send_json({"error": "not_found"}, 404)
             if path == "/api/runtime/start": return self.send_json(STATE.start_runtime())
             if path == "/api/runtime/stop": return self.send_json(STATE.stop_runtime())
             if path == "/api/workflows":
