@@ -204,7 +204,7 @@ workflows:
             - is_compress: true
 
   signed_development:
-    description: Build and export a signed development IPA using automatic code signing with your connected Apple Developer account. Installs directly on registered devices without Sideloadly.
+    description: Build and export a signed development IPA using a free personal Apple ID via Manage iOS Code Signing + Xcode Archive & Export.
     steps:
       - git-clone@8:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
@@ -221,22 +221,23 @@ workflows:
                 xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
       - activate-build-cache-for-xcode@1:
           title: Activate Bitrise Build Cache for Xcode
-      - script@1:
-          title: Archive the app with automatic signing
+      - ios-code-sign@4:
+          title: Manage iOS Code Signing
           inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$BITRISE_SOURCE_DIR/build/SuperCraftOS.xcarchive" -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES archive
-      - script@1:
-          title: Export the signed development IPA
+            - service_connection_method: apple-id
+            - apple_id: "$APPLE_ID"
+            - password: "$APPLE_PASSWORD"
+            - save_code_signing_settings: "true"
+      - xcode-archive@6:
+          title: Xcode Archive & Export for iOS
           inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                rm -rf "$BITRISE_SOURCE_DIR/build/ipa"
-                mkdir -p "$BITRISE_SOURCE_DIR/build/ipa"
-                xcodebuild -exportArchive -archivePath "$BITRISE_SOURCE_DIR/build/SuperCraftOS.xcarchive" -exportPath "$BITRISE_SOURCE_DIR/build/ipa" -exportOptionsPlist ios_app_dist/ci_xcode/ExportOptions-development.plist
+            - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+            - scheme: SuperCraftOS
+            - distribution_method: development
+            - automatic_code_signing: yes
+            - export_development_team: "$DEVELOPMENT_TEAM"
+            - register_test_devices: "true"
+            - output_directory: $BITRISE_SOURCE_DIR/build
       - script@1:
           title: Copy signed IPA to deploy directory
           inputs:
