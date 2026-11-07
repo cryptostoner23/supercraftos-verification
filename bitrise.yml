@@ -221,12 +221,22 @@ workflows:
                 xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
       - activate-build-cache-for-xcode@1:
           title: Activate Bitrise Build Cache for Xcode
+      - manage-ios-code-signing@2.4.0:
+          title: Manage iOS Code Signing
+          inputs:
+            - apple_service_connection: apple-id
+            - scheme: SuperCraftOS
+            - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+            - distribution_method: development
+            - certificate_url_list: ""
+            - register_test_devices: "yes"
       - xcode-archive@6.2.0:
           title: Xcode Archive & Export for iOS
           inputs:
             - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
             - scheme: SuperCraftOS
             - distribution_method: development
+            - automatic_code_signing: apple-id
             - register_test_devices: "yes"
       - deploy-to-bitrise-io@2:
           inputs:
