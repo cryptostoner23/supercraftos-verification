@@ -224,14 +224,13 @@ workflows:
             - platform: iOS
             - configuration: Release
             - distribution_method: development
-            - automatic_code_signing: "yes"
+            - CodeSigningAuthSource: apple-id
             - output_directory: $BITRISE_SOURCE_DIR/build
       - export-xcarchive@4:
           title: Export the signed development IPA
           inputs:
             - archive_path: $BITRISE_SOURCE_DIR/build/SuperCraftOS.xcarchive
             - distribution_method: development
-            - automatic_code_signing: "yes"
             - export_options_plist_content: |-
                 {
                   "method": "development",
