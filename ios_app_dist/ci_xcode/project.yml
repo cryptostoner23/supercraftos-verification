@@ -43,6 +43,7 @@ targets:
       - path: ../YourApp.swiftpm/ShortcutActions.swift
       - path: ../YourApp.swiftpm/UnifiedAPIClient.swift
       - path: ../YourApp.swiftpm/DigitalMeView.swift
+      - path: ../YourApp.swiftpm/AppleNotesView.swift
       - path: Assets.xcassets
         buildPhase: resources
       - path: PrivacyInfo.xcprivacy
@@ -103,6 +104,31 @@ targets:
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         # The keyboard stores an independent gateway key in its own Keychain.
         # It needs no App Group or shared credential entitlement.
+  SuperCraftOSShare:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ../BackendClient.swift
+      - path: ../CredentialStore.swift
+      - path: ../ShareExtension
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.share
+        PRODUCT_NAME: SaveToSuperCraftOS
+        INFOPLIST_FILE: ../ShareExtension/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        SKIP_INSTALL: YES
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # The share extension reuses the app's gateway credential from the
+        # Keychain when the app and extension share an access group; otherwise
+        # the key must be provisioned for the extension (see docs).
   SuperCraftOSTests:
     type: bundle.unit-test
     platform: iOS
@@ -222,3 +248,7 @@ schemes:
     build:
       targets:
         SuperCraftOSKeyboard: build
+  SuperCraftOSShare:
+    build:
+      targets:
+        SuperCraftOSShare: build

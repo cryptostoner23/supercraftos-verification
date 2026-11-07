@@ -284,6 +284,31 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header('Content-Length', str(len(body))); self.end_headers(); self.wfile.write(body)
                 return
             return self.send_json({'error': 'not_found'}, 404)
+        if path == '/api/notes':
+            from apple_notes import list_notes
+            try:
+                query = parse_qs(urlparse(self.path).query).get('q', [''])[0]
+                return self.send_json({'notes': list_notes(query)})
+            except (OSError, ValueError):
+                return self.send_json({'error': 'state_unavailable'}, 503)
+        if path == '/api/notes/notebooks':
+            from apple_notes import list_notebooks
+            try:
+                return self.send_json({'notebooks': list_notebooks()})
+            except (OSError, ValueError):
+                return self.send_json({'error': 'state_unavailable'}, 503)
+        if path.startswith('/api/notes/'):
+            parts = path.strip('/').split('/')
+            if len(parts) == 3:
+                from apple_notes import get_note
+                try:
+                    note = get_note(parts[2])
+                except (OSError, ValueError):
+                    return self.send_json({'error': 'state_unavailable'}, 503)
+                if note is None:
+                    return self.send_json({'error': 'not_found'}, 404)
+                return self.send_json(note)
+            return self.send_json({'error': 'not_found'}, 404)
         routes = {"/api/session": lambda: {"token": STATE.token},
                   "/api/status": overview, "/api/tools": lambda: {"tools": read_tools()},
                   "/api/platforms": catalog,
@@ -436,6 +461,56 @@ class Handler(BaseHTTPRequestHandler):
                 parts = path.strip("/").split("/")
                 if len(parts) == 5 and parts[3] == "planning" and len(parts) == 5:
                     return self.send_json(digital_me.api_planning_get(parts[4]))
+                return self.send_json({"error": "not_found"}, 404)
+            if path == '/api/notes':
+                from apple_notes import create_note
+                note = create_note(payload.get('title', ''), payload.get('body', ''),
+                                   payload.get('notebook', 'Default'), payload.get('tags'))
+                return self.send_json(note, 201)
+            if path == '/api/notes/ingest':
+                from apple_notes import create_note
+                body = payload.get('body') or ''
+                if not isinstance(body, str):
+                    return self.send_json({'error': 'invalid_request'}, 400)
+                raw_title = (payload.get('title') or '').strip() or next(
+                    (line.strip() for line in body.splitlines() if line.strip()), '')
+                title = raw_title[:200] or 'Imported Apple Note'
+                fmt = str(payload.get('format') or 'text').lower()
+                if fmt not in {'text', 'rtf', 'html'}:
+                    fmt = 'text'
+                source = str(payload.get('source') or 'apple_notes')[:64]
+                notebook = str(payload.get('notebook') or 'Apple Notes')[:60]
+                note = create_note(title, body, notebook=notebook, tags=['apple_notes'])
+                try:
+                    from digital_me import add_memory_entry
+                    digest = ' '.join(body.split())[:500]
+                    add_memory_entry({'note': f"Imported {source} '{note['title']}': {digest}",
+                                      'source': source, 'format': fmt})
+                except Exception:
+                    pass
+                return self.send_json({**note, 'source': source, 'format': fmt}, 201)
+            if path.startswith('/api/notes/'):
+                from apple_notes import (add_checklist_item, delete_note, pin_note,
+                                         toggle_checklist_item, update_note)
+                parts = path.strip('/').split('/')
+                if len(parts) == 4 and parts[3] in {'update', 'delete', 'pin'}:
+                    note_id, action = parts[2], parts[3]
+                    try:
+                        if action == 'update':
+                            return self.send_json(update_note(note_id, payload))
+                        if action == 'delete':
+                            return self.send_json(delete_note(note_id))
+                        return self.send_json(pin_note(note_id))
+                    except KeyError:
+                        return self.send_json({'error': 'note_not_found'}, 404)
+                if len(parts) == 5 and parts[3] == 'checklist' and parts[4] in {'add', 'toggle'}:
+                    note_id, op = parts[2], parts[4]
+                    try:
+                        if op == 'add':
+                            return self.send_json(add_checklist_item(note_id, payload.get('text', '')))
+                        return self.send_json(toggle_checklist_item(note_id, payload.get('index')))
+                    except KeyError:
+                        return self.send_json({'error': 'note_not_found'}, 404)
                 return self.send_json({"error": "not_found"}, 404)
             if path == "/api/runtime/start": return self.send_json(STATE.start_runtime())
             if path == "/api/runtime/stop": return self.send_json(STATE.stop_runtime())

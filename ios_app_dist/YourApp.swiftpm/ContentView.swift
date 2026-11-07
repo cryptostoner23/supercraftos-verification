@@ -14,7 +14,7 @@ enum ConsoleStyle {
 }
 
 enum ConsoleScreen: String, CaseIterable, Identifiable {
-    case mission = "Mission", tasks = "Tasks", memory = "Memory", digital_me = "Digital Me", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts"
+    case mission = "Mission", tasks = "Tasks", memory = "Memory", digital_me = "Digital Me", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts", notes = "Notes"
     var id: String { rawValue }
     var icon: String {
         switch self {
@@ -31,6 +31,7 @@ enum ConsoleScreen: String, CaseIterable, Identifiable {
         case .tools: return "terminal"
         case .registrations: return "person.crop.rectangle.stack"
         case .shortcuts: return "arrow.triangle.branch"
+        case .notes: return "note.text"
         }
     }
 
@@ -192,6 +193,7 @@ struct ContentView: View {
                         case .platforms: PlatformHub(store: store)
                         case .grants: GrantOperations(store: store)
                         case .mission: EmptyView()
+                        case .notes: AppleNotesView(store: store)
                         }
                     }.padding(18).frame(maxWidth: 1200, alignment: .leading).frame(maxWidth: .infinity)
                 }.accessibilityIdentifier("workspace-scroll").refreshable { await store.refresh() }
@@ -235,6 +237,7 @@ struct ContentView: View {
         case .platforms: return "See the capabilities the runtime can actually route and measure."
         case .shortcuts: return "Launch frequently used actions from your device."
         case .mission: return ""
+        case .notes: return "Import notes from Apple Notes on this device and review them."
         }
     }
 
