@@ -192,3 +192,4 @@ workflows:
       - deploy-to-bitrise-io@2:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+            - is_compress: true
