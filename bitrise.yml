@@ -221,29 +221,19 @@ workflows:
                 xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
       - activate-build-cache-for-xcode@1:
           title: Activate Bitrise Build Cache for Xcode
-      - ios-code-sign@4:
+      - manage-ios-code-signing@2.4.0:
           title: Manage iOS Code Signing
           inputs:
-            - service_connection_method: apple-id
-            - apple_id: "$APPLE_ID"
-            - password: "$APPLE_PASSWORD"
-            - save_code_signing_settings: "true"
-      - xcode-archive@6:
+            - apple_service_connection: apple-id
+            - register_test_devices: "yes"
+      - xcode-archive@6.2.0:
           title: Xcode Archive & Export for iOS
           inputs:
             - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
             - scheme: SuperCraftOS
             - distribution_method: development
-            - automatic_code_signing: yes
-            - register_test_devices: "true"
-            - output_directory: $BITRISE_SOURCE_DIR/build
-      - script@1:
-          title: Copy signed IPA to deploy directory
-          inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                cp "$BITRISE_SOURCE_DIR/build/ipa/SuperCraftOS.ipa" "$BITRISE_DEPLOY_DIR/SuperCraftOS-signed.ipa"
+            - automatic_code_signing: apple-id
+            - register_test_devices: "yes"
       - deploy-to-bitrise-io@2:
           inputs:
             - is_compress: true
