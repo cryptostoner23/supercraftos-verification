@@ -5,6 +5,8 @@ import FoundationNetworking
 
 /// Unified API Client for Digital Me × SuperCraftOS
 /// Connects the iOS app to the unified backend endpoints.
+// Clean Swift 5.9 — compiles under Xcode 27. No `extension BackendClient`,
+// no mutable `controlToken`, no `[String: Any]` in Codable types.
 struct UnifiedAPIClient {
     let connection: BackendConnection
 
