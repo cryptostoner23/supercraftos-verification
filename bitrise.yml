@@ -167,17 +167,24 @@ workflows:
                 #!/bin/bash
                 set -euo pipefail
                 DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
-                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO archive -archivePath "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive"
-                test -d "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive"
+                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
+                test -d "$APP"
                 mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
+                ditto "$APP" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS-iOS-Device-unsigned.app.zip"
       - script@1:
-          title: Export production IPA
+          title: Create unsigned production IPA
           inputs:
             - content: |
                 #!/bin/bash
                 set -euo pipefail
                 DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
-                xcodebuild -exportArchive -archivePath "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive" -exportPath "$BITRISE_SOURCE_DIR/build/Artifacts" -exportOptionsPlist ios_app_dist/ci_xcode/ExportOptions-development.plist
-                mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
-                ditto "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
+                test -d "$APP"
+                IPA_DIR="$BITRISE_SOURCE_DIR/build/IPA-Staging"
+                rm -rf "$IPA_DIR"
+                mkdir -p "$IPA_DIR/Payload"
+                cp -R "$APP" "$IPA_DIR/Payload/"
+                cd "$IPA_DIR"
+                zip -r "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" Payload
                 test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
