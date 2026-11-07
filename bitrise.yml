@@ -192,5 +192,3 @@ workflows:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
               title: "SuperCraftOS.ipa"
-              project: "SuperCraftOS"
-              version: "1.0.0"
