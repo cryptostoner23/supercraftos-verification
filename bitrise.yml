@@ -202,7 +202,7 @@ workflows:
                 REVYL_API_KEY="f3ded9b73f0ed8f6c0ea2716a080aa4bd4d1dcbde75e6b599781c8d8b84b3afa16e3a40a705481dd7678c402267a81ed"
                 REVYL_APP_ID="017e6103-7dbe-4ba3-a910-88575e966048"
                 FILE_SIZE=$(stat -f%z "$IPA")
-                UPLOAD_RESP=$(curl -s -X POST -H "Authorization: Bearer $REVYL_API_KEY" -H "Content-Type: application/json" -d "{\"filename\":\"SuperCraftOS.ipa\",\"content_type\":\"application/octet-stream\",\"file_size\":$FILE_SIZE}" "https://backend.revyl.ai/api/v1/files/upload-url")
+                UPLOAD_RESP=$(curl -s -X POST -H "Authorization: Bearer $REVYL_API_KEY" -H "Content-Type: application/json" -d "{\"filename\":\"SuperCraftOS.json\",\"content_type\":\"application/octet-stream\",\"file_size\":$FILE_SIZE}" "https://backend.revyl.ai/api/v1/files/upload-url")
                 UPLOAD_ID=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['file']['id'])")
                 UPLOAD_URL=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['upload_url'])")
                 curl -s -X PUT -H "Content-Type: application/octet-stream" -T "$IPA" "$UPLOAD_URL" > /dev/null
