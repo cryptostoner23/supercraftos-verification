@@ -145,19 +145,6 @@ workflows:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
           clone_dir: /home/bitrise/project
       - script@1:
-          title: Debug checkout directory
-          inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                echo "BITRISE_SOURCE_DIR=$BITRISE_SOURCE_DIR"
-                pwd
-                ls -la
-                echo "=== scripts dir ==="
-                ls -la scripts/ 2>/dev/null || echo "no scripts directory"
-                echo "=== find package_ipad ==="
-                find . -name "package_ipad.py" -maxdepth 4 2>/dev/null || echo "not found"
-      - script@1:
           title: Package Swift app bundle
           inputs:
             - content: |
