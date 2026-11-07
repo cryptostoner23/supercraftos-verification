@@ -167,7 +167,7 @@ workflows:
                 #!/bin/bash
                 set -euo pipefail
                 DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
-                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO archive -archivePath "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive"
                 APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
                 test -d "$APP"
                 mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
