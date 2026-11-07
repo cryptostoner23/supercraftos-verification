@@ -199,3 +199,54 @@ workflows:
       - deploy-to-bitrise-io@2:
           inputs:
             - is_compress: true
+
+  signed_development:
+    description: Build and export a signed development IPA using your connected Apple Developer account in Bitrise. Installs directly on your registered devices without Sideloadly.
+    steps:
+      - git-clone@8:
+          repository: https://github.com/cryptostoner94/opencode-supercraftos.git
+          clone_dir: /home/bitrise/project
+          reset_repository: true
+      - script@1:
+          title: Generate the Xcode project
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                python3 scripts/package_ipad.py
+                if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+                xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
+      - xcode-archive@6:
+          title: Archive the app with signing
+          inputs:
+            - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+            - scheme: SuperCraftOS
+            - platform: iOS
+            - configuration: Release
+            - distribution_method: development
+            - automatic_code_signing: "yes"
+            - output_directory: $BITRISE_SOURCE_DIR/build
+      - export-xcarchive@4:
+          title: Export the signed development IPA
+          inputs:
+            - archive_path: $BITRISE_SOURCE_DIR/build/SuperCraftOS.xcarchive
+            - distribution_method: development
+            - automatic_code_signing: "yes"
+            - export_options_plist_content: |-
+                {
+                  "method": "development",
+                  "destination": "export",
+                  "signingStyle": "automatic",
+                  "stripSwiftSymbols": true,
+                  "compileBitcode": false
+                }
+      - script@1:
+          title: Copy signed IPA to deploy directory
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                cp "$BITRISE_SOURCE_DIR/build/ipa/SuperCraftOS.ipa" "$BITRISE_DEPLOY_DIR/SuperCraftOS-signed.ipa"
+      - deploy-to-bitrise-io@2:
+          inputs:
+            - is_compress: true
