@@ -168,10 +168,8 @@ workflows:
                 set -euo pipefail
                 DERIVED="$BITRISE_SOURCE_DIR/build/PersonalDevice"
                 xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO archive -archivePath "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive"
-                APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
-                test -d "$APP"
+                test -d "$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.xcarchive"
                 mkdir -p "$BITRISE_SOURCE_DIR/build/Artifacts"
-                ditto "$APP" "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS-iOS-Device-unsigned.app.zip"
       - script@1:
           title: Export production IPA
           inputs:
