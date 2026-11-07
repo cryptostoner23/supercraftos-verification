@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import httpx
 
@@ -40,21 +40,44 @@ async def _composio_headers() -> Dict[str, str]:
     return headers
 
 
+def _find_composio_cli() -> str:
+    """Locate the composio CLI binary."""
+    for candidate in (
+        os.getenv("COMPOSIO_CLI") or "",
+        "composio",
+        "/root/.local/bin/composio",
+        "/var/lib/supercraftos/autonomous/bin/composio",
+        "/var/lib/supercraftos/autonomous/composio-cli/composio",
+    ):
+        if candidate and (os.path.exists(candidate) or candidate == "composio"):
+            return candidate
+    return "composio"
+
+
 async def composio_list_connected_accounts() -> List[Dict[str, Any]]:
-    """List accounts connected to Composio (Gmail appears as GMAIL)."""
-    client = httpx.AsyncClient(timeout=30)
+    """List accounts connected to Composio via the CLI (REST account API is not public).
+
+    Returns a flat list of connection records with keys: app, status,
+    display_name/alias, id.
+    """
     try:
-        resp = await client.get(
-            f"{composio_base()}/api/v3.1/accounts",
-            headers=await _composio_headers(),
+        proc = await asyncio.create_subprocess_exec(
+            _find_composio_cli(), "connections", "list",
+            env={**os.environ, "COMPOSIO_QUIET": "1"},
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
-        if resp.status_code != 200:
-            return []
-        data = resp.json()
-        accounts = data.get("items") or data.get("accounts") or []
-        return [a for a in accounts if isinstance(a, dict)]
-    finally:
-        await client.aclose()
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=60)
+        data = json.loads(stdout.decode())
+    except Exception:
+        return []
+    accounts: List[Dict[str, Any]] = []
+    if isinstance(data, dict):
+        for app, conns in data.items():
+            for c in conns if isinstance(conns, list) else []:
+                if isinstance(c, dict):
+                    accounts.append({**c, "app": app})
+    return accounts
 
 
 async def composio_gmail_status() -> Dict[str, Any]:
@@ -63,32 +86,52 @@ async def composio_gmail_status() -> Dict[str, Any]:
         return {"provider": "composio", "connected": False, "reason": "COMPOSIO_API_KEY missing"}
     try:
         accounts = await composio_list_connected_accounts()
-        gmail = [a for a in accounts if "gmail" in str(a.get("appUniqueId") or a.get("app") or a.get("provider") or "").lower()]
+        gmail = [a for a in accounts
+                 if a.get("app", "").lower() == "gmail" and a.get("status") == "ACTIVE"]
         return {
             "provider": "composio",
             "connected": bool(gmail),
             "gmail_accounts": len(gmail),
             "total_accounts": len(accounts),
+            "gmail_addresses": [a.get("display_name") or a.get("alias") for a in gmail if a.get("display_name") or a.get("alias")],
         }
     except Exception as exc:
         return {"provider": "composio", "connected": False, "reason": type(exc).__name__}
 
 
+async def _first_active_gmail_account() -> Optional[Dict[str, Any]]:
+    """Return the first ACTIVE Composio Gmail connection (for account selection)."""
+    for account in await composio_list_connected_accounts():
+        if account.get("app", "").lower() == "gmail" and account.get("status") == "ACTIVE":
+            return account
+    return None
+
+
 async def composio_execute_tool(tool: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
-    """Execute a Composio tool (e.g. GMAIL_SEND_EMAIL)."""
+    """Execute a Composio tool via the CLI (reliable account resolution)."""
     if not composio_key():
         raise RuntimeError("COMPOSIO_API_KEY is required for Composio mail")
-    client = httpx.AsyncClient(timeout=60)
+    account = await _first_active_gmail_account()
+    if account is None:
+        return {"successful": False, "reason": "No active Gmail connection in Composio"}
+    cli = _find_composio_cli()
     try:
-        resp = await client.post(
-            f"{composio_base()}/api/v3.1/tools/execute/{tool}",
-            headers=await _composio_headers(),
-            json={"arguments": arguments},
+        proc = await asyncio.create_subprocess_exec(
+            cli, "execute", tool, "--account", account.get("word_id") or account.get("id"),
+            "-d", json.dumps(arguments),
+            env={**os.environ, "COMPOSIO_QUIET": "1"},
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
-        body = resp.json() if resp.content else {}
-        return {"http_status": resp.status_code, "successful": body.get("successful"), "response_data": body.get("response_data", body)}
-    finally:
-        await client.aclose()
+        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=90)
+        body = json.loads(stdout.decode())
+    except Exception as exc:
+        return {"successful": False, "reason": f"cli_error: {type(exc).__name__}"}
+    return {
+        "successful": bool(body.get("successful")),
+        "response_data": body.get("data"),
+        "error": body.get("error"),
+    }
 
 
 # ── IMAP fallback ────────────────────────────────────────────────────────────
@@ -128,7 +171,7 @@ async def gmail_send(arguments: Dict[str, Any]) -> Dict[str, Any]:
     status = await composio_gmail_status()
     if status.get("connected"):
         return await composio_execute_tool("GMAIL_SEND_EMAIL", {
-            "to": to, "subject": subject, "body": body,
+            "recipient_email": to, "subject": subject, "body": body,
         })
 
     # No live sender available without credentials.
@@ -145,7 +188,7 @@ async def gmail_read(arguments: Dict[str, Any]) -> Dict[str, Any]:
     status = await composio_gmail_status()
     if status.get("connected"):
         # Composio read: fetch recent messages.
-        return await composio_execute_tool("GMAIL_GET_MESSAGES", {"limit": limit})
+        return await composio_execute_tool("GMAIL_LIST_MESSAGES", {"user_id": "me", "max_results": limit})
     if os.getenv("GMAIL_ADDRESS"):
         return {"messages": await imap_read_mail(limit=limit)}
     return {"reason": "No Gmail credentials. Connect a Gmail account through Composio or set GMAIL_ADDRESS."}
