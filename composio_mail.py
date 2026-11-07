@@ -24,7 +24,22 @@ import httpx
 
 # ── Composio helpers ─────────────────────────────────────────────────────────
 
+_env_loaded = False
+
+
+def _ensure_env():
+    global _env_loaded
+    if not _env_loaded:
+        try:
+            from runtime_env import load_environment
+            load_environment()
+        except Exception:
+            pass
+        _env_loaded = True
+
+
 def composio_key() -> str:
+    _ensure_env()
     return os.getenv("COMPOSIO_API_KEY") or ""
 
 

@@ -71,17 +71,11 @@ def add_memory_entry(entry: Dict[str, Any]) -> None:
 def retrieve_memory(query: str, limit: int = 10) -> List[Dict[str, Any]]:
     """Return memory entries whose note contains the query (case‑insensitive substring)."""
     memory = load_memory()
-    hits: List[Dict[str, Any]] = []
     q = query.lower()
-    for entry in memory.get("entries", []):
-        note = entry.get("note", "").lower()
-        if q in note:
-            hits.append(entry)
-        if len(hits) >= limit:
-            break
-    # Sort by recency (newest first)
+    hits = [e for e in memory.get("entries", []) if q in e.get("note", "").lower()]
+    # Sort by recency (newest first), then cap at the requested limit.
     hits.sort(key=lambda e: e.get("at", 0), reverse=True)
-    return hits
+    return hits[:max(1, min(limit, 500))]
 
 
 # ── Playbooks (reasoning patterns) ─────────────────────────────────────────

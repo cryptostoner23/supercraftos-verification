@@ -23,6 +23,22 @@ workflows:
         SCHEME: SuperCraftOS
         SDK: iphoneos
     scripts:
+      - name: Inject secrets into .env (from Codemagic app variables)
+        script: |
+          # Secrets are stored as Codemagic app/team-level environment variables
+          # (never in this file). If present, write them to a local .env for the
+          # backend/tests. The file is gitignored and ephemeral on the build host.
+          if [ -n "${COMPOSIO_API_KEY:-}" ] || [ -n "${APIFY_API_TOKEN:-}" ]; then
+            rm -f .env
+            [ -n "${COMPOSIO_API_KEY:-}" ] && printf 'COMPOSIO_API_KEY=%s\n' "$COMPOSIO_API_KEY" >> .env
+            [ -n "${APIFY_API_TOKEN:-}" ] && printf 'APIFY_API_TOKEN=%s\n' "$APIFY_API_TOKEN" >> .env
+            [ -n "${GMAIL_ADDRESS:-}" ] && printf 'GMAIL_ADDRESS=%s\n' "$GMAIL_ADDRESS" >> .env
+            [ -n "${GMAIL_APP_PASSWORD:-}" ] && printf 'GMAIL_APP_PASSWORD=%s\n' "$GMAIL_APP_PASSWORD" >> .env
+            chmod 600 .env
+            echo "Secrets injected into .env"
+          else
+            echo "No secrets injected (COMPOSIO_API_KEY / APIFY_API_TOKEN unset)"
+          fi
       - name: Package Swift app bundle
         script: |
           python3 scripts/package_ipad.py
