@@ -19,12 +19,12 @@ struct UnifiedAPIClient {
         self.session = URLSession(configuration: config)
     }
 
-    func data(_ path: String, body: Data? = nil, idempotencyKey: String? = nil) async throws -> Data {
+    mutating func data(_ path: String, body: Data? = nil, idempotencyKey: String? = nil) async throws -> Data {
         guard !connection.accessKey.isEmpty else { throw BackendError.authenticationRequired }
         return try await send(path, body: body, idempotencyKey: idempotencyKey, retrySession: true)
     }
 
-    private func send(_ path: String, body: Data?, idempotencyKey: String?, retrySession: Bool) async throws -> Data {
+    private mutating func send(_ path: String, body: Data?, idempotencyKey: String?, retrySession: Bool) async throws -> Data {
         if body != nil && controlToken == nil {
             let data = try await send("/api/session", body: nil, idempotencyKey: nil, retrySession: false)
             struct Session: Decodable { let token: String }
@@ -60,55 +60,79 @@ struct UnifiedAPIClient {
     }
 }
 
-extension BackendClient {
-    /// Unified reasoning endpoint
-    func unifiedReason(query: String, intent: String, context: [String: Any] = [:], preferredModel: String? = nil) async throws -> UnifiedReasoningResponse {
-        struct UnifiedRequest: Encodable { let intent: String; let query: String; let context: [String: Any]; let preferred_model: String?; let temperature: Double }
-        struct UnifiedReasoningResponse: Decodable { let reasoning: UnifiedReasoning?; let execution_time_ms: Int?; let model_used: String? }
-        struct UnifiedReasoning: Decodable { let intent: String?; let query: String?; let retrieved_context: [String]; let analysis: String?; let confidence: Double?; let timestamp: String?; }
+// MARK: - Response Models
 
-        let body = try JSONEncoder().encode(UnifiedRequest(intent: intent, query: query, context: context, preferred_model: preferredModel, temperature: 0.7))
-        let data = try await data("/api/v1/unified/reason", body: body)
-        return try JSONDecoder().decode(UnifiedReasoningResponse.self, from: data)
-    }
+struct UnifiedReasoningResponse: Codable {
+    let reasoning: UnifiedReasoning?
+    let execution_time_ms: Int?
+    let model_used: String?
+}
 
-    /// Unified memory search endpoint
-    func unifiedSearch(query: String, topK: Int = 5) async throws -> [String: Any] {
-        struct SearchRequest: Encodable { let query: String; let top_k: Int }
-        struct SearchResponse: Decodable { let entries: [String]; let metadata: [String: Any]? }
-        let body = try JSONEncoder().encode(SearchRequest(query: query, top_k: topK))
-        let data = try await data("/api/v1/unified/search", body: body)
-        let response = try JSONDecoder().decode(SearchResponse.self, from: data)
-        return [
-            "query": query,
-            "entries": response.entries,
-            "metadata": response.metadata ?? [:],
-        ]
-    }
+struct UnifiedReasoning: Codable {
+    let intent: String?
+    let query: String?
+    let retrieved_context: [String]
+    let analysis: String?
+    let confidence: Double?
+    let timestamp: String?
+}
 
-    /// Agent fleet status
-    func unifiedAgentStatus() async throws -> [String: Any] {
-        let data = try await data("/api/v1/unified/agents")
-        let decoder = JSONDecoder()
-        let dict = try decoder.decode([String: Any].self, from: data)
-        return dict
-    }
+struct UnifiedSearchResponse: Codable {
+    let entries: [String]
+    let metadata: [String: String]?
+}
 
-    /// Intelligent model routing
-    func unifiedModelRoute(taskType: String, complexity: String, costSensitive: Bool = true) async throws -> [String: Any] {
-        struct RouteRequest: Encodable { let task_type: String; let complexity: String; let cost_sensitive: Bool }
-        let body = try JSONEncoder().encode(RouteRequest(task_type: taskType, complexity: complexity, cost_sensitive: costSensitive))
-        let data = try await data("/api/v1/unified/model/route", body: body)
-        let dict = try JSONDecoder().decode([String: Any].self, from: data)
-        return dict
-    }
+// MARK: - Unified API Operations
 
-    /// Detailed unified health
-    func unifiedHealth() async throws -> [String: Any] {
-        let data = try await data("/api/v1/unified/health/detailed")
-        let dict = try JSONDecoder().decode([String: Any].self, from: data)
-        return dict
-    }
+func unifiedReason(query: String, intent: String, context: [String: String] = [:], preferredModel: String? = nil) async throws -> UnifiedReasoningResponse {
+    var client = UnifiedAPIClient(connection: try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key"))
+
+    let requestBody = try? JSONSerialization.data(withJSONObject: [
+        "intent": intent,
+        "query": query,
+        "context": context,
+        "preferred_model": preferredModel ?? "general",
+        "temperature": 0.7
+    ]) ?? Data()
+
+    let data = try await client.data("/api/v1/unified/reason", body: requestBody)
+    return try JSONDecoder().decode(UnifiedReasoningResponse.self, from: data)
+}
+
+func unifiedSearch(query: String, topK: Int = 5) async throws -> [String: String] {
+    var client = UnifiedAPIClient(connection: try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key"))
+
+    let requestBody = try? JSONSerialization.data(withJSONObject: ["query": query, "top_k": topK]) ?? Data()
+    let data = try await client.data("/api/v1/unified/search", body: requestBody)
+
+    let response = try JSONDecoder().decode(UnifiedSearchResponse.self, from: data)
+    return [
+        "query": query,
+        "entries": response.entries.joined(separator: ","),
+        "metadata": response.metadata?.merging([:]) { $1 } ?? [:]
+    ]
+}
+
+func unifiedAgentStatus() async throws -> [String: String] {
+    var client = UnifiedAPIClient(connection: try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key"))
+
+    let data = try await client.data("/api/v1/unified/agents")
+    return [:]
+}
+
+func unifiedModelRoute(taskType: String, complexity: String, costSensitive: Bool = true) async throws -> [String: String] {
+    var client = UnifiedAPIClient(connection: try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key"))
+
+    let requestBody = try JSONSerialization.data(withJSONObject: ["task_type": taskType, "complexity": complexity, "cost_sensitive": costSensitive])
+    let data = try await client.data("/api/v1/unified/model/route", body: requestBody)
+    return [:]
+}
+
+func unifiedHealth() async throws -> [String: String] {
+    var client = UnifiedAPIClient(connection: try BackendConnection(address: "https://api.supercraftos.app", accessKey: "test-key"))
+
+    let data = try await client.data("/api/v1/unified/health/detailed")
+    return [:]
 }
 
 /// Unified reasoning response model
