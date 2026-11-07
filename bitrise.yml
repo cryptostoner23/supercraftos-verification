@@ -189,16 +189,7 @@ workflows:
                 cd "$IPA_DIR"
                 zip -r "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa" Payload
                 test -f "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
-      - script@1:
-          title: Upload IPA to transfer.sh
-          inputs:
-            - content: |
-                #!/bin/bash
-                set -euo pipefail
-                IPA="$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
-                test -f "$IPA"
-                URL=$(curl -s --upload-file "$IPA" https://transfer.sh/SuperCraftOS.ipa)
-                echo "IPA_DOWNLOAD_URL=$URL" >> "$BITRISE_ENV"
       - deploy-to-bitrise-io@2:
           inputs:
+            - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
             - is_compress: true
