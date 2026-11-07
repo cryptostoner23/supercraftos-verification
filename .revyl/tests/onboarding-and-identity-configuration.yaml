@@ -1,0 +1,19 @@
+metadata:
+  name: onboarding-and-identity-configuration
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - onboarding
+  - identity
+blocks:
+  - step_type: tap
+    description: Navigate to the onboarding screen
+  - step_type: tap
+    description: Complete identity setup with user preferences
+  - step_type: tap
+    description: Set language and region preferences
+  - step_type: tap
+    description: Verify onboarding completion screen appears
+  - step_type: tap
+    description: Confirm identity settings are saved in profile

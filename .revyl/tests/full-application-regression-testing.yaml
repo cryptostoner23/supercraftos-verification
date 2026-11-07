@@ -1,0 +1,20 @@
+metadata:
+  name: full-application-regression-testing
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - regression
+  - full
+blocks:
+  - step_type: tap
+    description: Launch the app and verify all main screens load
+  - step_type: tap
+    description: Navigate through all major features (memory, AI, projects, agents, workflows, documents, integrations, settings)
+  - step_type: tap
+    description: Verify keyboard extension works in text fields
+  - step_type: tap
+    description: Verify data persists across app termination
+  - step_type: tap
+    description: Verify all API endpoints respond correctly
+  - step_type: tap
+    description: Confirm no crashes or critical bugs across all features

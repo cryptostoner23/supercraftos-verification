@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 308383b2-bace-46df-82b8-554baa3e8053
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:13:23+01:00"
+    checksum: e59de04c55841245d6a3bc434dd427929a424e460222e38a7b96a1ae62a17c6f
+test:
+    metadata:
+        name: workflow-creation-execution
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

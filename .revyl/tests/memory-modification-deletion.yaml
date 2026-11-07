@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 9af53693-427c-4630-9c1d-3f44a0be1bb3
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:13:50+01:00"
+    checksum: f0e5100ad2bed8bb010c765bc381aae5a2054bd0a8d1f1e1f96a0cafcf4765e6
+test:
+    metadata:
+        name: memory-modification-deletion
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

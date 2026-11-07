@@ -1,0 +1,18 @@
+metadata:
+  name: data-persistence-after-app-termination
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - persistence
+blocks:
+  - step_type: tap
+    description: Create data in the app (memory, task, or conversation)
+  - step_type: tap
+    description: Terminate the app completely (swipe up to close)
+  - step_type: tap
+    description: Relaunch the app
+  - step_type: tap
+    description: Verify the created data still exists
+  - step_type: tap
+    description: Verify data integrity after restart

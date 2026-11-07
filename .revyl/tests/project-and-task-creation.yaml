@@ -1,0 +1,19 @@
+metadata:
+  name: project-and-task-creation
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - project
+  - task
+blocks:
+  - step_type: tap
+    description: Navigate to the project creation screen
+  - step_type: tap
+    description: Create a new project with name and description
+  - step_type: tap
+    description: Create a new task within the project
+  - step_type: tap
+    description: Assign the task to an agent
+  - step_type: tap
+    description: Verify project and task appear in the project list

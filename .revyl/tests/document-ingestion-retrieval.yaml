@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 87197eac-2835-441d-b6ab-59c9448e424b
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:13:27+01:00"
+    checksum: 76f5fd75b3abe5e93a6723b49af8208c39490cb34ffafdcae8f3b3a1b8228b97
+test:
+    metadata:
+        name: document-ingestion-retrieval
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

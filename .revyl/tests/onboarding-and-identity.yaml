@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: ce24698e-6b18-4ec5-822b-cac94360eb9c
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:12:54+01:00"
+    checksum: a7bfcec601adc14c410240713e99929fa5b3f56e0627212d635fd6cc5f89e176
+test:
+    metadata:
+        name: onboarding-and-identity
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []
