@@ -85,9 +85,15 @@ class DynamicMCPServer:
         from grant_workflow import grant_tools
         from quest_workflow import quest_tools
         from ecosystem_ingestion import available_providers, ingest
+        from composio_mail import gmail_tools, gmail_status, gmail_send, gmail_read
         for tool in product_tools(): self.tools[tool['name']] = tool
         for tool in grant_tools(): self.tools[tool['name']] = tool
         for tool in quest_tools(): self.tools[tool['name']] = tool
+        for tool in gmail_tools():
+            self.tools[tool['name']] = tool
+            self.handlers[tool['name']] = {
+                'gmail_status': gmail_status, 'gmail_send': gmail_send, 'gmail_read': gmail_read,
+            }[tool['name']]
         # Ingestion is opt-in: the tool is only offered when a provider's
         # credential is present, and it is bound to a real implementation.
         for tool in available_providers():
