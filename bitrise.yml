@@ -191,3 +191,35 @@ workflows:
       - deploy-to-bitrise-io@2:
           inputs:
             - app: "$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+      - script@1:
+          title: Register build with Revyl for E2E testing
+          inputs:
+            - content: |
+                #!/bin/bash
+                set -euo pipefail
+                IPA="$BITRISE_SOURCE_DIR/build/Artifacts/SuperCraftOS.ipa"
+                test -f "$IPA"
+                REVYL_API_KEY="f3ded9b73f0ed8f6c0ea2716a080aa4bd4d1dcbde75e6b599781c8d8b84b3afa16e3a40a705481dd7678c402267a81ed"
+                REVYL_APP_ID="017e6103-7dbe-4ba3-a910-88575e966048"
+                # Step 1: Get presigned upload URL from Revyl API
+                UPLOAD_RESP=$(curl -s -X POST \
+                  -H "Authorization: Bearer $REVYL_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d '{"filename":"SuperCraftOS.ipa","content_type":"application/octet-stream","file_size":"'"$(stat -f%z "$IPA)"'"}' \
+                  "https://backend.revyl.ai/api/v1/files/upload-url")
+                UPLOAD_ID=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['file']['id'])")
+                UPLOAD_URL=$(echo "$UPLOAD_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['upload_url'])")
+                echo "Revyl upload_id: $UPLOAD_ID"
+                # Step 2: Upload IPA to S3 presigned URL
+                curl -s -X PUT \
+                  -H "Content-Type: application/octet-stream" \
+                  -T "$IPA" \
+                  "$UPLOAD_URL" > /dev/null
+                echo "Revyl IPA uploaded to S3"
+                # Step 3: Register build with Revyl
+                REGISTER_RESP=$(curl -s -X POST \
+                  -H "Authorization: Bearer $REVYL_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"upload_id\":\"$UPLOAD_ID\",\"version\":\"1.0.0\"}" \
+                  "https://backend.revyl.ai/api/v1/apps/$REVYL_APP_ID/builds")
+                echo "Revyl register response: $REGISTER_RESP"
