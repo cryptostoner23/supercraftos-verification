@@ -144,6 +144,7 @@ workflows:
       - git-clone@8:
           repository: https://github.com/cryptostoner94/opencode-supercraftos.git
           clone_dir: /home/bitrise/project
+          reset_repository: true
       - script@1:
           title: Package Swift app bundle
           inputs:
