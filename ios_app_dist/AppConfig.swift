@@ -445,6 +445,77 @@ struct ProductBeam: Decodable {
 
 #if canImport(SwiftUI)
 @MainActor
+// ── Digital Me models ───────────────────────────────────────────────────────
+struct DigitalMeIdentity: Decodable {
+    let id: String
+    let name: String
+    let createdAt: Int?
+    enum CodingKeys: String, CodingKey { case id, name; case createdAt = "created_at" }
+}
+
+struct DigitalMePlaybookSummary: Decodable, Identifiable {
+    let id: String
+    let title: String
+}
+
+struct DigitalMeMemoryEntry: Decodable, Identifiable {
+    let id: String
+    let note: String
+    let at: Int?
+}
+
+struct DigitalMeProfile: Decodable {
+    let identity: DigitalMeIdentity
+    let memoryEntries: Int
+    let playbooks: Int
+    let playbookSummaries: [DigitalMePlaybookSummary]
+    enum CodingKeys: String, CodingKey {
+        case identity
+        case memoryEntries = "memory_entries"
+        case playbooks
+        case playbookSummaries = "playbook_summaries"
+    }
+}
+
+struct DigitalMeMemoryResponse: Decodable {
+    let entries: [DigitalMeMemoryEntry]
+}
+
+// ── Apple Notes models ───────────────────────────────────────────────────────
+struct AppleChecklistItem: Codable, Equatable {
+    var id: String
+    var text: String
+    var checked: Bool
+}
+
+struct AppleNote: Codable, Identifiable, Equatable {
+    let id: String
+    var title: String
+    var body: String
+    var notebook: String
+    var tags: [String]
+    var checklist: [AppleChecklistItem]
+    var pinned: Bool
+    var createdAt: Int
+    var updatedAt: Int
+    enum CodingKeys: String, CodingKey {
+        case id, title, body, notebook, tags, checklist, pinned
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
+struct NotebookSummary: Decodable, Identifiable {
+    let notebook: String
+    let count: Int
+    var id: String { notebook }
+}
+
+private struct NotesResponse: Decodable { let notes: [AppleNote] }
+private struct NotebooksResponse: Decodable { let notebooks: [NotebookSummary] }
+private struct PinResponse: Decodable { let id: String; let pinned: Bool }
+
+@MainActor
 final class BackendStore: ObservableObject {
     @Published var status: RuntimeStatus?
     @Published var tools: [AgentTool] = []
@@ -480,6 +551,10 @@ final class BackendStore: ObservableObject {
     @Published private(set) var backend: String
     @Published var jobs: [AutonomousJob] = []
     @Published var agentStatus: AgentStatus?
+    @Published var digitalMe: DigitalMeProfile?
+    @Published var digitalMeMemory: [DigitalMeMemoryEntry] = []
+    @Published var notes: [AppleNote] = []
+    @Published var notebooks: [NotebookSummary] = []
     @Published var productSpec = ProductSpec() {
         didSet {
             if productSpec != oldValue { productReport = nil; productMesh = nil; productExports = [] }
@@ -537,6 +612,8 @@ final class BackendStore: ObservableObject {
     private func clearState() {
         status = nil; tools = []; workflows = []; integrations = []; registrations = []; accounts = []
         samples = []; log = []; platforms = []; capabilities = []; grants = []; jobs = []; agentStatus = nil
+        digitalMe = nil; digitalMeMemory = []
+        notes = []; notebooks = []
         questErrors = []; questSources = []; questLeads = []; questScreens = []; questActions = []; questCheckedAt = nil
         productSpec = ProductSpec(); productReport = nil; productMesh = nil; productExports = []
         grantDrafts = []; savedGrantApplications = []
@@ -550,7 +627,9 @@ final class BackendStore: ObservableObject {
                 connection = try BackendConnection(address: connection.origin, accessKey: saved)
             }
             guard !connection.accessKey.isEmpty else { throw BackendError.authenticationRequired }
-            try CredentialStore.save(connection.accessKey, origin: connection.origin)
+            // Keychain may be unavailable on cloud simulators; the connection still works
+            // because the access key is carried in the BackendClient's bearer credential.
+            try? CredentialStore.save(connection.accessKey, origin: connection.origin)
             self.clearState()
             self.backend = connection.origin
             self.addBookmark(connection.origin)
@@ -587,6 +666,8 @@ final class BackendStore: ObservableObject {
         async let applicationsData = request("/api/grants/packages")
         async let jobsData = request("/api/jobs")
         async let agentData = request("/api/agent/status")
+        async let digitalMeData = request("/api/digital_me/profile")
+        async let digitalMeMemoryData = request("/api/digital_me/memory")
         let nextStatus = try decoder.decode(RuntimeStatus.self, from: await statusData)
         let nextTools = try decoder.decode(ToolResponse.self, from: await toolsData)
         let nextWorkflows = try decoder.decode(WorkflowResponse.self, from: await workflowsData)
@@ -606,6 +687,12 @@ final class BackendStore: ObservableObject {
         capabilities = nextPlatforms.capabilities
         grants = nextGrants.programs; savedGrantApplications = nextApplications.packages
         jobs = nextJobs.jobs; agentStatus = nextAgent
+        if let meData = try? await digitalMeData, let me = try? decoder.decode(DigitalMeProfile.self, from: meData) {
+            digitalMe = me
+        }
+        if let memData = try? await digitalMeMemoryData, let mem = try? decoder.decode(DigitalMeMemoryResponse.self, from: memData) {
+            digitalMeMemory = mem.entries
+        }
         if let sourcesData = try? await request("/api/quests/sources"),
            let sources = try? decoder.decode(QuestSourcesResponse.self, from: sourcesData) {
             questSources = sources.sources
@@ -756,6 +843,15 @@ final class BackendStore: ObservableObject {
         _ = try await request("/api/agent/memory/forget", body: JSONEncoder().encode(["id": id]))
     }
 
+    func addDigitalMeMemory(note: String) async {
+        await mutate {
+            let body = try JSONEncoder().encode(["entry": ["note": note]])
+            _ = try await self.request("/api/digital_me/memory", body: body)
+            self.note("task", "DIGITAL ME MEMORY SAVED")
+            try await self.load()
+        }
+    }
+
     func discoverQuests() async {
         await mutate {
             let body = try JSONSerialization.data(withJSONObject: ["limit": 30])
@@ -841,6 +937,72 @@ final class BackendStore: ObservableObject {
     private func note(_ level: String, _ message: String) {
         log.insert(LogEntry(date: Date(), level: level, message: "\(Self.clock.string(from: Date())) \(message)"), at: 0)
         if log.count > 240 { log.removeLast(log.count - 240) }
+    }
+
+    func loadNotes() async {
+        guard !backend.isEmpty else { return }
+        do {
+            let data = try await request("/api/notes")
+            notes = try JSONDecoder().decode(NotesResponse.self, from: data).notes
+            let nb = try await request("/api/notes/notebooks")
+            notebooks = try JSONDecoder().decode(NotebooksResponse.self, from: nb).notebooks
+        } catch { }
+    }
+
+    /// Sends an Apple Notes export (from the device share/import flow) to the
+    /// backend ingest endpoint, which stores the encrypted note and records a
+    /// Digital Me memory entry for context.
+    func ingestNote(title: String, body: String, format: String, source: String = "apple_notes", notebook: String = "Apple Notes") async {
+        await mutate {
+            let payload = try JSONEncoder().encode(["title": title, "body": body, "format": format, "source": source, "notebook": notebook])
+            let data = try await self.request("/api/notes/ingest", body: payload)
+            let note = try JSONDecoder().decode(AppleNote.self, from: data)
+            self.notes.removeAll { $0.id == note.id }
+            self.notes.insert(note, at: 0)
+            self.note("task", "APPLE NOTE IMPORTED · \(title)")
+        }
+    }
+
+    func createNote(title: String, body: String, notebook: String) async {
+        await mutate {
+            let data = try await self.request("/api/notes", body: JSONEncoder().encode(["title": title, "body": body, "notebook": notebook]))
+            let note = try JSONDecoder().decode(AppleNote.self, from: data)
+            self.notes.removeAll { $0.id == note.id }
+            self.notes.insert(note, at: 0)
+            self.note("task", "NOTE CREATED · \(title)")
+        }
+    }
+
+    func updateNote(id: String, title: String? = nil, body: String? = nil, notebook: String? = nil) async {
+        await mutate {
+            var patch: [String: String] = [:]
+            if let title { patch["title"] = title }
+            if let body { patch["body"] = body }
+            if let notebook { patch["notebook"] = notebook }
+            let data = try await self.request("/api/notes/\(id)/update", body: JSONEncoder().encode(patch))
+            let note = try JSONDecoder().decode(AppleNote.self, from: data)
+            if let idx = self.notes.firstIndex(where: { $0.id == id }) { self.notes[idx] = note }
+            self.note("task", "NOTE UPDATED · \(note.title)")
+        }
+    }
+
+    func deleteNote(id: String) async {
+        await mutate {
+            _ = try await self.request("/api/notes/\(id)/delete", body: JSONEncoder().encode([String: String]()))
+            self.notes.removeAll { $0.id == id }
+            self.note("task", "NOTE DELETED")
+        }
+    }
+
+    func pinNote(id: String) async {
+        await mutate {
+            let data = try await self.request("/api/notes/\(id)/pin", body: JSONEncoder().encode([String: String]()))
+            let response = try JSONDecoder().decode(PinResponse.self, from: data)
+            if let idx = self.notes.firstIndex(where: { $0.id == id }) {
+                var note = self.notes[idx]; note.pinned = response.pinned; self.notes[idx] = note
+            }
+            self.note("task", response.pinned ? "NOTE PINNED" : "NOTE UNPINNED")
+        }
     }
 
     func generateProduct(_ spec: ProductSpec) async {

@@ -4,7 +4,7 @@ import SceneKit
 import UIKit
 
 // iOS 17+. Present ContentView() in the app target's WindowGroup.
-private enum ConsoleStyle {
+enum ConsoleStyle {
     static let background = Color(red: 0.035, green: 0.055, blue: 0.086)
     static let panel = Color(red: 0.067, green: 0.106, blue: 0.161)
     static let pink = Color(red: 0.52, green: 0.93, blue: 0.81)
@@ -14,13 +14,14 @@ private enum ConsoleStyle {
 }
 
 enum ConsoleScreen: String, CaseIterable, Identifiable {
-    case mission = "Mission", tasks = "Tasks", memory = "Memory", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts"
+    case mission = "Mission", tasks = "Tasks", memory = "Memory", digital_me = "Digital Me", quests = "Quests", products = "Product Lab", platforms = "Engine", grants = "Grant Ops", workflows = "Workflows", integrations = "Integrations", tools = "Tools", registrations = "Accounts", shortcuts = "Shortcuts", notes = "Notes"
     var id: String { rawValue }
     var icon: String {
         switch self {
         case .mission: return "point.3.connected.trianglepath.dotted"
         case .tasks: return "checklist"
         case .memory: return "brain"
+        case .digital_me: return "laptop.compute"
         case .quests: return "map"
         case .products: return "cube.transparent"
         case .platforms: return "square.grid.3x3"
@@ -30,6 +31,7 @@ enum ConsoleScreen: String, CaseIterable, Identifiable {
         case .tools: return "terminal"
         case .registrations: return "person.crop.rectangle.stack"
         case .shortcuts: return "arrow.triangle.branch"
+        case .notes: return "note.text"
         }
     }
 
@@ -180,6 +182,7 @@ struct ContentView: View {
                         switch selection {
                         case .tasks: AutonomousTasksView(store: store, onCreate: { sheet = .compose })
                         case .memory: LearningView(store: store)
+                        case .digital_me: DigitalMeView(store: store)
                         case .quests: QuestOperationsView(store: store)
                         case .workflows: workflows
                         case .integrations: integrations
@@ -190,6 +193,7 @@ struct ContentView: View {
                         case .platforms: PlatformHub(store: store)
                         case .grants: GrantOperations(store: store)
                         case .mission: EmptyView()
+                        case .notes: AppleNotesView(store: store)
                         }
                     }.padding(18).frame(maxWidth: 1200, alignment: .leading).frame(maxWidth: .infinity)
                 }.accessibilityIdentifier("workspace-scroll").refreshable { await store.refresh() }
@@ -226,12 +230,14 @@ struct ContentView: View {
         case .tools: return "Run installed capabilities and inspect their live responses."
         case .quests: return "Discover and execute supported reward actions."
         case .memory: return "Review the decisions and evidence the system has retained."
+        case .digital_me: return "Manage your identity, memories, reasoning and plans."
         case .workflows: return "Open durable plans, checkpoints and completed artifacts."
         case .integrations: return "Inspect recorded provider health and connection evidence."
         case .registrations: return "Track account setup and verification outcomes."
         case .platforms: return "See the capabilities the runtime can actually route and measure."
         case .shortcuts: return "Launch frequently used actions from your device."
         case .mission: return ""
+        case .notes: return "Import notes from Apple Notes on this device and review them."
         }
     }
 
