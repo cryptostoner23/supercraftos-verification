@@ -90,11 +90,33 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
+      groups:
+        - supercraftos-secrets
       vars:
         WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
         SCHEME: SuperCraftOS
         SDK: iphonesimulator
     scripts:
+      - name: Inject secrets into .env (from Codemagic app variables)
+        script: |
+          rm -f .env
+          injected=0
+          for var in COMPOSIO_API_KEY APIFY_API_TOKEN OPENROUTER_API_KEY NVIDIA_API_KEY \
+                     SKYFIRE_API_KEY FIRECRAWL_API_KEY HYPERBROWSER_API_KEY STEEL_API_KEY \
+                     BROWSERLESS_API_KEY E2B_API_KEY CONTEXT_DEV_API_KEY AIFLOWCHART_API_KEY \
+                     NOTION_API_KEY GMAIL_ADDRESS GMAIL_APP_PASSWORD LARK_APP_ID LARK_APP_SECRET \
+                     SUPERCRAFTOS_LLM_API_KEY SUPERCRAFTOS_LLM_BASE_URL SUPERCRAFTOS_MODEL; do
+            if [ -n "${!var:-}" ]; then
+              printf '%s=%s\n' "$var" "${!var}" >> .env
+              injected=$((injected+1))
+            fi
+          done
+          if [ "$injected" -gt 0 ]; then
+            chmod 600 .env
+            echo "Injected $injected secret(s) into .env"
+          else
+            echo "No secrets injected (no Codemagic variables set)"
+          fi
       - name: Install XcodeGen and generate Xcode project
         script: |
           if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
