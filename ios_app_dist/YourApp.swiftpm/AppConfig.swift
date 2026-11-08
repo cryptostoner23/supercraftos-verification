@@ -515,6 +515,7 @@ private struct NotesResponse: Decodable { let notes: [AppleNote] }
 private struct NotebooksResponse: Decodable { let notebooks: [NotebookSummary] }
 private struct PinResponse: Decodable { let id: String; let pinned: Bool }
 
+@MainActor
 final class BackendStore: ObservableObject {
     @Published var status: RuntimeStatus?
     @Published var tools: [AgentTool] = []

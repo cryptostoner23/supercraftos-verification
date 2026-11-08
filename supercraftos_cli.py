@@ -595,6 +595,13 @@ def serve_dashboard(host: str = "127.0.0.1", port: int = 8787) -> int:
                 except (OSError, ValueError): pass
             stop_updates.wait(60)
     threading.Thread(target=updates, name='platform-release-monitor', daemon=True).start()
+    def email_feed_loop():
+        from composio_mail import EMAIL_FEED_INTERVAL_SECONDS, pull_email_feed
+        while not stop_updates.is_set():
+            try: asyncio.run(pull_email_feed())
+            except Exception: pass
+            stop_updates.wait(EMAILIL_FEED_INTERVAL_SECONDS)
+    threading.Thread(target=email_feed_loop, name='email-feed-scheduler', daemon=True).start()
     try: server.serve_forever()
     except KeyboardInterrupt: return 0
     finally: stop_updates.set(); STATE.stop_runtime(); server.server_close()

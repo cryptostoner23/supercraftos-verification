@@ -234,3 +234,29 @@ def gmail_tools() -> List[Dict[str, Any]]:
             }, "additionalProperties": False},
         },
     ]
+
+EMAIL_FEED_INTERVAL_SECONDS = 960  # 16 minutes
+
+
+async def pull_email_feed(limit: int = 10) -> Dict[str, Any]:
+    """Scheduled (not continuous) email pull.
+
+    Fetches the most recent Gmail messages once and records a short, honest
+    digest locally (data/email-feed.json) plus a Digital Me memory line. The
+    caller (dashboard scheduler) invokes this every EMAIL_FEED_INTERVAL_SECONDS.
+    """
+    try:
+        result = await gmail_read({"limit": limit})
+    except Exception as exc:
+        return {"status": "failed", "reason": type(exc).__name__}
+    path = ROOT / "data" / "email-feed.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(result, indent=2) + "\n")
+    messages = (result.get("response_data") or {}).get("messages") if isinstance(result, dict) else None
+    count = len(messages) if isinstance(messages, list) else 0
+    try:
+        from digital_me import add_memory_entry
+        add_memory_entry({"note": f"Scheduled email-feed pull completed: {count} recent messages fetched."})
+    except Exception:
+        pass
+    return {"status": "ok", "count": count, "scheduled_every_s": EMAIL_FEED_INTERVAL_SECONDS}
