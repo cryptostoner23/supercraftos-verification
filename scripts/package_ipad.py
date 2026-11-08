@@ -21,7 +21,12 @@ def main():
         data = source.read_bytes(); data.decode('utf-8')
         if b'\r' in data or b'```' in data or not data.endswith(b'\n'):
             raise ValueError('Swift source must be raw UTF-8 with LF endings')
-    names = ['App.swift', 'Package.swift', 'KeyboardCatalog.swift', *(source.name for source in sources)]
+    # Preserve the full set of app sources: the fixed files plus every Swift
+    # file currently in the bundle (e.g. DigitalMeView.swift, AppleNotesView.swift)
+    # so packaging never deletes real sources that live only in the bundle.
+    names = sorted({'App.swift', 'Package.swift', 'KeyboardCatalog.swift',
+                    *(source.name for source in sources),
+                    *(b.name for b in BUNDLE.glob('*.swift'))})
     for stale in BUNDLE.glob('*.swift'):
         if stale.name not in names:
             stale.unlink()
