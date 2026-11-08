@@ -228,7 +228,6 @@ workflows:
             - scheme: SuperCraftOS
             - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
             - distribution_method: development
-            - certificate_url_list: "https://www.dropbox.com/scl/fi/vrv6hz59nhejj2eqytkqc/Cryptostoner.p12?rlkey=gccvnefa8qzas638jdox3zfwy&st=cv4l70ra&dl=1"
             - register_test_devices: "yes"
       - xcode-archive@6.2.0:
           title: Xcode Archive & Export for iOS
