@@ -139,21 +139,9 @@ workflows:
           # (so compile errors are readable from the API).
           TOKEN=$(curl -s -H "Authorization: Bearer ${SUPERCRAFTOS_ACCESS_KEY}" \
             https://agent.commetai.ca/api/session | python3 -c 'import sys,json;print(json.load(sys.stdin)["token"])' 2>/dev/null)
-          python3 - "$TOKEN" <<'PY'
-import sys, json, urllib.request
-tok = sys.argv[1]
-try:
-    log = open("sim_build.log", encoding="utf-8", errors="replace").read()
-except Exception:
-    log = "(no log produced)"
-req = urllib.request.Request("https://agent.commetai.ca/api/build-log",
-    data=json.dumps({"text": log}).encode(),
-    headers={"Content-Type": "application/json", "X-SuperCraftOS-Token": tok})
-try:
-    urllib.request.urlopen(req, timeout=30)
-except Exception as e:
-    print("log upload failed:", e)
-PY
+          python3 -c "import json,sys;print(json.dumps({'text':open('sim_build.log',encoding='utf-8',errors='replace').read()}))" > /tmp/log.json 2>/dev/null || true
+          curl -s -X POST -H "Content-Type: application/json" -H "X-SuperCraftOS-Token: $TOKEN" \
+            --data-binary @/tmp/log.json https://agent.commetai.ca/api/build-log || true
           if [ $RC -eq 0 ]; then
             mkdir -p "$CM_BUILD_DIR/build/Artifacts"
             APP="$DERIVED/Build/Products/Release-iphonesimulator/SuperCraftOS.app"
