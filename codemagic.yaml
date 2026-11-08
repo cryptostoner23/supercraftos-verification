@@ -70,11 +70,21 @@ workflows:
           exit $RC
       - name: Build unsigned device app
         script: |
-          set -euo pipefail
+          set +e
           DERIVED="$CM_BUILD_DIR/build/PersonalDevice"
           xcodebuild -project "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
             -sdk "$SDK" -destination 'generic/platform=iOS' \
-            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build > dev_build.log 2>&1
+          RC=$?
+          if [ $RC -ne 0 ]; then
+            python3 -c "import base64,sys;print(base64.b64encode(open('dev_build.log','rb').read()).decode())" > /tmp/lb.txt 2>/dev/null || true
+            LB=$(cat /tmp/lb.txt 2>/dev/null)
+            python3 -c "import json,sys;print(json.dumps({'message':'dev build log','content':sys.argv[1],'branch':'main'}))" "$LB" > /tmp/b.json 2>/dev/null || true
+            curl -s -X PUT -H "Authorization: Bearer ${GH_TOKEN}" -H "Content-Type: application/json" \
+              --data-binary @/tmp/b.json \
+              "https://api.github.com/repos/cryptostoner94/opencode-supercraftos/contents/.diagnostics/d_dev_build.log" || true
+            exit $RC
+          fi
           APP="$DERIVED/Build/Products/Release-iphoneos/SuperCraftOS.app"
           test -d "$APP"
           mkdir -p "$CM_BUILD_DIR/build/Artifacts"
