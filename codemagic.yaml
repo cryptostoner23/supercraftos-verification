@@ -130,16 +130,19 @@ workflows:
       - name: Build unsigned simulator app
         script: |
           set -euo pipefail
+          mkdir -p "$CM_BUILD_DIR/build/Artifacts"
           DERIVED="$CM_BUILD_DIR/build/Simulator"
           xcodebuild -project "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
             -sdk "$SDK" -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build
+            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build \
+            2>&1 | tee "$CM_BUILD_DIR/build/Artifacts/sim_build.log"
+          set -o pipefail
           APP="$DERIVED/Build/Products/Release-iphonesimulator/SuperCraftOS.app"
           test -d "$APP"
-          mkdir -p "$CM_BUILD_DIR/build/Artifacts"
           ditto "$APP" "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-iOS-Simulator.app.zip"
     artifacts:
       - build/Artifacts/*.zip
+      - build/Artifacts/*.log
 # build trigger marker 1794100119
 # webhook fix marker 1794100233
 # webhook correct-url marker 1794100477
