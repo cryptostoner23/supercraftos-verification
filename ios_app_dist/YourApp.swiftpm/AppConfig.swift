@@ -482,7 +482,7 @@ struct DigitalMeMemoryResponse: Decodable {
 }
 
 // ── Apple Notes models ───────────────────────────────────────────────────────
-struct AppleChecklistItem: Codable {
+struct AppleChecklistItem: Codable, Equatable {
     var id: String
     var text: String
     var checked: Bool
