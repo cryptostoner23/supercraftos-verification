@@ -179,14 +179,14 @@ private struct AppleNoteDetail: View {
     @Environment(\.dismiss) private var dismiss
     let note: AppleNote
     @State private var title: String
-    @State private var body: String
+    @State private var noteBody: String
     @State private var notebook: String
 
     init(store: BackendStore, note: AppleNote) {
         self.store = store
         self.note = note
         _title = State(initialValue: note.title)
-        _body = State(initialValue: note.body)
+        _noteBody = State(initialValue: note.body)
         _notebook = State(initialValue: note.notebook)
     }
 
@@ -196,7 +196,7 @@ private struct AppleNoteDetail: View {
                 VStack(alignment: .leading, spacing: 16) {
                     TextField("Title", text: $title).font(.title2.bold())
                     TextField("Notebook", text: $notebook).font(.subheadline.monospaced()).foregroundStyle(ConsoleStyle.cyan)
-                    TextEditor(text: $body)
+                    TextEditor(text: $noteBody)
                         .frame(minHeight: 220)
                         .padding(8)
                         .background(ConsoleStyle.background, in: RoundedRectangle(cornerRadius: 12))
@@ -236,7 +236,7 @@ private struct AppleNoteDetail: View {
     private func save() {
         let t = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !t.isEmpty else { return }
-        Task { await store.updateNote(id: note.id, title: t, body: body, notebook: notebook) }
+        Task { await store.updateNote(id: note.id, title: t, body: noteBody, notebook: notebook) }
     }
 }
 
@@ -246,7 +246,7 @@ private struct AppleNoteComposer: View {
     @ObservedObject var store: BackendStore
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
-    @State private var body = ""
+    @State private var noteBody = ""
     @State private var notebook = "Default"
 
     var body: some View {
@@ -254,7 +254,7 @@ private struct AppleNoteComposer: View {
             VStack(spacing: 16) {
                 TextField("Title", text: $title).font(.title2.bold())
                 TextField("Notebook", text: $notebook).font(.subheadline.monospaced()).foregroundStyle(ConsoleStyle.cyan)
-                TextEditor(text: $body).frame(minHeight: 220).padding(8)
+                TextEditor(text: $noteBody).frame(minHeight: 220).padding(8)
                     .background(ConsoleStyle.background, in: RoundedRectangle(cornerRadius: 12))
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(ConsoleStyle.line))
             }
@@ -266,7 +266,7 @@ private struct AppleNoteComposer: View {
                     Button("Save") {
                         let t = title.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !t.isEmpty else { return }
-                        Task { await store.createNote(title: t, body: body, notebook: notebook); dismiss() }
+                        Task { await store.createNote(title: t, body: noteBody, notebook: notebook); dismiss() }
                     }
                     .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.mutating)
                 }
