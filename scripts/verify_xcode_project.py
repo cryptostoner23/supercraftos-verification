@@ -115,11 +115,19 @@ def validate_project(document: dict, project_directory: Path,
 
 
 def required_app_sources(root: Path) -> set[Path]:
-    dist = root / "ios_app_dist"
-    bundle = dist / "YourApp.swiftpm"
+    """Expected app-target compile inputs.
+
+    The app target compiles every Swift file it the app bundle, plus the shared
+    KeyboardCatalog from swift-verification. It does NOT compile the bundle's
+    own KeyboardCatalog copy (that one is compiled from swift-verification) nor
+    Package.swift. Globbing the bundle directory keeps this correct as new view
+    files (e.g. DigitalMeView.swift, AppleNotesView.swift) are added.
+    """
+    bundle = root / "ios_app_dist" / "YourApp.swiftpm"
     return {bundle / "App.swift",
             root / "swift-verification/Sources/ControlCore/KeyboardCatalog.swift",
-            *(bundle / path.name for path in dist.glob("*.swift"))}
+            *(p for p in bundle.iterdir()
+              if p.suffix == ".swift" and p.name not in {"Package.swift", "KeyboardCatalog.swift"})}
 
 
 def main() -> int:
