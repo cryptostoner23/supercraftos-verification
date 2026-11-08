@@ -953,7 +953,7 @@ final class BackendStore: ObservableObject {
     /// Digital Me memory entry for context.
     func ingestNote(title: String, body: String, format: String, source: String = "apple_notes", notebook: String = "Apple Notes") async {
         await mutate {
-            let payload = JSONEncoder().encode(["title": title, "body": body, "format": format, "source": source, "notebook": notebook])
+            let payload = try JSONEncoder().encode(["title": title, "body": body, "format": format, "source": source, "notebook": notebook])
             let data = try await self.request("/api/notes/ingest", body: payload)
             let note = try JSONDecoder().decode(AppleNote.self, from: data)
             self.notes.removeAll { $0.id == note.id }
