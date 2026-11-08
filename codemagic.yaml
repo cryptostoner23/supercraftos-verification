@@ -19,8 +19,6 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
-      groups:
-        - supercraftos-secrets
       vars:
         WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
         SCHEME: SuperCraftOS
@@ -83,8 +81,6 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
-      groups:
-        - supercraftos-secrets
       vars:
         WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
         SCHEME: SuperCraftOS
