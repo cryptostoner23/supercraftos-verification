@@ -1,0 +1,15 @@
+2 Spec validations errors:
+	- Target "SuperCraftOS" has a missing source directory "/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift"
+	- Target "SuperCraftOS" has a missing source directory "/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift"
+Traceback (most recent call last):
+  File "/Users/builder/clone/scripts/xcode_project.py", line 105, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/builder/clone/scripts/xcode_project.py", line 97, in main
+    project = generate(spec, args.embed_keyboard, output)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/builder/clone/scripts/xcode_project.py", line 77, in generate
+    subprocess.run(["xcodegen", "generate", "--spec", str(output)], check=True, cwd=str(spec.parent))
+  File "/Users/builder/.pyenv/versions/3.12.7/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['xcodegen', 'generate', '--spec', '/Users/builder/clone/ios_app_dist/ci_xcode/project.resolved.yml']' returned non-zero exit status 1.
