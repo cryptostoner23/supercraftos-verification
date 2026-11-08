@@ -348,6 +348,13 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         try:
             payload = self.payload()
+            if path == '/api/build-log':
+                text = payload.get('text', '')
+                if isinstance(text, str) and text:
+                    d = ROOT / 'data' / 'build-logs'; d.mkdir(parents=True, exist_ok=True)
+                    (d / f"{int(time.time())}.txt").write_text(text)
+                    return self.send_json({'ok': True}, 201)
+                return self.send_json({'error': 'empty'}, 400)
             if path == '/api/integrations/reconnect':
                 from provider_recovery import reconnect
                 return self.send_json(asyncio.run(reconnect(payload)))

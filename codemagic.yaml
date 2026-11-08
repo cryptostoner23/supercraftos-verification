@@ -129,17 +129,38 @@ workflows:
           python3 scripts/xcode_project.py
       - name: Build unsigned simulator app
         script: |
-          set -euo pipefail
-          mkdir -p "$CM_BUILD_DIR/build/Artifacts"
+          set +e
           DERIVED="$CM_BUILD_DIR/build/Simulator"
           xcodebuild -project "$WORKSPACE" -scheme "$SCHEME" -configuration Release \
             -sdk "$SDK" -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build \
-            2>&1 | tee "$CM_BUILD_DIR/build/Artifacts/sim_build.log"
-          set -o pipefail
-          APP="$DERIVED/Build/Products/Release-iphonesimulator/SuperCraftOS.app"
-          test -d "$APP"
-          ditto "$APP" "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-iOS-Simulator.app.zip"
+            -derivedDataPath "$DERIVED" CODE_SIGNING_ALLOWED=NO build > sim_build.log 2>&1
+          RC=$?
+          # Upload the full build log to the SuperCraftOS backend for diagnostics
+          # (so compile errors are readable from the API).
+          TOKEN=$(curl -s -H "Authorization: Bearer ${SUPERCRAFTOS_ACCESS_KEY}" \
+            https://agent.commetai.ca/api/session | python3 -c 'import sys,json;print(json.load(sys.stdin)["token"])' 2>/dev/null)
+          python3 - "$TOKEN" <<'PY'
+import sys, json, urllib.request
+tok = sys.argv[1]
+try:
+    log = open("sim_build.log", encoding="utf-8", errors="replace").read()
+except Exception:
+    log = "(no log produced)"
+req = urllib.request.Request("https://agent.commetai.ca/api/build-log",
+    data=json.dumps({"text": log}).encode(),
+    headers={"Content-Type": "application/json", "X-SuperCraftOS-Token": tok})
+try:
+    urllib.request.urlopen(req, timeout=30)
+except Exception as e:
+    print("log upload failed:", e)
+PY
+          if [ $RC -eq 0 ]; then
+            mkdir -p "$CM_BUILD_DIR/build/Artifacts"
+            APP="$DERIVED/Build/Products/Release-iphonesimulator/SuperCraftOS.app"
+            test -d "$APP"
+            ditto "$APP" "$CM_BUILD_DIR/build/Artifacts/SuperCraftOS-iOS-Simulator.app.zip"
+          fi
+          exit $RC
     artifacts:
       - build/Artifacts/*.zip
       - build/Artifacts/*.log
