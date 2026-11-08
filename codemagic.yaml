@@ -19,6 +19,8 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
+      groups:
+        - supercraftos-secrets
       vars:
         WORKSPACE: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
         SCHEME: SuperCraftOS
@@ -29,16 +31,23 @@ workflows:
           # Secrets are stored as Codemagic app/team-level environment variables
           # (never in this file). If present, write them to a local .env for the
           # backend/tests. The file is gitignored and ephemeral on the build host.
-          if [ -n "${COMPOSIO_API_KEY:-}" ] || [ -n "${APIFY_API_TOKEN:-}" ]; then
-            rm -f .env
-            [ -n "${COMPOSIO_API_KEY:-}" ] && printf 'COMPOSIO_API_KEY=%s\n' "$COMPOSIO_API_KEY" >> .env
-            [ -n "${APIFY_API_TOKEN:-}" ] && printf 'APIFY_API_TOKEN=%s\n' "$APIFY_API_TOKEN" >> .env
-            [ -n "${GMAIL_ADDRESS:-}" ] && printf 'GMAIL_ADDRESS=%s\n' "$GMAIL_ADDRESS" >> .env
-            [ -n "${GMAIL_APP_PASSWORD:-}" ] && printf 'GMAIL_APP_PASSWORD=%s\n' "$GMAIL_APP_PASSWORD" >> .env
+          rm -f .env
+          injected=0
+          for var in COMPOSIO_API_KEY APIFY_API_TOKEN OPENROUTER_API_KEY NVIDIA_API_KEY \
+                     SKYFIRE_API_KEY FIRECRAWL_API_KEY HYPERBROWSER_API_KEY STEEL_API_KEY \
+                     BROWSERLESS_API_KEY E2B_API_KEY CONTEXT_DEV_API_KEY AIFLOWCHART_API_KEY \
+                     NOTION_API_KEY GMAIL_ADDRESS GMAIL_APP_PASSWORD LARK_APP_ID LARK_APP_SECRET \
+                     SUPERCRAFTOS_LLM_API_KEY SUPERCRAFTOS_LLM_BASE_URL SUPERCRAFTOS_MODEL; do
+            if [ -n "${!var:-}" ]; then
+              printf '%s=%s\n' "$var" "${!var}" >> .env
+              injected=$((injected+1))
+            fi
+          done
+          if [ "$injected" -gt 0 ]; then
             chmod 600 .env
-            echo "Secrets injected into .env"
+            echo "Injected $injected secret(s) into .env"
           else
-            echo "No secrets injected (COMPOSIO_API_KEY / APIFY_API_TOKEN unset)"
+            echo "No secrets injected (no Codemagic variables set)"
           fi
       - name: Package Swift app bundle
         script: |
