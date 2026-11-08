@@ -27,14 +27,23 @@ targets:
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      # Whole-directory source: auto-includes every Swift file in the app
-      # bundle. Package.swift and the bundled KeyboardCatalog copy are excluded
-      # (KeyboardCatalog is compiled from swift-verification below).
-      - path: ../YourApp.swiftpm
-        excludes:
-          - Package.swift
-          - KeyboardCatalog.swift
+      - path: ../YourApp.swiftpm/App.swift
+      - path: ../YourApp.swiftpm/AppConfig.swift
+      - path: ../YourApp.swiftpm/ContentView.swift
       - path: ../../swift-verification/Sources/ControlCore/KeyboardCatalog.swift
+      - path: ../YourApp.swiftpm/AccountOperationsView.swift
+      - path: ../YourApp.swiftpm/AgentModels.swift
+      - path: ../YourApp.swiftpm/MissionConversation.swift
+      - path: ../YourApp.swiftpm/AutonomousTasksView.swift
+      - path: ../YourApp.swiftpm/BackendClient.swift
+      - path: ../YourApp.swiftpm/CIBackendFixture.swift
+      - path: ../YourApp.swiftpm/CredentialStore.swift
+      - path: ../YourApp.swiftpm/LearningView.swift
+      - path: ../YourApp.swiftpm/QuestOperationsView.swift
+      - path: ../YourApp.swiftpm/ShortcutActions.swift
+      - path: ../YourApp.swiftpm/UnifiedAPIClient.swift
+      - path: ../YourApp.swiftpm/DigitalMeView.swift
+      - path: ../YourApp.swiftpm/AppleNotesView.swift
       - path: Assets.xcassets
         buildPhase: resources
       - path: PrivacyInfo.xcprivacy
