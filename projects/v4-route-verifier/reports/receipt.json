@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "input_sha256": "59f1ac08baee1650be6bcd945bf275dc9ae1e4115f2e272d9a8bf2aabaac81f9",
+  "passed": true,
+  "routes": [
+    {
+      "id": "single_exact",
+      "passed": true,
+      "minimum_out_passed": true,
+      "review_flags": [],
+      "hops": [
+        {
+          "token_in": "0x1111111111111111111111111111111111111111",
+          "token_out": "0x2222222222222222222222222222222222222222",
+          "amount_in": "1000",
+          "reference_out": "997",
+          "observed_out": "997",
+          "absolute_difference": "0",
+          "quote_matches": true,
+          "hook_permissions": []
+        }
+      ]
+    },
+    {
+      "id": "multi_hop",
+      "passed": true,
+      "minimum_out_passed": true,
+      "review_flags": [],
+      "hops": [
+        {
+          "token_in": "0x1111111111111111111111111111111111111111",
+          "token_out": "0x2222222222222222222222222222222222222222",
+          "amount_in": "1000",
+          "reference_out": "997",
+          "observed_out": "997",
+          "absolute_difference": "0",
+          "quote_matches": true,
+          "hook_permissions": []
+        },
+        {
+          "token_in": "0x2222222222222222222222222222222222222222",
+          "token_out": "0x3333333333333333333333333333333333333333",
+          "amount_in": "997",
+          "reference_out": "990",
+          "observed_out": "990",
+          "absolute_difference": "0",
+          "quote_matches": true,
+          "hook_permissions": []
+        }
+      ]
+    },
+    {
+      "id": "hook_dynamic",
+      "passed": true,
+      "minimum_out_passed": true,
+      "review_flags": [
+        "custom_accounting",
+        "dynamic_fee",
+        "hook_permissions_require_behavior_review"
+      ],
+      "hops": [
+        {
+          "token_in": "0x1111111111111111111111111111111111111111",
+          "token_out": "0x2222222222222222222222222222222222222222",
+          "amount_in": "1000",
+          "reference_out": "950",
+          "observed_out": "950",
+          "absolute_difference": "0",
+          "quote_matches": true,
+          "hook_permissions": [
+            "beforeSwapReturnsDelta",
+            "beforeSwap"
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Compares supplied reference and observed quotes; it does not independently simulate PoolManager.",
+    "Fixtures are reproducible test vectors, not live prices or evidence of profitable execution.",
+    "Hook flags identify callable permissions, not an audit of contract behavior.",
+    "No RPC, private keys, signatures, transactions or blockchain database are needed."
+  ]
+}

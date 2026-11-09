@@ -1,0 +1,18 @@
+metadata:
+  name: integration-connection-and-execution
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - integration
+blocks:
+  - step_type: tap
+    description: Navigate to the integration settings screen
+  - step_type: tap
+    description: Connect to an external integration (email, calendar, etc.)
+  - step_type: tap
+    description: Authenticate the integration
+  - step_type: tap
+    description: Execute an integration action
+  - step_type: tap
+    description: Verify integration action completed successfully

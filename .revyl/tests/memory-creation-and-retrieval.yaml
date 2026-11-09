@@ -1,0 +1,20 @@
+metadata:
+  name: memory-creation-and-retrieval
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - memory
+blocks:
+  - step_type: tap
+    description: Navigate to the memory creation screen
+  - step_type: tap
+    description: Create a new memory entry with text content
+  - step_type: tap
+    description: Save the memory entry
+  - step_type: tap
+    description: Navigate to the memory list/retrieval screen
+  - step_type: tap
+    description: Verify the created memory appears in the list
+  - step_type: tap
+    description: Open the memory and verify content matches

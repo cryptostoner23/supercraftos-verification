@@ -1,0 +1,94 @@
+--- a/web3agent/intel/config.py
++++ b/web3agent/intel/config.py
+@@ -1,6 +1,8 @@
+ """INTEL stream config: chains, public RPCs, seeded public labels."""
+ import os
+ from pathlib import Path
++
++ON_DEMAND = os.environ.get("W3A_INTEL_ON_DEMAND", "1") == "1"
+ 
+ DATA = Path(os.environ.get("W3A_DATA", "./data"))
+ DUCK_PATH = DATA / "intel.duckdb"
+--- a/web3agent/intel/store.py
++++ b/web3agent/intel/store.py
+@@ -39,7 +39,7 @@
+     with _lock:
+         if _duck is None:
+             config.DATA.mkdir(parents=True, exist_ok=True)
+-            _duck = duckdb.connect(str(config.DUCK_PATH))
++            _duck = duckdb.connect(":memory:" if config.ON_DEMAND else str(config.DUCK_PATH))
+             _duck.execute(DUCK_DDL)
+         return _duck
+ 
+--- a/web3agent/intel/__init__.py
++++ b/web3agent/intel/__init__.py
+@@ -10,6 +10,10 @@
+ 
+ @router.get("/status")
+ async def status():
++    if config.ON_DEMAND:
++        return {"mode": "on_demand", "running": False, "chains": [], "persistent_blockchain_cache": False,
++                "cursors": [], "pools": 0, "edges": 0, "wallets": 0, "swaps": 0, "last_sync": None,
++                "note": "Live RPC and token-risk requests fetch upstream data when invoked. Historical graph datasets are not retained."}
+     sl = store.sqlite()
+     cur = [dict(zip(("chain", "last_block", "updated_ts"), r)) for r in sl.execute("SELECT * FROM ingest_cursor")]
+     pools = sl.execute("SELECT count(*) FROM liquidity_pools").fetchone()[0]; sl.close()
+@@ -63,6 +67,8 @@
+ 
+ async def startup():
+     global _runner
++    if config.ON_DEMAND:
++        return
+     store.sqlite().close(); store.duck()
+     _runner = Runner(); await _runner.start()
+ 
+--- a/web3agent/intel/analytics.py
++++ b/web3agent/intel/analytics.py
+@@ -106,6 +106,9 @@
+ 
+ # ---------- tools ----------
+ async def new_pools(chain: str | None = None, hours: float = 6, limit: int = 30, min_liquidity_usd: float = 0) -> list[dict]:
++    if config.ON_DEMAND:
++        return {"status": "unavailable", "mode": "on_demand", "persistent_blockchain_cache": False,
++                "reason": "This historical analysis needs an upstream history/indexer adapter; local blockchain storage and background ingestion are disabled."}
+     """New-pool screener: pools from on-chain PairCreated/PoolCreated, enriched with DexScreener liquidity/volume + smart-money entries."""
+     pools = _pools(chain, int(time.time() - hours * 3600))[: limit * 3]
+     by = {}
+@@ -135,6 +138,9 @@
+ 
+ 
+ async def trace_flow(address: str, hops: int = 3, direction: str = "out", min_usd: float = 1000, hours: float = 24, per_hop: int = 8, token: str | None = None) -> dict:
++    if config.ON_DEMAND:
++        return {"status": "unavailable", "mode": "on_demand", "persistent_blockchain_cache": False,
++                "reason": "This historical analysis needs an upstream history/indexer adapter; local blockchain storage and background ingestion are disabled."}
+     """Multi-hop USD-valued flow tracing over token_transfer_edges (BFS, top-k edges per node by USD)."""
+     address = address.lower(); since = _ts(hours)
+     me, other = ("from_address", "to_address") if direction == "out" else ("to_address", "from_address")
+@@ -220,13 +226,16 @@
+         ch1 = (p.get("priceChange") or {}).get("h1")
+         if ch1 is not None and ch1 < -50: warnings.append(f"Price -{abs(ch1):.0f}% in 1h on {p.get('dexId')} — possible rug")
+     return {"chain": chain, "token": token, "name": gp.get("token_name"), "symbol": gp.get("token_symbol"), "total_supply": supply / 10 ** dec,
+-            "holder_count": gp.get("holder_count"), "top20_concentration_pct": round(conc, 2) if conc is not None else None, "top_holders": holders,
++            "holder_count": gp.get("holder_count"), "history_status": "not_retained" if config.ON_DEMAND else "local_window", "top20_concentration_pct": round(conc, 2) if conc is not None else None, "top_holders": holders,
+             "lp_locked_pct": round(lp_locked * 100, 1), "goplus_flags": flags, "buy_tax": gp.get("buy_tax"), "sell_tax": gp.get("sell_tax"),
+             "pools": [{"pair": p["pairAddress"], "dex": p.get("dexId"), "liquidity_usd": (p.get("liquidity") or {}).get("usd")} for p in dx[:5]],
+             "pool_flows": drains, "warnings": warnings, "risk": "HIGH" if len(warnings) >= 3 else "MEDIUM" if warnings else "LOW"}
+ 
+ 
+ async def smart_money(chain: str | None = None, hours: float = 24, limit: int = 25) -> dict:
++    if config.ON_DEMAND:
++        return {"status": "unavailable", "mode": "on_demand", "persistent_blockchain_cache": False,
++                "reason": "This historical analysis needs an upstream history/indexer adapter; local blockchain storage and background ingestion are disabled."}
+     """Labelled Smart Money / deployer / bot wallets + tokens Smart Money is buying now."""
+     since = _ts(hours)
+     wallets = store.q(f"""SELECT w.wallet_address, w.entity_label, w.label_detail, w.confidence_score, count(s.tx_hash) swaps, count(DISTINCT s.pool_address) pools, max(s.timestamp) last_swap
+@@ -242,6 +251,9 @@
+ 
+ 
+ async def alerts(min_usd: float | None = None, hours: float = 1, limit: int = 50, chain: str | None = None) -> list[dict]:
++    if config.ON_DEMAND:
++        return {"status": "unavailable", "mode": "on_demand", "persistent_blockchain_cache": False,
++                "reason": "This historical analysis needs an upstream history/indexer adapter; local blockchain storage and background ingestion are disabled."}
+     """Whale transfers (USD >= threshold) with entity labels, newest first; plus fresh Smart Money pool entries."""
+     min_usd = min_usd or config.WHALE_USD
+     rows = store.q(f"""SELECT chain, tx_hash, timestamp, token_address token, from_address, to_address, usd_value FROM token_transfer_edges

@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 2984ac73-0bb3-4274-b43a-fd9e7cfeb621
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:12:37+01:00"
+    checksum: 7eed6cc116994a30327f256aa48a33a099f8a4ed6082e83eb326bccfe26d0511
+test:
+    metadata:
+        name: fresh-ipa-installation
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

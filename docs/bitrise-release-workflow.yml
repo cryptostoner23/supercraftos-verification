@@ -1,0 +1,96 @@
+# Bitrise workflow for a signed build that can be uploaded to TestFlight.
+#
+# This is intentionally NOT part of bitrise.yml. It needs Apple credentials
+# that do not exist in this repository, and an unsigned pipeline must stay
+# green without them.
+#
+# Setup, once, in the Bitrise app:
+#   1. App settings > Apple Developer account: connect your team so Xcode can
+#      sign automatically. The App ID com.supercraftos.control must exist. The
+#      app ships standalone, so no App Group and no keyboard App ID are needed.
+#   2. Secrets: ASC_API_KEY_PATH (a .p8 file uploaded as a secret),
+#      ASC_API_KEY_ID, ASC_API_ISSUER_ID for the TestFlight upload.
+#   3. Add this workflow and run it on demand. Do not add it to the push
+#      trigger map.
+#
+# Step majors are taken from the official Bitrise step library:
+#   xcode-archive = 6, export-xcarchive = 4, deploy-to-bitrise-io = 2.
+#
+# The unsigned verification pipeline in bitrise.yml stays independent of this.
+
+format_version: '26'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+project_type: ios
+
+workflows:
+  release_testflight:
+    description: Archive the app and its custom keyboard extension with real signing, export an App Store Connect IPA, and upload it to TestFlight.
+    steps:
+      - git-clone@8: {}
+      - script@1:
+          title: Generate the Xcode project
+          inputs:
+            - content: |-
+                #!/bin/bash
+                set -euo pipefail
+                if ! command -v xcodegen >/dev/null 2>&1; then
+                  brew install xcodegen
+                fi
+                xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
+                xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -list
+      - xcode-archive@6:
+          title: Archive the app with signing
+          inputs:
+            - project_path: ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+            - scheme: SuperCraftOS
+            - platform: iOS
+            - configuration: Release
+            - distribution_method: app-store
+            - automatic_code_signing: "yes"
+            - export_development_team: $APP_STORE_CONNECT_TEAM_ID
+            - output_directory: $BITRISE_SOURCE_DIR/release
+            - export_options_plist_content: |-
+                {
+                  "method": "app-store-connect",
+                  "destination": "export",
+                  "signingStyle": "automatic",
+                  "stripSwiftSymbols": true,
+                  "uploadSymbols": true,
+                  "compileBitcode": false
+                }
+      - export-xcarchive@4:
+          title: Export the App Store Connect IPA
+          inputs:
+            - archive_path: $BITRISE_SOURCE_DIR/release/SuperCraftOS.xcarchive
+            - distribution_method: app-store
+            - automatic_code_signing: "yes"
+            - export_development_team: $APP_STORE_CONNECT_TEAM_ID
+            - export_options_plist_content: |-
+                {
+                  "method": "app-store-connect",
+                  "destination": "export",
+                  "signingStyle": "automatic",
+                  "stripSwiftSymbols": true,
+                  "uploadSymbols": true,
+                  "compileBitcode": false
+                }
+      - script@1:
+          title: Upload the IPA to TestFlight
+          inputs:
+            - content: |-
+                #!/bin/bash
+                set -euo pipefail
+                IPA="$(ls "$BITRISE_SOURCE_DIR/release/ipa"/*.ipa | head -1)"
+                echo "==> uploading $(basename "$IPA")"
+                if xcrun altool --help >/dev/null 2>&1; then
+                  xcrun altool --upload-app -f "$IPA" -t ios \
+                    --apiKey "$ASC_API_KEY_ID" --apiIssuer "$ASC_API_ISSUER_ID"
+                else
+                  xcrun iTMSTransporter -m upload -assetFile "$IPA" \
+                    -apiKey "$ASC_API_KEY_ID" -apiIssuer "$ASC_API_ISSUER_ID"
+                fi
+      - deploy-to-bitrise-io@2:
+          title: Publish the IPA as a build artifact
+          inputs:
+            - deploy_dir: $BITRISE_SOURCE_DIR/release/ipa

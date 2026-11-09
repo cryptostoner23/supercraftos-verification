@@ -1,0 +1,18 @@
+metadata:
+  name: failure-handling-and-recovery
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - failure
+blocks:
+  - step_type: tap
+    description: Attempt an action that will fail (invalid input, network error)
+  - step_type: tap
+    description: Verify app shows appropriate error message
+  - step_type: tap
+    description: Attempt recovery from the failure
+  - step_type: tap
+    description: Verify app returns to a usable state
+  - step_type: tap
+    description: Verify no data corruption from the failure

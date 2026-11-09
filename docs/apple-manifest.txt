@@ -1,0 +1,9 @@
+# The official Apple documentation that governs this project.
+# One path per line, the path from the documentation URL.
+uikit/uiinputviewcontroller
+uikit/extending-your-app-for-custom-keyboards
+bundleresources/information-property-list/nsextension
+app-extensions
+foundationmodels
+xcode/distributing-your-app-for-beta-testing-and-releases
+bundleresources/entitlements

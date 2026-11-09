@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "aiflowchart": {
+      "type": "http",
+      "url": "https://mcp.aiflowchart.io/mcp",
+      "headers": {
+        "Authorization": "Bearer ${AIFLOWCHART_API_KEY}"
+      }
+    },
+    "context-dev": {
+      "type": "http",
+      "url": "https://mcp.context.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CONTEXT_DEV_API_KEY}"
+      }
+    },
+    "supercraftos": {
+      "type": "stdio",
+      "command": ".venv/bin/python",
+      "args": [
+        "main.py",
+        "mcp"
+      ]
+    }
+  }
+}

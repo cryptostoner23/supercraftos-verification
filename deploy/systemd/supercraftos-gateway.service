@@ -1,0 +1,30 @@
+[Unit]
+Description=SuperCraftOS private access gateway
+Wants=network-online.target supercraftos-app.service
+After=network-online.target supercraftos-app.service
+
+[Service]
+Type=simple
+User=supercraftos
+Group=supercraftos
+WorkingDirectory=/root/SuperCraftOS
+EnvironmentFile=/etc/supercraftos.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/root/SuperCraftOS/.venv/bin/python /root/SuperCraftOS/private_gateway.py
+Restart=on-failure
+RestartSec=5s
+KillMode=control-group
+TimeoutStopSec=20s
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=tmpfs
+BindReadOnlyPaths=/root/SuperCraftOS
+ProtectSystem=full
+MemoryMax=256M
+TasksMax=128
+LimitNOFILE=1024
+
+[Install]
+WantedBy=multi-user.target

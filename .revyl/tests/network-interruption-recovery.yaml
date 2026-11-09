@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 35fa0175-aec3-4fdd-8f83-5bfc2f106473
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:13:54+01:00"
+    checksum: c89b2baa5abc241fe10768a16a0ec7a1416f24b482cf18f08d9e1db7b9817b79
+test:
+    metadata:
+        name: network-interruption-recovery
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: 3c66e3de-45da-4f9b-bb6c-365a6c39dc09
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:12:58+01:00"
+    checksum: a6fa5f5034a87ce7ea76f6961705d1dc69ad38c2f4dbd3f5ce93c415afdc14e0
+test:
+    metadata:
+        name: memory-creation-retrieval
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

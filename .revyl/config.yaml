@@ -1,0 +1,32 @@
+project:
+    id: b46201d7-2376-45a4-adc5-1619fc133a64
+session:
+    idle_timeout_seconds: 1800
+build:
+    framework: ios
+    profiles:
+        preview:
+            ios:
+                app_id: 017e6103-7dbe-4ba3-a910-88575e966048  # SuperCraftOS iOS app ID
+                build_commands:
+                    - brew install xcodegen
+                    - cd ios_app_dist/ci_xcode && xcodegen generate --spec project.yml
+                    - xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Debug -sdk iphonesimulator -derivedDataPath "$HOME/DerivedData" CODE_SIGNING_ALLOWED=NO build
+                output_path: $HOME/DerivedData/Build/Products/Debug-iphonesimulator/SuperCraftOS.app
+        ipa_release:
+            ios:
+                app_id: 017e6103-7dbe-4ba3-a910-88575e966048  # SuperCraftOS iOS app ID
+                build_commands:
+                    - brew install xcodegen
+                    - cd ios_app_dist/ci_xcode && xcodegen generate --spec project.yml
+                    - xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphonesimulator -derivedDataPath "$HOME/DerivedData" CODE_SIGNING_ALLOWED=NO build
+                    - cp -r "$HOME/DerivedData/Build/Products/Release-iphonesimulator/SuperCraftOS.app" "$PWD/SuperCraftOS.app"
+                output_path: SuperCraftOS.app
+        ipa_release_keyboard:
+            ios:
+                app_id: 017e6103-7dbe-4ba3-a910-88575e966048  # SuperCraftOS iOS app ID
+                build_commands:
+                    - brew install xcodegen
+                    - cd ios_app_dist/ci_xcode && xcodegen generate --spec project.yml
+                    - xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOSKeyboard -configuration Release -sdk iphoneos -derivedDataPath "$HOME/DerivedData/KeyboardRelease" CODE_SIGNING_ALLOWED=NO build
+                output_path: $HOME/DerivedData/KeyboardRelease/Build/Products/Release-iphoneos/SuperCraftOSKeyboard.appex

@@ -1,0 +1,67 @@
+version: 2
+project: SuperCraftOS
+models:
+  provider_selection: verified
+  primary: minimaxai/minimax-m3.1-flash
+  implementation: minimaxai/minimax-m3.1-flash
+  lightweight: nvidia/nemotron-3.5-lightning-30b-a3b
+  input_budget_tokens: 96000
+  max_output_tokens: 8192
+  # Supply account-specific verified rates, or count requests as unpriced.
+  price_per_million: {}
+resources:
+  memory_limit_mb: 512
+  context_compaction_tokens: 400000
+  max_events: 256
+  retries: {max_attempts: 5, base_seconds: 1, max_seconds: 30, jitter: 0.5}
+security:
+  require_human_approval_for_destructive: true
+  execute_on_host: false
+  vault_key_path: data/vault.key
+notion:
+  parent_page_id_env: NOTION_PARENT_PAGE_ID
+  database_ids_path: data/notion_databases.json
+  databases:
+    vault_env: NOTION_VAULT_DB_ID
+registration:
+  mode: autonomous
+  cloud_backends: [hyperbrowser, steel, apify]
+  allow_local_cloud_account_bootstrap: true
+  allow_local_target_registration: false
+  max_steps: 18
+  deadline_seconds: 180
+  workflow_path: data/registration_workflows.json
+  providers: [devhunt, firecrawl, composio, peerpush, startupage]
+  verification: supported_platform_flow
+mcp:
+  stdio: true
+  registry_path: data/tools.json
+  protocol_version: '2025-06-18'
+e2b:
+  enabled: true
+  template: base
+  timeout_seconds: 30
+  max_code_bytes: 10000
+  max_output_bytes: 64000
+lark:
+  domain: https://open.larksuite.com
+  allowed_users_env: LARK_ALLOWED_USER_IDS
+  stream_interval_seconds: 1.0
+agent_brain:
+  registry_path: agent-brain
+  governance: [genuine-audit, qa-review, task-execute, revenue-first]
+  max_prompt_chars: 12000
+ingestion:
+  # The providers with a real API that the MCP ingestion tool can use. A
+  # provider is only offered when its credential is present, so a provider
+  # that cannot answer is never advertised.
+  devhunt:
+    url: https://api.devhunt.io/graphql
+    env: DEVHUNT_API_KEY
+  firecrawl:
+    url: https://api.firecrawl.dev/v2/scrape
+    env: FIRECRAWL_API_KEY
+protocol:
+  provisioning_endpoint_env: MAILBOX_PROVISION_URL
+  jmap_session_url_env: JMAP_SESSION_URL
+  activation_hosts_env: ACTIVATION_ALLOWED_HOSTS

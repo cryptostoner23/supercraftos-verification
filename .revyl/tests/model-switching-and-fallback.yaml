@@ -1,0 +1,19 @@
+metadata:
+  name: model-switching-and-fallback
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - ai
+  - model
+blocks:
+  - step_type: tap
+    description: Navigate to the AI model settings screen
+  - step_type: tap
+    description: Switch to a different AI provider/model
+  - step_type: tap
+    description: Send a query using the new model
+  - step_type: tap
+    description: Verify model switch took effect
+  - step_type: tap
+    description: Test fallback behavior when model is unavailable
