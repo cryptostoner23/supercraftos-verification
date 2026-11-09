@@ -38,3 +38,16 @@ Exactly one real targeted Context.dev search was completed on 2026-10-18, reques
 - `.github/workflows/ci.yml` runs on every push and pull request: the full Python unittest suite (`python -m unittest discover -p "test_*.py"`), the static repository audit (`scripts/audit_repository.py`, which exits non-zero on syntax errors or detected committed secrets), and the Swift contract tests (`swift test --package-path swift-verification`) on Linux.
 - The live e2e suite (`test_e2e.py`) skips unless the `SUPERCRAFTOS_E2E_KEY` repository secret is set. Keep every credential in repository secrets or server-side environment; the repository audit now bans committed credentials statically, so a secret in source fails CI.
 - Bitrise (`bitrise.yml`) remains the macOS-only Xcode/XcodeGen build, signing and artifact pipeline. GitHub Actions covers only Linux-verifiable checks; do not move iOS builds there.
+
+
+# Repository sync model (private <-> public verification mirror)
+
+- Two remotes: `origin` = `cryptostoner94/opencode-supercraftos` (private, canonical, full legacy history on `main`) and `public` = `cryptostoner94/supercraftos-verification` (public, fresh single-root history at `853106e`, temporary until the product is fully corrected, tested and verified, then deleted).
+- The public repo must NEVER receive the legacy history: it still contains the historical committed access key. The legacy history lives only on `origin` (and in the scratchpad backup `opencode-supercraftos-old-git-20261109`).
+- Verified 2026-11-09: the fresh root commit's tree is byte-identical to the private `main` tree (`git diff origin/main` empty after fetch). The bridge commit `66e25bc` on branch `sync` merges `origin/main` into `main`, so both repos' `main` can fast-forward independently without ever exposing legacy commits to the public repo.
+- Repeatable sync procedure after every commit on `main`:
+  1. `git push` — publishes `main` to `public/main` and triggers Actions CI there.
+  2. `git switch sync && git merge main && git push` with remote `origin` and remote branch `main`, then `git switch main` — the private `main` fast-forwards to the same tree. No content may exist in one repo and not the other after this procedure.
+- The `sync` branch is infrastructure: never push it to `public`, never delete it, and never merge `sync` into `main` (that would drag legacy history into the public repo's ancestry).
+- CI results are analysed on the public repo via checks: every failed job must be diagnosed, fixed on `main`, re-pushed to both repos, and re-verified green before it counts as tested.
+- GitHub Actions account status 2026-11-09: billing lock — all jobs refuse to start ("account is locked due to a billing issue") until the billing issue is resolved at github.com/settings/billing. This blocks auto-testing on both repos; pushes still work.
