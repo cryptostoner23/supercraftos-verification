@@ -21,6 +21,11 @@ settings:
     # bundles as the initial address; users supply their private access key. Override it with
     #   xcodebuild SUPERCRAFTOS_BACKEND_URL=https://other-host
     SUPERCRAFTOS_BACKEND_URL: "https://agent.commetai.ca"
+    # Provisioned gateway access key. NEVER hardcode a real key here: it becomes
+    # readable by anyone with the source. Inject it at build time instead, e.g.
+    #   xcodebuild SUPERCRAFTOS_ACCESS_KEY="$(cat data/access.key)"
+    # An empty value keeps the app on the manual "enter access key" path.
+    SUPERCRAFTOS_ACCESS_KEY: ""
 targets:
   SuperCraftOS:
     type: application

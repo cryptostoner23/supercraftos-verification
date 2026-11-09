@@ -1,0 +1,36 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      # Live-gateway e2e tests skip cleanly unless SUPERCRAFTOS_E2E_KEY is set
+      # as a repository secret, so this job needs no credentials to run.
+      - run: python -m unittest discover -p "test_*.py" -v
+        env:
+          SUPERCRAFTOS_E2E_KEY: ${{ secrets.SUPERCRAFTOS_E2E_KEY }}
+  repository-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Exits non-zero on any syntax error or detected secret (the
+      # committed-credential leak that was remediated must never return).
+      - run: python scripts/audit_repository.py
+  swift-package-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: '5.9'
+      - run: swift test
+        working-directory: swift-verification

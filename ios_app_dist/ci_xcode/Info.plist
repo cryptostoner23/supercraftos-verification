@@ -29,7 +29,7 @@
 	<key>SUPERCRAFTOSBackendURL</key>
 	<string>$(SUPERCRAFTOS_BACKEND_URL)</string>
 	<key>SUPERCRAFTOSAccessKey</key>
-	<string>BCQMChP-tCaOWU_aeLlY32rn618HAX3F8Oi4dIf0wjg</string>
+	<string>$(SUPERCRAFTOS_ACCESS_KEY)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>

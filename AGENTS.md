@@ -30,3 +30,11 @@ Exactly one real targeted Context.dev search was completed on 2026-10-18, reques
 - Free personal installation follows `docs/FREE_APPLE_INSTALL.md`: build on Bitrise, sign/install locally on the Mac with a supported tool, and refresh before the seven-day provisioning expiry. Keep Apple credentials out of scripts, chat and the VPS. An unsigned IPA, a validated profile, a successful install command and a verified physical-device launch are distinct outcomes. TestFlight requires paid membership.
 - Default iOS tests use a DEBUG-only authenticated URLProtocol fixture. Test unknown routes fail closed without network fallback. The explicit live workflow is read-only and receives the gateway key as a CI secret. Python live mutation tests require `SUPERCRAFTOS_ALLOW_LIVE_MUTATIONS=1` and an explicit target; never enable these in routine discovery.
 - Verification commands: `swift test --package-path swift-verification` for the contract tests, `.venv/bin/python -m unittest -q test_verify_ios_artifacts.py` for the artifact verifier, and `.venv/bin/python scripts/verify_ios_artifacts.py <app.zip>` for a delivered bundle.
+
+
+
+# Continuous integration (GitHub Actions)
+
+- `.github/workflows/ci.yml` runs on every push and pull request: the full Python unittest suite (`python -m unittest discover -p "test_*.py"`), the static repository audit (`scripts/audit_repository.py`, which exits non-zero on syntax errors or detected committed secrets), and the Swift contract tests (`swift test --package-path swift-verification`) on Linux.
+- The live e2e suite (`test_e2e.py`) skips unless the `SUPERCRAFTOS_E2E_KEY` repository secret is set. Keep every credential in repository secrets or server-side environment; the repository audit now bans committed credentials statically, so a secret in source fails CI.
+- Bitrise (`bitrise.yml`) remains the macOS-only Xcode/XcodeGen build, signing and artifact pipeline. GitHub Actions covers only Linux-verifiable checks; do not move iOS builds there.

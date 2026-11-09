@@ -3,10 +3,30 @@ import ast
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GENERATED = {'.venv', '.cad-venv', '.git', 'node_modules', '__pycache__', '.build', 'target', 'browser'}
+# Text formats where a committed credential would actually be executed or shipped.
+SECRET_SCAN_EXTENSIONS = {'.py', '.swift', '.md', '.txt', '.yaml', '.yml', '.toml', '.html', '.plist'}
+SECRET_PATTERNS = (
+    # secrets.token_urlsafe(32) and similar: 40+ opaque base64url characters.
+    (re.compile(r'\b[A-Za-z0-9_\-]{40,}\b'), 'opaque_token'),
+    # Known previously leaked credentials are banned outright. Assembled at
+    # runtime so this scanner does not itself match the pattern it guards.
+    (re.compile('BCQM' + 'ChP'), 'leaked_gateway_key'),
+    (re.compile(r'(BITRISE|REVYL|OPENROUTER|FIRECRAWL|COMPOSIO|HYPERBROWSER|STEEL|AIFLOWCHART|CONTEXT_DEV)_?(API_)?KEY\s*=\s*["\'][^"\']+["\']', re.I), 'hardcoded_provider_key'),
+)
+
+
+def scan_for_secrets(path: Path, text: str):
+    issues = []
+    for pattern, label in SECRET_PATTERNS:
+        for match in pattern.finditer(text):
+            issues.append({'path': str(path.relative_to(ROOT)), 'check': f'potential_secret_{label}',
+                           'line': text.count('\n', 0, match.start()) + 1})
+    return issues
 
 
 def main():
@@ -34,6 +54,11 @@ def main():
                         if path.suffix == '.py': ast.parse(text)
                         elif b'\r' in data or '```' in text: issues.append({'path': str(relative), 'check': 'swift_raw_format'})
                     except (UnicodeError, SyntaxError): issues.append({'path': str(relative), 'check': 'syntax_or_encoding'})
+                if path.suffix in SECRET_SCAN_EXTENSIONS:
+                    try:
+                        issues.extend(scan_for_secrets(path, data.decode('utf-8')))
+                    except UnicodeError:
+                        pass
             inventory.append(record)
     report = {'total_files_inventoried': len(inventory), 'maintained_files_hashed': source_count,
               'issues': issues, 'scope': 'All files inventoried by metadata; maintained text hashed and Python parsed. Dependencies, binary artifacts and external agent-brain are not semantically audited.',

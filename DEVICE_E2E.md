@@ -11,8 +11,9 @@ Session env: `REVYL_API_KEY` + `-s <session_id>`.
 
 ## 1. App launch & connection
 - Instruction: "Accept any permissions. Wait for home screen. If the top-right
-  shows a Connect banner, tap it, enter access key `BCQMChP-tCaOWU_aeLlY32rn618HAX3F8Oi4dIf0wjg`
-  and URL `https://agent.commetai.ca`, then tap Save and connect."
+  shows a Connect banner, tap it, enter access key `<live key from data/access.key —
+  provision per run, never commit>` and URL `https://agent.commetai.ca`,
+  then tap Save and connect."
 - Validation: device shows "CONNECTED" or "SC / OS".
 
 ## 2. Mission / Home

@@ -14,7 +14,9 @@ import unittest
 import httpx
 
 BASE = os.getenv("SUPERCRAFTOS_E2E_BASE", "https://agent.commetai.ca")
-ACCESS_KEY = os.getenv("SUPERCRAFTOS_E2E_KEY", "BCQMChP-tCaOWU_aeLlY32rn618HAX3F8Oi4dIf0wjg")
+# The gateway key is a live credential: it is never committed. Rotate it by
+# deleting data/access.key on the server and restarting private_gateway.py.
+ACCESS_KEY = os.getenv("SUPERCRAFTOS_E2E_KEY", "")
 TIMEOUT = 60.0
 
 
@@ -37,6 +39,9 @@ def _tool(token, name, args):
 class TestE2E25(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if not ACCESS_KEY:
+            raise unittest.SkipTest(
+                "Set SUPERCRAFTOS_E2E_KEY (live gateway access key from data/access.key) to run this suite.")
         cls.token = _token()
         cls.c = httpx.Client(timeout=TIMEOUT, headers=_h(cls.token))
 
