@@ -1,0 +1,10 @@
+{
+  "name": "SuperCraftOS verification",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "postCreateCommand": "python3 -m pip install -r requirements.txt; echo \"pip-exit=$?\" > install-exit.log; python3 -m unittest discover -p \"test_*.py\" > py-results.log 2>&1; echo \"python-exit=$?\" >> py-results.log; python3 scripts/audit_repository.py > audit-results.log 2>&1; echo \"audit-exit=$?\" >> audit-results.log; git config user.email \"ci@supercraftos.local\"; git config user.name \"ci-bot\"; git checkout -B ci-results; git add -f install-exit.log py-results.log audit-results.log; git commit -m \"Automated verification results\"; git push origin HEAD:ci-results",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}
