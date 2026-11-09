@@ -1,5 +1,10 @@
 name: ci
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  # On-demand runs: the verification fork under the contributor account
+  # dispatches this workflow after every synced change (see AGENTS.md).
+  workflow_dispatch:
 jobs:
   python-tests:
     runs-on: ubuntu-latest
