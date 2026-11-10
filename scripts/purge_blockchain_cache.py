@@ -32,14 +32,19 @@ def digest(connection, table):
 def purge(path):
     path = Path(path).resolve()
     if not path.is_file(): raise ValueError('Database does not exist')
-    # Refuse to rebuild a database any other process has open.
-    for process in Path('/proc').iterdir():
-        if not process.name.isdigit() or int(process.name) == os.getpid(): continue
-        try:
-            for descriptor in (process / 'fd').iterdir():
-                if descriptor.resolve() == path:
-                    raise RuntimeError('Stop all processes using the database before purging')
-        except (FileNotFoundError, PermissionError): pass
+    # Refuse to rebuild a database any other process has open. On Linux the
+    # process table is visible under /proc; on non-Linux platforms there is no
+    # /proc, so the open-file check is skipped (the WAL checkpoint below still
+    # refuses a busy database).
+    proc = Path('/proc')
+    if proc.is_dir():
+        for process in proc.iterdir():
+            if not process.name.isdigit() or int(process.name) == os.getpid(): continue
+            try:
+                for descriptor in (process / 'fd').iterdir():
+                    if descriptor.resolve() == path:
+                        raise RuntimeError('Stop all processes using the database before purging')
+            except (FileNotFoundError, PermissionError): pass
     source = sqlite3.connect(str(path), timeout=5)
     if source.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchone()[0]:
         source.close(); raise RuntimeError('Database is still busy')

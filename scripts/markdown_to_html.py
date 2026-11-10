@@ -86,7 +86,9 @@ def convert(markdown: str) -> str:
         elif re.match(r"^\d+\. ", line):
             items = []
             while index < len(lines) and re.match(r"^\d+\. ", lines[index]):
-                items.append(f"<li>{inline(re.sub(r'^\d+\. ', '', lines[index]))}</li>")
+                text = lines[index]
+                text = re.sub(r"^\d+\. ", "", text)
+                items.append(f"<li>{inline(text)}</li>")
                 index += 1
             out.append("<ol>" + "".join(items) + "</ol>")
             continue

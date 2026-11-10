@@ -10,6 +10,12 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.9"
+    # xcodegen's setting presets are not applied by every version (notably
+    # 2.43). Explicitly define DEBUG and testability so #if DEBUG blocks (the
+    # offline fixture client) compile and @testable imports work in Debug builds
+    # on any toolchain.
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) DEBUG"
+    ENABLE_TESTABILITY: YES
     TARGETED_DEVICE_FAMILY: "1,2"
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
@@ -150,6 +156,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.tests
+        PRODUCT_NAME: SuperCraftOSTests
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -166,9 +173,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.backendtests
+        PRODUCT_NAME: SuperCraftOSBackendTests
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1,2"
+        # Host the test bundle in the app so @testable import SuperCraftOS links.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SuperCraftOS.app/SuperCraftOS"
+        BUNDLE_LOADER: "$(TEST_HOST)"
   # The keyboard is driven for real: every tile is fired through the
   # extension actor using authenticated deterministic HTTP fixtures.
   SuperCraftOSInteractionTests:
@@ -186,9 +197,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.interactiontests
+        PRODUCT_NAME: SuperCraftOSInteractionTests
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1,2"
+        # Host the test bundle in the app so @testable import SuperCraftOS links.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SuperCraftOS.app/SuperCraftOS"
+        BUNDLE_LOADER: "$(TEST_HOST)"
   # The app is driven for real: every screen is opened by tapping it, on a
   # simulator, using deterministic fixtures by default.
   SuperCraftOSUITests:
@@ -202,6 +217,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.uitests
+        PRODUCT_NAME: SuperCraftOSUITests
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "5.9"
         TARGETED_DEVICE_FAMILY: "1,2"

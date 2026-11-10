@@ -278,7 +278,9 @@ struct ContentView: View {
             }.accessibilityIdentifier("navigation-more")
         }
         .padding(.vertical, 8)
-        .accessibilityIdentifier("compact-navigation")
+        // The container must not override its children's accessibility
+        // identifiers: each tab button carries its own navigation-<Screen> id.
+        .accessibilityElement(children: .contain)
         .background(ConsoleStyle.panel)
         .overlay(alignment: .top) { Rectangle().fill(ConsoleStyle.line).frame(height: 1) }
     }

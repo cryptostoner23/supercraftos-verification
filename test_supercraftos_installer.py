@@ -168,7 +168,10 @@ class InstallerTests(unittest.TestCase):
         self.mock_mac()
         result, output = self.signed("--tool", "ideviceinstaller")
         self.assertEqual(result, 0, output)
-        self.assertEqual(self.install_commands(), [["/tools/ideviceinstaller", "-u", UDID, "install", str(self.ipa)]])
+        # The installer canonicalizes the IPA path (Path.resolve), so the
+        # expectation must match that resolved form. On macOS /var is a symlink
+        # to /private/var, so the raw and resolved paths differ there.
+        self.assertEqual(self.install_commands(), [["/tools/ideviceinstaller", "-u", UDID, "install", str(self.ipa.resolve())]])
         self.assertIn("Open the app on the device to verify", output)
 
     def test_legacy_installer_interface(self):
