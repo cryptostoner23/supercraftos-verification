@@ -213,6 +213,15 @@ async def _execute_action(action: str, args: Dict[str, Any]) -> Dict[str, Any]:
             return {"outcome": "ok", "detail": "Notes indexed by notebook (no-op, already organized)."}
         if action == "draft_reply":
             return {"outcome": "ok", "detail": "Drafted reply saved to memory."}
+        if action == "propose_next_step":
+            # Materialize a concrete next-step proposal into the notes store so
+            # the user has a tangible, actionable artifact.
+            from apple_notes import create_note
+            title = str(args.get("title") or "Proposed next step")
+            body = str(args.get("body") or args.get("reason") or "See brain synthesis.")
+            note = create_note(title=title, body=body, notebook="Digital Me",
+                               tags=["proactive", "next-step"])
+            return {"outcome": "ok", "detail": f"Proposal saved as note {note['id']}."}
         if action == "update_playbook":
             from digital_me import add_playbook
             add_playbook(title=str(args.get("title") or "Learned step"),

@@ -69,13 +69,36 @@ def add_memory_entry(entry: Dict[str, Any]) -> None:
 
 
 def retrieve_memory(query: str, limit: int = 10) -> List[Dict[str, Any]]:
-    """Return memory entries whose note contains the query (case‑insensitive substring)."""
+    """Return memory entries most relevant to the query.
+
+    Relevance is scored by token overlap (query tokens found in the note) with
+    a small recency tiebreak, so a query finds related memories even when it is
+    not an exact substring of the note. Falls back to empty when the query is
+    blank or nothing matches.
+    """
     memory = load_memory()
-    q = query.lower()
-    hits = [e for e in memory.get("entries", []) if q in e.get("note", "").lower()]
-    # Sort by recency (newest first), then cap at the requested limit.
-    hits.sort(key=lambda e: e.get("at", 0), reverse=True)
-    return hits[:max(1, min(limit, 500))]
+    q = (query or "").lower()
+    tokens = [t for t in q.split() if len(t) >= 2]
+    if not tokens:
+        return []
+    scored = []
+    for e in memory.get("entries", []):
+        note = (e.get("note", "") or "").lower()
+        if not note:
+            continue
+        overlap = sum(1 for t in tokens if t in note)
+        if overlap == 0:
+            continue
+        # Normalize by query length; recency is a small tiebreak.
+        score = overlap / len(tokens) + 0.01 * max(0.0, min(1.0, (e.get("at", 0) / max(1, _now()))))
+        scored.append((score, e))
+    scored.sort(key=lambda pair: pair[0], reverse=True)
+    return [e for _, e in scored[:max(1, min(limit, 500))]]
+
+
+def _now() -> float:
+    import time
+    return time.time()
 
 
 # ── Playbooks (reasoning patterns) ─────────────────────────────────────────
