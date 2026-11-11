@@ -32,3 +32,8 @@ data/apple-docs/raw/
 
 # Local signing credentials (never commit)
 .signing/
+
+# Generated Xcode artifacts (concept apps) — never commit
+ios_concepts/*/SuperCraftOSConcept*.xcodeproj/
+ios_concepts/*/Info.plist
+ios_concepts/*/build/

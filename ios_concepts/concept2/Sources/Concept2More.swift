@@ -147,11 +147,18 @@ struct TaskDetailView: View {
 
 // MARK: - Digital Me
 struct DigitalMeView: View {
-    @State private var memories = [
+    @EnvironmentObject private var backend: Concept2Backend
+    @State private var localMemories = [
         MemoryEntry(note: "Prefers concise answers and SwiftUI.", tag: "fact", confidence: 0.95),
         MemoryEntry(note: "Working on client follow-ups + Q3 proposal.", tag: "project", confidence: 0.88),
         MemoryEntry(note: "Uses aloop.agent@gmail.com for accounts.", tag: "identity", confidence: 0.99),
     ]
+    var memories: [MemoryEntry] {
+        if !backend.memories.isEmpty {
+            return backend.memories.prefix(5).map { MemoryEntry(note: $0, tag: "live", confidence: 0.9) }
+        }
+        return localMemories
+    }
     var body: some View {
         NavigationStack {
             ScrollView {

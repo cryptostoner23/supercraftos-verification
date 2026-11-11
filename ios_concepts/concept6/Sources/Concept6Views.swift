@@ -78,16 +78,18 @@ enum NeuralStatus: String {
 struct Concept6Root: View {
     @State private var tab = 0
     @State private var offline = false
+    @StateObject private var backend = Concept6Backend(accessKey: Concept6BackendConfig.accessKey)
     var body: some View {
         TabView(selection: $tab) {
-            NeuralMissionView(offline: $offline).tabItem { Label("Mission", systemImage: "point.3.connected.trianglepath.dotted") }.tag(0)
+            NeuralMissionView(offline: $offline).environmentObject(backend).tabItem { Label("Mission", systemImage: "point.3.connected.trianglepath.dotted") }.tag(0)
             NeuralTasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
-            NeuralMeView().tabItem { Label("Me", systemImage: "brain.head.profile") }.tag(2)
+            NeuralMeView().environmentObject(backend).tabItem { Label("Me", systemImage: "brain.head.profile") }.tag(2)
             NeuralLabView().tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
             NeuralMoreView(offline: $offline).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
         }
         .tint(Neural.accent)
         .preferredColorScheme(.dark)
+        .task { await backend.refresh() }
         .overlay(alignment: .top) { if offline { NeuralOfflineBanner() } }
     }
 }

@@ -90,6 +90,7 @@ struct NeuralTaskDetailView: View {
 
 // MARK: - Digital Me
 struct NeuralMeView: View {
+    @EnvironmentObject private var backend: Concept6Backend
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -105,28 +106,45 @@ struct NeuralMeView: View {
                                 Text("Predictive, proactive memory").font(.caption).foregroundStyle(Neural.muted)
                             }
                             Spacer()
-                            PulseDot(color: Neural.ok)
+                            if let e = backend.error {
+                                Text("⚠︎").foregroundStyle(Neural.danger)
+                            } else {
+                                PulseDot(color: backend.loading ? Neural.warn : Neural.ok)
+                            }
                         }
                     }
                     NeuralPanel {
                         VStack(alignment: .leading, spacing: 10) {
-                            NeuralMono(text: "PROACTIVE INTENTS")
-                            intentRow("Complete client follow-ups", 0.9)
-                            intentRow("Advance Q3 proposal", 0.8)
-                            intentRow("Verify grant deadlines", 0.7)
+                            NeuralMono(text: "LIVE PROFILE")
+                            HStack {
+                                statBlock("\(backend.memoryCount)", "memories")
+                                statBlock("\(backend.playbookCount)", "playbooks")
+                            }
+                            if let e = backend.error {
+                                Text(e).font(.caption).foregroundStyle(Neural.danger)
+                            }
                         }
                     }
                     NeuralPanel {
                         VStack(alignment: .leading, spacing: 10) {
                             NeuralMono(text: "MEMORY")
-                            ForEach(0..<3, id: \.self) { i in
-                                HStack(alignment: .top, spacing: 10) {
-                                    Image(systemName: "brain").foregroundStyle(Neural.accent)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(["Prefers concise SwiftUI answers.", "Acme Q3 proposal in progress.", "Uses aloop.agent@gmail.com."][i])
-                                            .font(.subheadline).foregroundStyle(Neural.ink)
-                                        Text("confidence \(0.9 - Double(i) * 0.08)")
-                                            .font(.caption2.monospaced()).foregroundStyle(Neural.muted)
+                            if backend.memories.isEmpty {
+                                ForEach(0..<3, id: \.self) { i in
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: "brain").foregroundStyle(Neural.accent)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(["Prefers concise SwiftUI answers.", "Acme Q3 proposal in progress.", "Uses aloop.agent@gmail.com."][i])
+                                                .font(.subheadline).foregroundStyle(Neural.ink)
+                                            Text("confidence \(0.9 - Double(i) * 0.08)")
+                                                .font(.caption2.monospaced()).foregroundStyle(Neural.muted)
+                                        }
+                                    }
+                                }
+                            } else {
+                                ForEach(backend.memories, id: \.self) { note in
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: "brain").foregroundStyle(Neural.accent)
+                                        Text(note).font(.subheadline).foregroundStyle(Neural.ink)
                                     }
                                 }
                             }
@@ -138,6 +156,13 @@ struct NeuralMeView: View {
             .background(Neural.bg)
             .navigationTitle("Digital Me")
         }
+    }
+    private func statBlock(_ v: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(v).font(.system(size: 26, weight: .bold, design: .rounded)).foregroundStyle(Neural.accent)
+            Text(label).font(.caption).foregroundStyle(Neural.muted)
+        }
+        .frame(maxWidth: .infinity)
     }
     private func intentRow(_ name: String, _ v: Double) -> some View {
         VStack(alignment: .leading, spacing: 4) {

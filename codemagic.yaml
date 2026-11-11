@@ -222,6 +222,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       xcode: latest
+      groups:
+        - backend_credentials
     scripts:
       - name: Generate Concept 2 Xcode project
         script: |
@@ -235,7 +237,8 @@ workflows:
           xcodebuild test -project SuperCraftOSConcept2.xcodeproj \
             -scheme Concept2UITests -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=iPhone 17" \
-            CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept2.log
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
+            2>&1 | tee /tmp/concept2.log
         test_report: /tmp/concept2.log
     artifacts:
       - /tmp/concept2.log
@@ -247,6 +250,8 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       xcode: latest
+      groups:
+        - backend_credentials
     scripts:
       - name: Generate Concept 6 Xcode project
         script: |
@@ -260,7 +265,8 @@ workflows:
           xcodebuild test -project SuperCraftOSConcept6.xcodeproj \
             -scheme Concept6UITests -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=iPhone 17" \
-            CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept6.log
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
+            2>&1 | tee /tmp/concept6.log
         test_report: /tmp/concept6.log
     artifacts:
       - /tmp/concept6.log

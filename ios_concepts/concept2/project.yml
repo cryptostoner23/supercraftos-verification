@@ -12,6 +12,11 @@ targets:
       - path: Sources
         excludes:
           - "Concept2UITests"
+      - path: ../SharedBackend.swift
+    info:
+      path: Info.plist
+      properties:
+        SUPERCRAFTOSAccessKey: "$(SUPERCRAFTOS_ACCESS_KEY)"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.concept2
@@ -24,6 +29,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Concept 2
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
+        SUPERCRAFTOS_ACCESS_KEY: "$(SUPERCRAFTOS_ACCESS_KEY)"
   Concept2UITests:
     type: bundle.ui-testing
     platform: iOS

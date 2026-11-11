@@ -90,19 +90,27 @@ struct MemoryEntry: Identifiable {
 struct Concept2Root: View {
     @State private var tab = 0
     @State private var offline = false
+    @StateObject private var backend = Concept2Backend(accessKey: BackendConfig.accessKey)
     var body: some View {
         TabView(selection: $tab) {
-            MissionView(offline: $offline).tabItem { Label("Mission", systemImage: "scope") }.tag(0)
+            MissionView(offline: $offline).environmentObject(backend).tabItem { Label("Mission", systemImage: "scope") }.tag(0)
             TasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
-            DigitalMeView().tabItem { Label("Digital Me", systemImage: "brain.head.profile") }.tag(2)
+            DigitalMeView().environmentObject(backend).tabItem { Label("Digital Me", systemImage: "brain.head.profile") }.tag(2)
             LabView().tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
             MoreView(offline: $offline).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
         }
         .tint(Tactical.accent)
         .preferredColorScheme(.dark)
+        .task { await backend.refresh() }
         .overlay(alignment: .top) {
             if offline { OfflineBanner() }
         }
+    }
+}
+
+struct BackendConfig {
+    static var accessKey: String {
+        (Bundle.main.object(forInfoDictionaryKey: "SUPERCRAFTOS_ACCESS_KEY") as? String) ?? ""
     }
 }
 
@@ -121,6 +129,7 @@ struct OfflineBanner: View {
 // MARK: - Mission
 struct MissionView: View {
     @Binding var offline: Bool
+    @EnvironmentObject private var backend: Concept2Backend
     @State private var runs: [AgentRun] = [AgentRun(name: "Yuki", step: 2), AgentRun(name: "Quill", step: 0)]
     @State private var showCompose = false
 
