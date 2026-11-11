@@ -1,0 +1,23 @@
+# Render free-tier deploy (best fit for this long-running Python backend).
+# Free tier: service sleeps after 15 min idle; we keep it awake via a health ping.
+services:
+  - type: web
+    name: supercraftos-backend
+    runtime: docker
+    repo: https://github.com/cryptostoner23/supercraftos-verification.git
+    plan: free
+    healthCheckPath: /api/status
+    envVars:
+      - key: SUPERCRAFTOS_EMBEDDED_WORKER
+        value: "0"
+      - key: SUPERCRAFTOS_BACKEND_PORT
+        value: "8787"
+      - key: SUPERCRAFTOS_GATEWAY_PORT
+        value: "8790"
+      - key: SUPERCRAFTOS_PUBLIC_ORIGIN
+        value: "https://supercraftos-backend.onrender.com"
+      # The gateway access key is generated at first start on the server and
+      # stored in /app/data/access.key; read it and bake the SAME value into
+      # the iOS app build so it connects automatically.
+      - key: ACCESS_KEY_PROVISIONED
+        value: "GENERATED_AT_FIRST_BOOT"
