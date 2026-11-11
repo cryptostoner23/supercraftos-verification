@@ -82,11 +82,16 @@ final class SuperCraftOSUITests: XCTestCase {
         XCTAssertTrue((field.value as? String)?.contains(query) == true)
         let run = app.buttons["START AUTONOMOUS TASK"]
         XCTAssertTrue(run.isEnabled)
-        // Dismiss the keyboard so the action button is not covered and can be
-        // tapped without the AX scroll-to-visible step that fails under it.
+        // Dismiss the keyboard so the action button is not covered.
         if app.keyboards.count > 0 { app.swipeDown() }
-        run.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(waitUntilGone(app.buttons["Close"], timeout: 15), "task was not accepted")
+        // Wait for the run button to be hittable, then tap it directly (coordinate
+        // taps are unreliable across simulator toolchains).
+        let hittable = NSPredicate(format: "isHittable == true")
+        let runExpectation = XCTNSPredicateExpectation(predicate: hittable, object: run)
+        _ = XCTWaiter.wait(for: [runExpectation], timeout: 10)
+        XCTAssertTrue(run.isHittable, "START AUTONOMOUS TASK is not tappable")
+        run.tap()
+        XCTAssertTrue(waitUntilGone(app.buttons["Close"], timeout: 20), "task was not accepted")
         openScreen("Tasks")
         XCTAssertTrue(app.staticTexts[query].waitForExistence(timeout: 10), "the submitted task never reached the task list")
     }
