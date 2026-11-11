@@ -215,7 +215,6 @@ workflows:
 # --------------------------------------------------------------------------
 # Concept apps (visual design prototypes) — build + UI-test on the simulator
 # --------------------------------------------------------------------------
-workflows:
   concept2-verify:
     name: Concept 2 Verify
     max_build_duration: 60
