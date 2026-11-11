@@ -64,6 +64,7 @@ workflows:
         script: |
           cd "$CM_BUILD_DIR"
           set -e
+          mkdir -p build/ios
           PROJECT=ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
           xcodebuild test -project "$PROJECT" -scheme SuperCraftOSTests \
             -sdk iphonesimulator -destination "platform=iOS Simulator,name=$TEST_SIMULATOR" \
