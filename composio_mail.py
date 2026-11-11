@@ -44,54 +44,98 @@ def composio_key() -> str:
 
 
 def composio_base() -> str:
-    return os.getenv("COMPOSIO_BASE_URL", "https://backend.composio.dev")
+    # The Composio MCP endpoint is the supported route for account-authenticated
+    # tool execution. The legacy v1 REST API and CLI are retired.
+    return os.getenv("COMPOSIO_MCP_URL", "https://connect.composio.dev/mcp")
 
 
 async def _composio_headers() -> Dict[str, str]:
     key = composio_key()
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json, text/event-stream"}
     if key:
-        headers["x-api-key"] = key
+        # MCP clients authenticate with the consumer API key in this header.
+        headers["x-consumer-api-key"] = key
     return headers
 
 
-def _find_composio_cli() -> str:
-    """Locate the composio CLI binary."""
-    for candidate in (
-        os.getenv("COMPOSIO_CLI") or "",
-        "composio",
-        "/root/.local/bin/composio",
-        "/var/lib/supercraftos/autonomous/bin/composio",
-        "/var/lib/supercraftos/autonomous/composio-cli/composio",
-    ):
-        if candidate and (os.path.exists(candidate) or candidate == "composio"):
-            return candidate
-    return "composio"
+def _parse_mcp_sse(raw: bytes) -> List[Any]:
+    """Extract the JSON payloads from an MCP SSE response."""
+    results: List[Any] = []
+    for line in raw.decode("utf-8", "replace").splitlines():
+        line = line.strip()
+        if line.startswith("data: "):
+            payload = line[len("data: "):]
+            try:
+                results.append(json.loads(payload))
+            except (ValueError, json.JSONDecodeError):
+                continue
+    return results
+
+
+async def _mcp_call(method: str, params: Dict[str, Any], request_id: int) -> Any:
+    """Perform a JSON-RPC call over the Composio MCP endpoint."""
+    key = composio_key()
+    if not key:
+        raise RuntimeError("COMPOSIO_API_KEY is required for Composio mail")
+    payload = {"jsonrpc": "2.0", "id": request_id, "method": method, "params": params}
+    async with httpx.AsyncClient(timeout=httpx.Timeout(60, connect=15)) as client:
+        resp = await client.post(composio_base(), headers=await _composio_headers(), json=payload)
+        resp.raise_for_status()
+        messages = _parse_mcp_sse(resp.content)
+        for msg in messages:
+            if msg.get("id") == request_id:
+                if "error" in msg:
+                    raise RuntimeError(f"Composio MCP error: {msg['error']}")
+                return msg.get("result")
+    return None
+
+
+def _extract_text_json(result: Any) -> Any:
+    """MCP tool results carry the JSON payload as text inside content[].text."""
+    if isinstance(result, dict):
+        content = result.get("content") or []
+        for item in content:
+            text = item.get("text") if isinstance(item, dict) else None
+            if isinstance(text, str):
+                try:
+                    return json.loads(text)
+                except (ValueError, json.JSONDecodeError):
+                    continue
+    return result
 
 
 async def composio_list_connected_accounts() -> List[Dict[str, Any]]:
-    """List accounts connected to Composio via the CLI (REST account API is not public).
+    """Return the connected Gmail accounts via the Composio MCP search tool.
 
-    Returns a flat list of connection records with keys: app, status,
-    display_name/alias, id.
+    Returns a list of records with keys: app, status, id, email, alias.
     """
     try:
-        proc = await asyncio.create_subprocess_exec(
-            _find_composio_cli(), "connections", "list",
-            env={**os.environ, "COMPOSIO_QUIET": "1"},
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-        stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=60)
-        data = json.loads(stdout.decode())
+        result = await _mcp_call("tools/call", {
+            "name": "COMPOSIO_SEARCH_TOOLS",
+            "arguments": {"query": "GMAIL_GET_PROFILE"},
+        }, request_id=20)
+        result = _extract_text_json(result)
     except Exception:
         return []
     accounts: List[Dict[str, Any]] = []
-    if isinstance(data, dict):
-        for app, conns in data.items():
-            for c in conns if isinstance(conns, list) else []:
-                if isinstance(c, dict):
-                    accounts.append({**c, "app": app})
+    if not isinstance(result, dict):
+        return accounts
+    data = result.get("data") or {}
+    for status in (data.get("toolkit_connection_statuses") or []):
+        if not status.get("has_active_connection"):
+            continue
+        for acc in status.get("accounts", []):
+            if acc.get("status", "").upper() == "ACTIVE":
+                email = (acc.get("user_info") or {}).get("email", "")
+                accounts.append({
+                    "app": status.get("toolkit", "gmail"),
+                    "status": acc.get("status", "ACTIVE"),
+                    "id": acc.get("id"),
+                    "email": email,
+                    "alias": acc.get("alias"),
+                    "display_name": email,
+                })
     return accounts
 
 
@@ -101,14 +145,13 @@ async def composio_gmail_status() -> Dict[str, Any]:
         return {"provider": "composio", "connected": False, "reason": "COMPOSIO_API_KEY missing"}
     try:
         accounts = await composio_list_connected_accounts()
-        gmail = [a for a in accounts
-                 if a.get("app", "").lower() == "gmail" and a.get("status") == "ACTIVE"]
+        gmail = [a for a in accounts if a.get("app", "").lower() == "gmail"]
         return {
             "provider": "composio",
             "connected": bool(gmail),
             "gmail_accounts": len(gmail),
             "total_accounts": len(accounts),
-            "gmail_addresses": [a.get("display_name") or a.get("alias") for a in gmail if a.get("display_name") or a.get("alias")],
+            "gmail_addresses": [a.get("email") or a.get("alias") for a in gmail if a.get("email") or a.get("alias")],
         }
     except Exception as exc:
         return {"provider": "composio", "connected": False, "reason": type(exc).__name__}
@@ -117,27 +160,44 @@ async def composio_gmail_status() -> Dict[str, Any]:
 async def _first_active_gmail_account() -> Optional[Dict[str, Any]]:
     """Return the first ACTIVE Composio Gmail connection (for account selection)."""
     for account in await composio_list_connected_accounts():
-        if account.get("app", "").lower() == "gmail" and account.get("status") == "ACTIVE":
+        if account.get("app", "").lower() == "gmail" and account.get("status", "").upper() == "ACTIVE":
             return account
     return None
 
 
-async def composio_execute_tool(tool: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
-    """Execute a Composio tool via the CLI (reliable account resolution)."""
+async def _composio_session_id() -> str:
+    """Obtain a reusable session id from the Composio search meta-tool."""
+    result = await _mcp_call("tools/call", {
+        "name": "COMPOSIO_SEARCH_TOOLS",
+        "arguments": {"query": "GMAIL_GET_PROFILE"},
+    }, request_id=22)
+    payload = _extract_text_json(result)
+    session = (payload or {}).get("session") or {}
+    return session.get("id") or "held"
+
+
+async def composio_execute_tool(tool: str, arguments: Dict[str, Any], account_id: Optional[str] = None) -> Dict[str, Any]:
+    """Execute a Composio tool via the MCP multi-execute endpoint using a connected account."""
     if not composio_key():
         raise RuntimeError("COMPOSIO_API_KEY is required for Composio mail")
-    account = await _first_active_gmail_account()
-    if account is None:
+    account = account_id or (await _first_active_gmail_account() or {}).get("id")
+    if not account:
         return {"successful": False, "reason": "No active Gmail connection in Composio"}
-    cli = _find_composio_cli()
+    execution = {"tool_slug": tool, "arguments": arguments or {}, "account": account}
     try:
-        proc = await asyncio.create_subprocess_exec(
-            cli, "execute", tool, "--account", account.get("word_id") or account.get("id"),
-            "-d", json.dumps(arguments),
-            env={**os.environ, "COMPOSIO_QUIET": "1"},
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
+        session_id = await _composio_session_id()
+        result = await _mcp_call("tools/call", {
+            "name": "COMPOSIO_MULTI_EXECUTE_TOOL",
+            "arguments": {"tools": [execution], "session_id": session_id},
+        }, request_id=21)
+        payload = _extract_text_json(result)
+        results = (payload or {}).get("data", {}).get("results", [])
+        if results and results[0].get("response", {}).get("successful"):
+            return {"successful": True, "data": results[0]["response"].get("data")}
+        error = results[0].get("error") if results else (payload or {}).get("error")
+        return {"successful": False, "reason": error or "Execution failed"}
+    except Exception as exc:
+        return {"successful": False, "reason": f"{type(exc).__name__}: {exc}"}
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=90)
         body = json.loads(stdout.decode())
     except Exception as exc:
