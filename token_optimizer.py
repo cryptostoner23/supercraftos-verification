@@ -248,6 +248,10 @@ class TokenOptimizer:
                         payload['reasoning'] = {'enabled': False}
                         if task in {'agent execution', 'acceptance review'}:
                             payload['response_format'] = {'type': 'json_object'}
+                    # Custom OpenAI-compatible routes (e.g. Inception) also need
+                    # structured JSON on agent-execution tasks.
+                    if key_env == 'SUPERCRAFTOS_LLM_API_KEY' and task in {'agent execution', 'acceptance review'}:
+                        payload['response_format'] = {'type': 'json_object'}
                     if key_env == 'NVIDIA_API_KEY':
                         # Review has a bounded JSON verdict. Unbounded hidden
                         # reasoning can consume its entire output budget and
