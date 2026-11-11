@@ -53,6 +53,7 @@ workflows:
         script: |
           cd "$CM_BUILD_DIR"
           set -e
+          mkdir -p build
           # The CLI contract tests invoke the supercraftos-check binary; point
           # them at the freshly built one (same as build_ios.sh does).
           export SUPERCRAFTOS_CLI_BINARY="$(swift build --package-path swift-verification --show-bin-path)/supercraftos-check"
