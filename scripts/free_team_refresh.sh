@@ -14,6 +14,10 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CREDS="$ROOT/.signing/creds.env"
+ONLY_INSTALL=""
+if [ "${1:-}" = "--only-install" ]; then
+  ONLY_INSTALL="${2:-}"
+fi
 [ -f "$CREDS" ] || { echo "missing $CREDS"; exit 1; }
 # shellcheck disable=SC1090
 source "$CREDS"
@@ -31,7 +35,7 @@ fi
 
 export DEVELOPER_DIR="${DEVELOPER_DIR:-/Users/hsk/Downloads/Xcode.app/Contents/Developer}"
 
-echo "==>[1/4] Ensuring iPhone reachable (USB or Wi-Fi)")
+echo "==>[1/4] Ensuring iPhone reachable (USB or Wi-Fi)"
 $DEVELOPER_DIR/usr/bin/devicectl list devices --json 2>/dev/null | grep -q "$DEVICE_UDID" \
   && echo "   device seen" || echo "   WARNING: device not listed; will retry via devicectl discovery"
 
@@ -55,7 +59,9 @@ cp -R "$APP" "$STAGE/Payload/"
 (cd "$STAGE" && zip -r -q "$ROOT/build/SuperCraftOS-signed.ipa" Payload)
 
 echo "==>[4/4] Installing to iPhone (USB or Wi-Fi)"
-$DEVELOPER_DIR/usr/bin/devicectl device install app --device "$DEVICE_UDID" "$ROOT/build/SuperCraftOS-signed.ipa" \
+INSTALL_IPA="$ROOT/build/SuperCraftOS-signed.ipa"
+if [ -n "$ONLY_INSTALL" ]; then INSTALL_IPA="$ONLY_INSTALL"; fi
+$DEVELOPER_DIR/usr/bin/devicectl device install app --device "$DEVICE_UDID" "$INSTALL_IPA" \
   && echo "OK: signed app installed" || echo "FAILED: install (is device unlocked/trusted?)"
 
 echo "done"

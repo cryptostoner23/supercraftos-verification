@@ -7,22 +7,25 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/hsk/scos-repo/scripts/free_team_refresh.sh</string>
+        <string>/Users/hsk/scos-repo/scripts/auto_install_from_codemagic.sh</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
-        <!-- Run at 03:00 daily; the free profile is valid 7 days, so a daily
-             run keeps a fresh signed+installed build within expiry. -->
+        <!-- Daily at 03:00: auto-fetch the latest green Codemagic build,
+             re-sign with the free Personal Team, and reinstall to the iPhone
+             over USB / same Wi-Fi, keeping inside the 7-day profile window. -->
         <key>Hour</key><integer>3</integer>
         <key>Minute</key><integer>0</integer>
     </dict>
+    <key>StartInterval</key>
+    <integer>43200</integer>
     <key>ProcessType</key>
     <string>Background</string>
     <key>RunAtLoad</key>
     <false/>
     <key>StandardOutPath</key>
-    <string>/Users/hsk/scos-repo/build/free_team_refresh.log</string>
+    <string>/Users/hsk/scos-repo/build/auto_install.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/hsk/scos-repo/build/free_team_refresh.log</string>
+    <string>/Users/hsk/scos-repo/build/auto_install.log</string>
 </dict>
 </plist>
