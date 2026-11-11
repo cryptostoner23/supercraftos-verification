@@ -216,19 +216,18 @@ workflows:
 # Concept apps (visual design prototypes) — build + UI-test on the simulator
 # --------------------------------------------------------------------------
 workflows:
-  concept-apps-verify:
-    name: Concept Apps Verify (2 & 6)
-    max_build_duration: 90
+  concept2-verify:
+    name: Concept 2 Verify
+    max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
       xcode: latest
     scripts:
-      - name: Generate both concept Xcode projects
+      - name: Generate Concept 2 Xcode project
         script: |
           command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
-          cd "$CM_BUILD_DIR"
-          (cd ios_concepts/concept2 && xcodegen generate --spec project.yml)
-          (cd ios_concepts/concept6 && xcodegen generate --spec project.yml)
+          cd "$CM_BUILD_DIR/ios_concepts/concept2"
+          xcodegen generate --spec project.yml
       - name: Run Concept 2 UI tests
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept2"
@@ -237,6 +236,22 @@ workflows:
             -destination "platform=iOS Simulator,name=iPhone 16" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept2.log
         test_report: /tmp/concept2.log
+    artifacts:
+      - /tmp/concept2.log
+    publishing: {}
+
+  concept6-verify:
+    name: Concept 6 Verify
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+    scripts:
+      - name: Generate Concept 6 Xcode project
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR/ios_concepts/concept6"
+          xcodegen generate --spec project.yml
       - name: Run Concept 6 UI tests
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept6"
@@ -246,5 +261,5 @@ workflows:
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept6.log
         test_report: /tmp/concept6.log
     artifacts:
-      - /tmp/concept*.log
+      - /tmp/concept6.log
     publishing: {}
