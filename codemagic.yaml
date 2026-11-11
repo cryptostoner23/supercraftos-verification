@@ -231,9 +231,10 @@ workflows:
       - name: Run Concept 2 UI tests
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept2"
+          set -e
           xcodebuild test -project SuperCraftOSConcept2.xcodeproj \
             -scheme Concept2UITests -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 16" \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept2.log
         test_report: /tmp/concept2.log
     artifacts:
@@ -255,9 +256,10 @@ workflows:
       - name: Run Concept 6 UI tests
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept6"
+          set -e
           xcodebuild test -project SuperCraftOSConcept6.xcodeproj \
             -scheme Concept6UITests -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 16" \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee /tmp/concept6.log
         test_report: /tmp/concept6.log
     artifacts:
