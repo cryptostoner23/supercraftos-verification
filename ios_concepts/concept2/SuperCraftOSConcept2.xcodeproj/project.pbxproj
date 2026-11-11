@@ -1,0 +1,190 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A99F35F92F7C7B81BAD3D5CE /* Concept2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DBC224B33ACF8DEC1BC288 /* Concept2App.swift */; };
+		B1B63BDA82C7704677E15933 /* Concept2More.swift in Sources */ = {isa = PBXBuildFile; fileRef = 333C5C2BFD8E7489D68081FE /* Concept2More.swift */; };
+		CF79B30DDDB2E0A3A674FE7D /* Concept2Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86963CB926AEAB9B11E78BE /* Concept2Views.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		333C5C2BFD8E7489D68081FE /* Concept2More.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concept2More.swift; sourceTree = "<group>"; };
+		49DBC224B33ACF8DEC1BC288 /* Concept2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concept2App.swift; sourceTree = "<group>"; };
+		9445AFFC2B426B8CE03A857B /* SuperCraftOSConcept2.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SuperCraftOSConcept2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B86963CB926AEAB9B11E78BE /* Concept2Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Concept2Views.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		11C2DBF8878EF4857F4A9DF4 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				49DBC224B33ACF8DEC1BC288 /* Concept2App.swift */,
+				333C5C2BFD8E7489D68081FE /* Concept2More.swift */,
+				B86963CB926AEAB9B11E78BE /* Concept2Views.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		1EF1D99401C525A99A58179A = {
+			isa = PBXGroup;
+			children = (
+				11C2DBF8878EF4857F4A9DF4 /* Sources */,
+				43ABE4B5961DDE833F0B39A2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		43ABE4B5961DDE833F0B39A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9445AFFC2B426B8CE03A857B /* SuperCraftOSConcept2.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DD3FDB489101C02335696DBC /* SuperCraftOSConcept2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51762F070D3F4C482813C9C3 /* Build configuration list for PBXNativeTarget "SuperCraftOSConcept2" */;
+			buildPhases = (
+				06356374303AFE7357C211B1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SuperCraftOSConcept2;
+			packageProductDependencies = (
+			);
+			productName = SuperCraftOSConcept2;
+			productReference = 9445AFFC2B426B8CE03A857B /* SuperCraftOSConcept2.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8F9801240DA4A1E9AC2DD4A5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					DD3FDB489101C02335696DBC = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 20E319728A800FD1D27781D9 /* Build configuration list for PBXProject "SuperCraftOSConcept2" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 1EF1D99401C525A99A58179A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 54;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DD3FDB489101C02335696DBC /* SuperCraftOSConcept2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		06356374303AFE7357C211B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A99F35F92F7C7B81BAD3D5CE /* Concept2App.swift in Sources */,
+				B1B63BDA82C7704677E15933 /* Concept2More.swift in Sources */,
+				CF79B30DDDB2E0A3A674FE7D /* Concept2Views.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2769E8CF45272512DF99E381 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Concept 2";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.supercraftos.concept2;
+				PRODUCT_NAME = SuperCraftOSConcept2;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		685CE0A83360932AF64F99AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		893CA3F0A9434A931AD7469E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		D9F7DD69237F9C907F1B74C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Concept 2";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.supercraftos.concept2;
+				PRODUCT_NAME = SuperCraftOSConcept2;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		20E319728A800FD1D27781D9 /* Build configuration list for PBXProject "SuperCraftOSConcept2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				893CA3F0A9434A931AD7469E /* Debug */,
+				685CE0A83360932AF64F99AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		51762F070D3F4C482813C9C3 /* Build configuration list for PBXNativeTarget "SuperCraftOSConcept2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9F7DD69237F9C907F1B74C9 /* Debug */,
+				2769E8CF45272512DF99E381 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8F9801240DA4A1E9AC2DD4A5 /* Project object */;
+}
