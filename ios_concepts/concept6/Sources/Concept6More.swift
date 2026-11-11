@@ -1,79 +1,143 @@
 import SwiftUI
 
-// MARK: - Tasks
+// MARK: - Tasks (real jobs)
 struct NeuralTasksView: View {
-    @State private var tasks = [
-        NeuralTask(title: "Research funding routes", status: .running, progress: 0.7),
-        NeuralTask(title: "Draft Q3 proposal", status: .done, progress: 1.0),
-        NeuralTask(title: "Compose follow-up", status: .queued, progress: 0),
-    ]
+    @EnvironmentObject private var backend: Concept6Backend
+    @State private var query = ""
+
+    var filtered: [Job] {
+        query.isEmpty ? backend.jobs : backend.jobs.filter { $0.query.localizedCaseInsensitiveContains(query) }
+    }
+
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(tasks) { t in
-                    NavigationLink {
-                        NeuralTaskDetailView(task: t)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text(t.title).font(.headline).foregroundStyle(Neural.ink)
-                                Spacer()
-                                Text(t.status.rawValue.uppercased())
-                                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                    .padding(.horizontal, 8).padding(.vertical, 4)
-                                    .background(t.status.color.opacity(0.16), in: Capsule())
-                                    .foregroundStyle(t.status.color)
+            Group {
+                if filtered.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass").font(.largeTitle).foregroundStyle(Neural.muted)
+                        Text("No matching tasks").font(.headline)
+                        Text("Try a different search.").font(.subheadline).foregroundStyle(Neural.muted)
+                        Button("Clear search") { query = "" }.buttonStyle(.bordered)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    List {
+                        ForEach(filtered) { job in
+                            NavigationLink {
+                                NeuralTaskDetailView(job: job)
+                            } label: {
+                                NeuralJobRow(job: job)
                             }
-                            ProgressView(value: t.progress).tint(Neural.accent)
                         }
-                        .padding(.vertical, 6)
                     }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            tasks.removeAll { $0.id == t.id }
-                        } label: { Label("Delete", systemImage: "trash") }
-                    }
+                    .listStyle(.plain).scrollContentBackground(.hidden)
+                    .refreshable { await backend.refresh() }
                 }
             }
-            .listStyle(.plain).scrollContentBackground(.hidden)
             .background(Neural.bg)
+            .searchable(text: $query, prompt: "Search tasks")
             .navigationTitle("Tasks")
         }
     }
 }
 
+struct NeuralJobRow: View {
+    let job: Job
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(job.query).font(.headline).foregroundStyle(Neural.ink)
+                    .lineLimit(2)
+                Spacer()
+                Text(job.status.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(NeuralJobColor.color(job.statusColorName).opacity(0.16), in: Capsule())
+                    .foregroundStyle(NeuralJobColor.color(job.statusColorName))
+            }
+            HStack(spacing: 12) {
+                Text("\(job.steps) steps").font(.caption.monospaced()).foregroundStyle(Neural.muted)
+                if let s = job.summary {
+                    Text(s).font(.caption).foregroundStyle(Neural.muted).lineLimit(1)
+                }
+            }
+        }
+        .padding(.vertical, 6)
+    }
+}
+
 struct NeuralTaskDetailView: View {
-    let task: NeuralTask
-    let steps = ["Decompose", "Recall", "Execute", "Draft", "Verify"]
+    let job: Job
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 NeuralPanel {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text(task.title).font(.title3.bold()).foregroundStyle(Neural.ink)
+                            Text(job.query).font(.title3.bold()).foregroundStyle(Neural.ink)
                             Spacer()
-                            Text(task.status.rawValue.uppercased())
+                            Text(job.status.uppercased())
                                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                                 .padding(.horizontal, 8).padding(.vertical, 4)
-                                .background(task.status.color.opacity(0.16), in: Capsule())
-                                .foregroundStyle(task.status.color)
+                                .background(NeuralJobColor.color(job.statusColorName).opacity(0.16), in: Capsule())
+                                .foregroundStyle(NeuralJobColor.color(job.statusColorName))
                         }
-                        ProgressView(value: task.progress).tint(Neural.accent)
-                        Text("\(Int(task.progress * 100))%").font(.caption.monospaced()).foregroundStyle(Neural.muted)
+                        Text("\(job.steps) steps · started \(formatted(job.created))")
+                            .font(.caption.monospaced()).foregroundStyle(Neural.muted)
                     }
                 }
-                NeuralPanel {
-                    VStack(alignment: .leading, spacing: 10) {
-                        NeuralMono(text: "EXECUTION LEDGER")
-                        ForEach(Array(steps.enumerated()), id: \.offset) { i, s in
-                            HStack(spacing: 10) {
-                                Image(systemName: i < (task.status == .done ? steps.count : min(task.status == .running ? 2 : 0, steps.count)) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(i < (task.status == .done ? steps.count : min(task.status == .running ? 2 : 0, steps.count)) ? Neural.ok : (i == 2 && task.status == .running ? Neural.accent : Neural.muted))
-                                Text(s).font(.subheadline).foregroundStyle(Neural.ink)
-                                Spacer()
-                                if i == 2 && task.status == .running {
-                                    Text("LIVE").font(.caption2.monospaced().bold()).foregroundStyle(Neural.accent)
+                if let plan = job.result?.plan, !plan.isEmpty {
+                    NeuralPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            NeuralMono(text: "EXECUTION PLAN")
+                            ForEach(Array(plan.enumerated()), id: \.offset) { i, s in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "circle").foregroundStyle(Neural.accent)
+                                    Text(s).font(.subheadline).foregroundStyle(Neural.ink)
+                                }
+                            }
+                        }
+                    }
+                }
+                if let checks = job.result?.checks, !checks.isEmpty {
+                    NeuralPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            NeuralMono(text: "CHECKS")
+                            ForEach(checks, id: \.command) { c in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: (c.exitCode == 0) ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                        .foregroundStyle((c.exitCode == 0) ? Neural.ok : Neural.danger)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(c.command).font(.caption.monospaced()).foregroundStyle(Neural.ink)
+                                        if let o = c.output {
+                                            Text(o).font(.caption2.monospaced()).foregroundStyle(Neural.muted).lineLimit(3)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if let s = job.summary {
+                    NeuralPanel {
+                        VStack(alignment: .leading, spacing: 8) {
+                            NeuralMono(text: "SUMMARY")
+                            Text(s).font(.subheadline).foregroundStyle(Neural.ink)
+                        }
+                    }
+                }
+                if let files = job.result?.files, !files.isEmpty {
+                    NeuralPanel {
+                        VStack(alignment: .leading, spacing: 8) {
+                            NeuralMono(text: "ARTIFACTS")
+                            ForEach(files, id: \.path) { f in
+                                HStack {
+                                    Image(systemName: "doc.text").foregroundStyle(Neural.accent)
+                                    Text(f.path).font(.caption.monospaced()).foregroundStyle(Neural.ink)
+                                    Spacer()
+                                    if let b = f.bytes {
+                                        Text("\(b)B").font(.caption2.monospaced()).foregroundStyle(Neural.muted)
+                                    }
                                 }
                             }
                         }
@@ -85,6 +149,11 @@ struct NeuralTaskDetailView: View {
         .background(Neural.bg)
         .navigationTitle("Task detail")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    private func formatted(_ ts: Double) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "MMM d, HH:mm"
+        return f.string(from: Date(timeIntervalSince1970: ts))
     }
 }
 
@@ -106,7 +175,7 @@ struct NeuralMeView: View {
                                 Text("Predictive, proactive memory").font(.caption).foregroundStyle(Neural.muted)
                             }
                             Spacer()
-                            if let e = backend.error {
+                            if let e = backend.error, !backend.connected {
                                 Text("⚠︎").foregroundStyle(Neural.danger)
                             } else {
                                 PulseDot(color: backend.loading ? Neural.warn : Neural.ok)
@@ -117,11 +186,19 @@ struct NeuralMeView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             NeuralMono(text: "LIVE PROFILE")
                             HStack {
-                                statBlock("\(backend.memoryCount)", "memories")
-                                statBlock("\(backend.playbookCount)", "playbooks")
+                                statBlock("\(backend.memoryEntries)", "memories")
+                                statBlock("\(backend.playbooks)", "playbooks")
                             }
-                            if let e = backend.error {
-                                Text(e).font(.caption).foregroundStyle(Neural.danger)
+                            if !backend.brainProfile.isEmpty {
+                                Text(backend.brainProfile).font(.subheadline).foregroundStyle(Neural.ink)
+                            }
+                        }
+                    }
+                    if !backend.brainTopics.isEmpty {
+                        NeuralPanel {
+                            VStack(alignment: .leading, spacing: 10) {
+                                NeuralMono(text: "TOPICS")
+                                NeuralChips(items: backend.brainTopics)
                             }
                         }
                     }
@@ -129,22 +206,32 @@ struct NeuralMeView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             NeuralMono(text: "MEMORY")
                             if backend.memories.isEmpty {
-                                ForEach(0..<3, id: \.self) { i in
+                                Text("No notes ingested yet.").font(.subheadline).foregroundStyle(Neural.muted)
+                            } else {
+                                ForEach(backend.memories.prefix(6)) { m in
                                     HStack(alignment: .top, spacing: 10) {
                                         Image(systemName: "brain").foregroundStyle(Neural.accent)
                                         VStack(alignment: .leading, spacing: 2) {
-                                            Text(["Prefers concise SwiftUI answers.", "Acme Q3 proposal in progress.", "Uses aloop.agent@gmail.com."][i])
-                                                .font(.subheadline).foregroundStyle(Neural.ink)
-                                            Text("confidence \(0.9 - Double(i) * 0.08)")
-                                                .font(.caption2.monospaced()).foregroundStyle(Neural.muted)
+                                            Text(m.note).font(.subheadline).foregroundStyle(Neural.ink)
+                                            Text(m.notebook ?? "").font(.caption2.monospaced()).foregroundStyle(Neural.muted)
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                    NeuralPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            NeuralMono(text: "PLAYBOOKS")
+                            if backend.playbookList.isEmpty {
+                                Text("No playbooks yet.").font(.subheadline).foregroundStyle(Neural.muted)
                             } else {
-                                ForEach(backend.memories, id: \.self) { note in
-                                    HStack(alignment: .top, spacing: 10) {
-                                        Image(systemName: "brain").foregroundStyle(Neural.accent)
-                                        Text(note).font(.subheadline).foregroundStyle(Neural.ink)
+                                ForEach(backend.playbookList.prefix(4)) { pb in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(pb.title).font(.subheadline.bold()).foregroundStyle(Neural.ink)
+                                        if let when = pb.when {
+                                            Text(when).font(.caption).foregroundStyle(Neural.muted)
+                                        }
                                     }
                                 }
                             }
@@ -164,44 +251,63 @@ struct NeuralMeView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    private func intentRow(_ name: String, _ v: Double) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(name).font(.subheadline).foregroundStyle(Neural.ink)
-                Spacer()
-                Text("\(Int(v * 100))%").font(.caption.monospaced()).foregroundStyle(Neural.muted)
+}
+
+struct NeuralChips: View {
+    let items: [String]
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], alignment: .leading, spacing: 8) {
+            ForEach(items, id: \.self) { item in
+                Text(item)
+                    .font(.caption).foregroundStyle(Neural.ink)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Neural.surface2, in: Capsule())
             }
-            ProgressView(value: v).tint(Neural.accent)
         }
     }
 }
 
 // MARK: - Lab
 struct NeuralLabView: View {
+    @EnvironmentObject private var backend: Concept6Backend
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     NeuralPanel {
                         VStack(alignment: .leading, spacing: 8) {
-                            NeuralMono(text: "PRODUCT LAB")
-                            Text("Enclosure v3").font(.title3.bold()).foregroundStyle(Neural.ink)
-                            Text("STEP → STL → DXF").font(.caption.monospaced()).foregroundStyle(Neural.muted)
-                        }
-                    }
-                    NeuralPanel {
-                        VStack(alignment: .leading, spacing: 8) {
-                            NeuralMono(text: "GRANTS")
-                            Text("3 programme routes").font(.headline).foregroundStyle(Neural.ink)
-                            Text("Deadline 02 Dec 2026").font(.caption.monospaced()).foregroundStyle(Neural.muted)
+                            NeuralMono(text: "CAPABILITIES")
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(backend.capabilities) { cap in
+                                    HStack(alignment: .top, spacing: 10) {
+                                        PulseDot(color: cap.enabled ? Neural.ok : Neural.muted)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(cap.name).font(.subheadline.bold()).foregroundStyle(Neural.ink)
+                                            if let f = cap.features {
+                                                Text(f).font(.caption).foregroundStyle(Neural.muted)
+                                            }
+                                            Text("\(cap.runs) runs · \(Int(cap.routingScore * 100))% route")
+                                                .font(.caption2.monospaced()).foregroundStyle(Neural.muted)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     NeuralPanel {
                         VStack(alignment: .leading, spacing: 8) {
                             NeuralMono(text: "INTEGRATIONS")
-                            row("Gmail", connected: true)
-                            row("Composio", connected: true)
-                            row("Notion", connected: false)
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(backend.integrationList) { int in
+                                    HStack {
+                                        Text(int.name).font(.subheadline).foregroundStyle(Neural.ink)
+                                        Spacer()
+                                        Text(int.status.replacingOccurrences(of: "_", with: " ").uppercased())
+                                            .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                            .foregroundStyle(int.status == "connected" || int.status == "configured" ? Neural.ok : Neural.muted)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -211,18 +317,12 @@ struct NeuralLabView: View {
             .navigationTitle("Lab")
         }
     }
-    private func row(_ name: String, connected: Bool) -> some View {
-        HStack {
-            Text(name).font(.subheadline).foregroundStyle(Neural.ink)
-            Spacer()
-            PulseDot(color: connected ? Neural.ok : Neural.muted)
-        }
-    }
 }
 
 // MARK: - More
 struct NeuralMoreView: View {
     @Binding var offline: Bool
+    @EnvironmentObject private var backend: Concept6Backend
     var body: some View {
         NavigationStack {
             List {
@@ -230,8 +330,20 @@ struct NeuralMoreView: View {
                     Toggle(isOn: $offline) { Label("Simulate offline", systemImage: "wifi.slash") }
                         .tint(Neural.accent)
                 }
+                Section("Connection") {
+                    HStack {
+                        Label("Backend", systemImage: "network")
+                        Spacer()
+                        Text(backend.connected ? "connected" : "offline")
+                            .font(.caption.monospaced()).foregroundStyle(backend.connected ? Neural.ok : Neural.danger)
+                    }
+                    HStack {
+                        Label("Runtime", systemImage: "cpu")
+                        Spacer()
+                        Text(backend.runtime).font(.caption.monospaced()).foregroundStyle(Neural.muted)
+                    }
+                }
                 Section("Settings") {
-                    Label("Connection", systemImage: "network")
                     Label("Keyboard", systemImage: "keyboard")
                     Label("Billing", systemImage: "creditcard")
                 }

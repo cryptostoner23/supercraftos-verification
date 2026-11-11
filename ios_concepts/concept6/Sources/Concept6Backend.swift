@@ -1,49 +1,149 @@
 import SwiftUI
 import Foundation
 
+struct Concept6BackendConfig {
+    static var accessKey: String {
+        (Bundle.main.object(forInfoDictionaryKey: "SUPERCRAFTOS_ACCESS_KEY") as? String) ?? ""
+    }
+}
+
 @MainActor
 final class Concept6Backend: ObservableObject {
-    @Published var status: String = "offline"
-    @Published var workers: Int = 0
-    @Published var memoryCount: Int = 0
-    @Published var playbookCount: Int = 0
-    @Published var memories: [String] = []
-    @Published var loading = true
+    @Published var connected = false
     @Published var error: String?
 
-    private let service: BackendService
+    @Published var runtime = "unknown"
+    @Published var tools = 0
+    @Published var integrations = 0
+    @Published var healthyIntegrations = 0
+    @Published var workflows = 0
+    @Published var awaitingApproval = 0
+    @Published var usageRequests = 0
+    @Published var usageTokens = 0
+    @Published var usageCost = 0.0
+    @Published var agentBrain = false
+
+    @Published var jobs: [Job] = []
+
+    @Published var memoryEntries = 0
+    @Published var playbooks = 0
+    @Published var brainProfile = ""
+    @Published var brainTopics: [String] = []
+    @Published var brainIntents: [String] = []
+    @Published var memories: [MemoryEntry] = []
+    @Published var playbookList: [Playbook] = []
+
+    @Published var capabilities: [Capability] = []
+    @Published var integrationList: [Integration] = []
+
+    @Published var loading = true
+
+    private let service: APIClient
+
     init(accessKey: String) {
-        service = BackendService(accessKey: accessKey)
+        service = APIClient(accessKey: accessKey)
     }
 
     func refresh() async {
         loading = true
         defer { loading = false }
         do {
-            let statusData = try await service.get("/api/status")
-            if let obj = try JSONSerialization.jsonObject(with: statusData) as? [String: Any] {
-                workers = obj["agents"] as? Int ?? 0
-                status = obj["status"] as? String ?? "online"
-            }
-            let profileData = try await service.get("/api/digital_me/profile")
-            if let obj = try JSONSerialization.jsonObject(with: profileData) as? [String: Any] {
-                memoryCount = obj["memory_entries"] as? Int ?? 0
-                playbookCount = obj["playbooks"] as? Int ?? 0
-            }
-            let memData = try await service.get("/api/digital_me/memory?query=recent")
-            if let obj = try JSONSerialization.jsonObject(with: memData) as? [String: Any],
-               let entries = obj["entries"] as? [[String: Any]] {
-                memories = entries.prefix(5).compactMap { $0["note"] as? String }
-            }
+            let status = try await service.get("/api/status")
+            let st = try JSONDecoder().decode(SystemStatus.self, from: status)
+            runtime = st.runtime
+            tools = st.tools
+            integrations = st.integrations
+            healthyIntegrations = st.healthyIntegrations
+            workflows = st.workflows
+            awaitingApproval = st.awaitingApproval
+            agentBrain = st.agentBrain
+            usageRequests = st.usage.requests
+            usageTokens = st.usage.inputTokens + st.usage.outputTokens
+            usageCost = st.usage.costUSD
+
+            await loadJobs()
+            await loadDigitalMe()
+            await loadLab()
+
+            connected = true
             error = nil
         } catch {
-            self.error = "Backend unreachable: \(error.localizedDescription)"
+            connected = false
+            self.error = error.localizedDescription
         }
     }
-}
 
-struct Concept6BackendConfig {
-    static var accessKey: String {
-        (Bundle.main.object(forInfoDictionaryKey: "SUPERCRAFTOS_ACCESS_KEY") as? String) ?? ""
+    private func loadJobs() async {
+        do {
+            let data = try await service.get("/api/jobs?limit=20")
+            if let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let arr = obj["jobs"] as? [[String: Any]] {
+                let j = try JSONSerialization.data(withJSONObject: arr)
+                jobs = try JSONDecoder().decode([Job].self, from: j)
+            }
+        } catch {
+            jobs = []
+        }
+    }
+
+    private func loadDigitalMe() async {
+        do {
+            let profileData = try await service.get("/api/digital_me/profile")
+            let prof = try JSONDecoder().decode(GameProfile.self, from: profileData)
+            memoryEntries = prof.memoryEntries
+            playbooks = prof.playbooks
+
+            let brainData = try await service.get("/api/digital_me/brain/status")
+            let brain = try JSONDecoder().decode(BrainStatus.self, from: brainData)
+            brainProfile = brain.understanding?.profile ?? "No synthesis yet. Ingest notes to teach Digital Me."
+            brainTopics = brain.understanding?.topics ?? []
+            brainIntents = brain.understanding?.intents ?? []
+
+            let memData = try await service.get("/api/notes?limit=10")
+            if let obj = try JSONSerialization.jsonObject(with: memData) as? [String: Any],
+               let arr = obj["notes"] as? [[String: Any]] {
+                let d = try JSONSerialization.data(withJSONObject: arr)
+                memories = try JSONDecoder().decode([MemoryEntry].self, from: d)
+            }
+
+            let pbData = try await service.get("/api/agent/memory")
+            if let obj = try JSONSerialization.jsonObject(with: pbData) as? [String: Any],
+               let arr = obj["playbooks"] as? [[String: Any]] {
+                let d = try JSONSerialization.data(withJSONObject: arr)
+                playbookList = try JSONDecoder().decode([Playbook].self, from: d)
+            }
+        } catch {
+            // Best-effort.
+        }
+    }
+
+    private func loadLab() async {
+        do {
+            let capData = try await service.get("/api/capabilities")
+            if let obj = try JSONSerialization.jsonObject(with: capData) as? [String: Any],
+               let arr = obj["capabilities"] as? [[String: Any]] {
+                let d = try JSONSerialization.data(withJSONObject: arr)
+                capabilities = try JSONDecoder().decode([Capability].self, from: d)
+            }
+            let intData = try await service.get("/api/integrations")
+            if let obj = try JSONSerialization.jsonObject(with: intData) as? [String: Any],
+               let arr = obj["integrations"] as? [[String: Any]] {
+                let d = try JSONSerialization.data(withJSONObject: arr)
+                integrationList = try JSONDecoder().decode([Integration].self, from: d)
+            }
+        } catch {
+            // Best-effort.
+        }
+    }
+
+    func dispatchJob(_ prompt: String) async -> Bool {
+        do {
+            _ = try await service.post("/api/jobs", body: ["query": prompt])
+            await refresh()
+            return true
+        } catch {
+            self.error = error.localizedDescription
+            return false
+        }
     }
 }

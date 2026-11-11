@@ -47,29 +47,25 @@ struct PulseDot: View {
     }
 }
 
-// MARK: - Models
-struct NeuralRun: Identifiable {
-    let id = UUID()
-    let name: String
-    var step = 0
-    let steps = ["Decompose", "Recall", "Execute", "Draft", "Verify"]
-    var active = true
-    var started = Date()
+enum NeuralJobColor {
+    static func color(_ name: String) -> Color {
+        switch name {
+        case "ok": return Neural.ok
+        case "danger": return Neural.danger
+        case "accent": return Neural.accent
+        default: return Neural.muted
+        }
+    }
 }
 
-struct NeuralTask: Identifiable {
-    let id = UUID()
-    let title: String
-    let status: NeuralStatus
-    let progress: Double
-}
 enum NeuralStatus: String {
-    case running = "Running", done = "Done", queued = "Queued"
+    case running = "Running", done = "Done", queued = "Queued", failed = "Failed"
     var color: Color {
         switch self {
         case .running: return Neural.accent
         case .done: return Neural.ok
         case .queued: return Neural.muted
+        case .failed: return Neural.danger
         }
     }
 }
@@ -82,10 +78,10 @@ struct Concept6Root: View {
     var body: some View {
         TabView(selection: $tab) {
             NeuralMissionView(offline: $offline).environmentObject(backend).tabItem { Label("Mission", systemImage: "point.3.connected.trianglepath.dotted") }.tag(0)
-            NeuralTasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
+            NeuralTasksView().environmentObject(backend).tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
             NeuralMeView().environmentObject(backend).tabItem { Label("Me", systemImage: "brain.head.profile") }.tag(2)
-            NeuralLabView().tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
-            NeuralMoreView(offline: $offline).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
+            NeuralLabView().environmentObject(backend).tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
+            NeuralMoreView(offline: $offline).environmentObject(backend).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
         }
         .tint(Neural.accent)
         .preferredColorScheme(.dark)
@@ -107,7 +103,7 @@ struct NeuralOfflineBanner: View {
 // MARK: - Mission
 struct NeuralMissionView: View {
     @Binding var offline: Bool
-    @State private var runs = [NeuralRun(name: "Atlas", step: 3), NeuralRun(name: "Aria", step: 1)]
+    @EnvironmentObject private var backend: Concept6Backend
     @State private var showCompose = false
 
     var body: some View {
@@ -116,8 +112,20 @@ struct NeuralMissionView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     Text("Command Dashboard").font(.largeTitle.bold())
                     NeuralMono(text: "MISSION / NEURAL CORE")
-                    topologyCard
-                    runGrid
+
+                    if let err = backend.error, !backend.connected {
+                        NeuralPanel {
+                            VStack(alignment: .leading, spacing: 8) {
+                                NeuralMono(text: "CONNECTION")
+                                Text(err).font(.subheadline).foregroundStyle(Neural.danger)
+                                Button("Retry") { Task { await backend.refresh() } }
+                                    .buttonStyle(.bordered).tint(Neural.accent)
+                            }
+                        }
+                    }
+
+                    statusCard
+                    usageCard
                     feedCard
                 }
                 .padding(16)
@@ -135,52 +143,44 @@ struct NeuralMissionView: View {
                 .padding(.horizontal, 16).padding(.bottom, 8)
                 .disabled(offline)
             }
-            .sheet(isPresented: $showCompose) { NeuralComposeSheet { run in withAnimation { runs.insert(run, at: 0) } } }
-        }
-    }
-
-    private var topologyCard: some View {
-        NeuralPanel {
-            VStack(alignment: .leading, spacing: 12) {
-                NeuralMono(text: "LIVE TOPOLOGY")
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16).fill(Neural.surface2)
-                    Canvas { ctx, size in
-                        let c = CGPoint(x: size.width / 2, y: size.height / 2)
-                        for i in 0..<6 {
-                            let a = Double(i) / 6 * 2 * .pi
-                            let p = CGPoint(x: c.x + cos(a) * 60, y: c.y + sin(a) * 60)
-                            var path = Path(); path.move(to: c); path.addLine(to: p)
-                            ctx.stroke(path, with: .color(Neural.accent.opacity(0.3)), lineWidth: 1)
-                            ctx.fill(Path(ellipseIn: CGRect(x: p.x - 4, y: p.y - 4, width: 8, height: 8)), with: .color(Neural.accent))
-                        }
-                        ctx.fill(Path(ellipseIn: CGRect(x: c.x - 7, y: c.y - 7, width: 14, height: 14)), with: .color(Neural.accent))
+            .sheet(isPresented: $showCompose) {
+                NeuralComposeSheet { prompt in
+                    Task {
+                        _ = await backend.dispatchJob(prompt)
                     }
-                    .frame(height: 140)
                 }
             }
         }
     }
 
-    private var runGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            ForEach(runs.prefix(4)) { run in
-                NeuralPanel {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            PulseDot(color: offline ? Neural.muted : Neural.accent)
-                            NeuralMono(text: run.name.uppercased())
-                            Spacer()
-                            Text(run.active ? "RUN" : "IDLE")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .foregroundStyle(offline ? Neural.muted : Neural.accent)
-                        }
-                        Text(run.steps[min(run.step, run.steps.count - 1)])
-                            .font(.callout.weight(.medium)).foregroundStyle(Neural.ink)
-                        TimelineView(.periodic(from: run.started, by: 1)) { ctx in
-                            NeuralMono(text: "ELAPSED \(Int(ctx.date.timeIntervalSince(run.started)))s")
-                        }
-                    }
+    private var statusCard: some View {
+        NeuralPanel {
+            VStack(alignment: .leading, spacing: 12) {
+                NeuralMono(text: "LIVE SYSTEM")
+                HStack(spacing: 16) {
+                    statBlock("\(backend.tools)", "tools")
+                    statBlock("\(backend.integrations)", "integrations")
+                    statBlock("\(backend.healthyIntegrations)", "healthy")
+                    statBlock("\(backend.workflows)", "workflows")
+                }
+                HStack {
+                    NeuralMono(text: "RUNTIME")
+                    Spacer()
+                    PulseDot(color: backend.runtime == "running" ? Neural.ok : Neural.warn)
+                    Text(backend.runtime.uppercased()).font(.caption.monospaced()).foregroundStyle(Neural.ink)
+                }
+            }
+        }
+    }
+
+    private var usageCard: some View {
+        NeuralPanel {
+            VStack(alignment: .leading, spacing: 10) {
+                NeuralMono(text: "USAGE")
+                HStack {
+                    statSmall("Requests", "\(backend.usageRequests)")
+                    statSmall("Tokens", "\(backend.usageTokens)")
+                    statSmall("Cost", String(format: "$%.2f", backend.usageCost))
                 }
             }
         }
@@ -189,29 +189,50 @@ struct NeuralMissionView: View {
     private var feedCard: some View {
         NeuralPanel {
             VStack(alignment: .leading, spacing: 10) {
-                NeuralMono(text: "EXECUTION FEED")
-                ForEach(0..<3, id: \.self) { i in
-                    HStack(spacing: 8) {
-                        Image(systemName: ["network", "doc.text", "checkmark.circle"][i])
-                            .foregroundStyle(Neural.accent)
-                        Text(["Fetched 4 sources", "Synthesized findings", "Verification passed"][i])
-                            .font(.subheadline).foregroundStyle(Neural.ink)
-                        Spacer()
-                        Text(String(format: "%.1fs", Double.random(in: 0.4...2.4)))
-                            .font(.caption.monospaced()).foregroundStyle(Neural.muted)
+                NeuralMono(text: "RECENT TASKS")
+                if backend.jobs.isEmpty {
+                    Text("No tasks yet.").font(.subheadline).foregroundStyle(Neural.muted)
+                } else {
+                    ForEach(backend.jobs.prefix(3)) { job in
+                        HStack(spacing: 8) {
+                            Image(systemName: job.isRunning ? "bolt.fill" : (job.isCompleted ? "checkmark.circle.fill" : "circle"))
+                                .foregroundStyle(NeuralJobColor.color(job.statusColorName))
+                            Text(job.query).font(.subheadline).foregroundStyle(Neural.ink)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(job.status.uppercased())
+                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                .foregroundStyle(NeuralJobColor.color(job.statusColorName))
+                        }
                     }
                 }
             }
         }
     }
+
+    private func statBlock(_ v: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(v).font(.system(size: 24, weight: .bold, design: .rounded)).foregroundStyle(Neural.accent)
+            Text(label).font(.caption).foregroundStyle(Neural.muted)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func statSmall(_ label: String, _ v: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label).font(.caption).foregroundStyle(Neural.muted)
+            Text(v).font(.headline.monospaced()).foregroundStyle(Neural.ink)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 }
 
-// MARK: - Compose
+// MARK: - Compose (dispatches a real job)
 struct NeuralComposeSheet: View {
     @Environment(\.dismiss) private var dismiss
-    let onRun: (NeuralRun) -> Void
+    let onDispatch: (String) -> Void
     @State private var prompt = ""
-    @State private var agent = "Atlas"
+    @State private var submitting = false
 
     var body: some View {
         NavigationStack {
@@ -220,18 +241,16 @@ struct NeuralComposeSheet: View {
                 TextEditor(text: $prompt)
                     .frame(height: 120).scrollContentBackground(.hidden).padding(10)
                     .background(RoundedRectangle(cornerRadius: 14).fill(Neural.surface2))
-                Picker("Agent", selection: $agent) {
-                    Text("Atlas").tag("Atlas")
-                    Text("Aria").tag("Aria")
-                }
-                .pickerStyle(.segmented)
                 Button {
-                    onRun(NeuralRun(name: agent, step: 0)); dismiss()
+                    submitting = true
+                    onDispatch(prompt)
+                    dismiss()
                 } label: {
-                    Text("Dispatch run").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 12)
+                    Text(submitting ? "Dispatching…" : "Dispatch run")
+                        .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 12)
                 }
                 .buttonStyle(.borderedProminent).tint(Neural.accent)
-                .disabled(prompt.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(prompt.trimmingCharacters(in: .whitespaces).isEmpty || submitting)
             }
             .padding(20).background(Neural.bg)
             .navigationTitle("New task").navigationBarTitleDisplayMode(.inline)

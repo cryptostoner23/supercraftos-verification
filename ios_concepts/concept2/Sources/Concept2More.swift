@@ -1,16 +1,12 @@
 import SwiftUI
 
-// MARK: - Tasks
+// MARK: - Tasks (real jobs)
 struct TasksView: View {
-    @State private var tasks = [
-        TaskItem(title: "Draft Q3 proposal", status: .running, progress: 0.62, evidence: ["drive.pdf", "notes"]),
-        TaskItem(title: "Verify grant deadlines", status: .done, progress: 1.0, evidence: ["web"]),
-        TaskItem(title: "Compose client follow-up", status: .queued, progress: 0, evidence: []),
-    ]
+    @EnvironmentObject private var backend: Concept2Backend
     @State private var query = ""
 
-    var filtered: [TaskItem] {
-        query.isEmpty ? tasks : tasks.filter { $0.title.localizedCaseInsensitiveContains(query) }
+    var filtered: [Job] {
+        query.isEmpty ? backend.jobs : backend.jobs.filter { $0.query.localizedCaseInsensitiveContains(query) }
     }
 
     var body: some View {
@@ -26,28 +22,17 @@ struct TasksView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
-                        ForEach(filtered) { task in
+                        ForEach(filtered) { job in
                             NavigationLink {
-                                TaskDetailView(task: task)
+                                TaskDetailView(job: job)
                             } label: {
-                                TaskRow(task: task)
-                            }
-                            .swipeActions {
-                                Button(role: .destructive) {
-                                    tasks.removeAll { $0.id == task.id }
-                                } label: { Label("Delete", systemImage: "trash") }
-                                Button {
-                                    if let i = tasks.firstIndex(where: { $0.id == task.id }) {
-                                        tasks[i].paused.toggle()
-                                    }
-                                } label: { Label(task.paused ? "Resume" : "Pause", systemImage: task.paused ? "play" : "pause") }
-                                .tint(Tactical.accent)
+                                JobRow(job: job)
                             }
                         }
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
-                    .refreshable { _ = (0..<2).map { _ in } ; await Task.sleep(600_000_000) }
+                    .refreshable { await backend.refresh() }
                 }
             }
             .background(Tactical.bg)
@@ -57,28 +42,24 @@ struct TasksView: View {
     }
 }
 
-struct TaskRow: View {
-    let task: TaskItem
+struct JobRow: View {
+    let job: Job
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(task.title).font(.headline).foregroundStyle(Tactical.ink)
+                Text(job.query).font(.headline).foregroundStyle(Tactical.ink)
+                    .lineLimit(2)
                 Spacer()
-                Text(task.status.rawValue.uppercased())
+                Text(job.status.uppercased())
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
                     .padding(.horizontal, 8).padding(.vertical, 4)
-                    .background(task.status.color.opacity(0.16), in: Capsule())
-                    .foregroundStyle(task.status.color)
+                    .background(JobStatusColor.color(job.statusColorName).opacity(0.16), in: Capsule())
+                    .foregroundStyle(JobStatusColor.color(job.statusColorName))
             }
-            ProgressView(value: task.progress).tint(Tactical.accent)
-            if !task.evidence.isEmpty {
-                HStack(spacing: 6) {
-                    ForEach(task.evidence, id: \.self) { e in
-                        Text(e).font(.caption2.monospaced())
-                            .padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(Tactical.surface2, in: Capsule())
-                            .foregroundStyle(Tactical.muted)
-                    }
+            HStack(spacing: 12) {
+                Text("\(job.steps) steps").font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                if let s = job.summary {
+                    Text(s).font(.caption).foregroundStyle(Tactical.muted).lineLimit(1)
                 }
             }
         }
@@ -87,50 +68,77 @@ struct TaskRow: View {
 }
 
 struct TaskDetailView: View {
-    let task: TaskItem
-    let steps = ["Plan scope", "Gather sources", "Draft output", "Verify & cite", "Hand off"]
+    let job: Job
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 TacticalPanel {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text(task.title).font(.title3.bold()).foregroundStyle(Tactical.ink)
+                            Text(job.query).font(.title3.bold()).foregroundStyle(Tactical.ink)
                             Spacer()
-                            Text(task.status.rawValue.uppercased())
+                            Text(job.status.uppercased())
                                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                                 .padding(.horizontal, 8).padding(.vertical, 4)
-                                .background(task.status.color.opacity(0.16), in: Capsule())
-                                .foregroundStyle(task.status.color)
+                                .background(JobStatusColor.color(job.statusColorName).opacity(0.16), in: Capsule())
+                                .foregroundStyle(JobStatusColor.color(job.statusColorName))
                         }
-                        ProgressView(value: task.progress).tint(Tactical.accent)
-                        Text("\(Int(task.progress * 100))% complete").font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                        Text("\(job.steps) steps · started \(formatted(job.created))")
+                            .font(.caption.monospaced()).foregroundStyle(Tactical.muted)
                     }
                 }
-                TacticalPanel {
-                    VStack(alignment: .leading, spacing: 10) {
-                        MonoLabel(text: "EXECUTION LEDGER")
-                        ForEach(Array(steps.enumerated()), id: \.offset) { i, s in
-                            HStack(spacing: 10) {
-                                Image(systemName: i < (task.status == .done ? steps.count : min(task.status == .running ? 2 : 0, steps.count)) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(i < (task.status == .done ? steps.count : min(task.status == .running ? 2 : 0, steps.count)) ? Tactical.ok : (i == 2 && task.status == .running ? Tactical.accent : Tactical.muted))
-                                Text(s).font(.subheadline).foregroundStyle(Tactical.ink)
-                                Spacer()
-                                if i == 2 && task.status == .running {
-                                    Text("LIVE").font(.caption2.monospaced().bold()).foregroundStyle(Tactical.accent)
+                if let plan = job.result?.plan, !plan.isEmpty {
+                    TacticalPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            MonoLabel(text: "EXECUTION PLAN")
+                            ForEach(Array(plan.enumerated()), id: \.offset) { i, s in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "circle").foregroundStyle(Tactical.accent)
+                                    Text(s).font(.subheadline).foregroundStyle(Tactical.ink)
                                 }
                             }
                         }
                     }
                 }
-                if !task.evidence.isEmpty {
+                if let checks = job.result?.checks, !checks.isEmpty {
+                    TacticalPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            MonoLabel(text: "CHECKS")
+                            ForEach(checks, id: \.command) { c in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: (c.exitCode == 0) ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                        .foregroundStyle((c.exitCode == 0) ? Tactical.ok : Tactical.danger)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(c.command).font(.caption.monospaced()).foregroundStyle(Tactical.ink)
+                                        if let o = c.output {
+                                            Text(o).font(.caption2.monospaced()).foregroundStyle(Tactical.muted).lineLimit(3)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if let s = job.summary {
                     TacticalPanel {
                         VStack(alignment: .leading, spacing: 8) {
-                            MonoLabel(text: "EVIDENCE")
-                            ForEach(task.evidence, id: \.self) { e in
+                            MonoLabel(text: "SUMMARY")
+                            Text(s).font(.subheadline).foregroundStyle(Tactical.ink)
+                        }
+                    }
+                }
+                if let files = job.result?.files, !files.isEmpty {
+                    TacticalPanel {
+                        VStack(alignment: .leading, spacing: 8) {
+                            MonoLabel(text: "ARTIFACTS")
+                            ForEach(files, id: \.path) { f in
                                 HStack {
                                     Image(systemName: "doc.text").foregroundStyle(Tactical.accent)
-                                    Text(e).font(.subheadline).foregroundStyle(Tactical.ink)
+                                    Text(f.path).font(.caption.monospaced()).foregroundStyle(Tactical.ink)
+                                    Spacer()
+                                    if let b = f.bytes {
+                                        Text("\(b)B").font(.caption2.monospaced()).foregroundStyle(Tactical.muted)
+                                    }
                                 }
                             }
                         }
@@ -143,22 +151,16 @@ struct TaskDetailView: View {
         .navigationTitle("Task detail")
         .navigationBarTitleDisplayMode(.inline)
     }
+    private func formatted(_ ts: Double) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "MMM d, HH:mm"
+        return f.string(from: Date(timeIntervalSince1970: ts))
+    }
 }
 
 // MARK: - Digital Me
 struct DigitalMeView: View {
     @EnvironmentObject private var backend: Concept2Backend
-    @State private var localMemories = [
-        MemoryEntry(note: "Prefers concise answers and SwiftUI.", tag: "fact", confidence: 0.95),
-        MemoryEntry(note: "Working on client follow-ups + Q3 proposal.", tag: "project", confidence: 0.88),
-        MemoryEntry(note: "Uses aloop.agent@gmail.com for accounts.", tag: "identity", confidence: 0.99),
-    ]
-    var memories: [MemoryEntry] {
-        if !backend.memories.isEmpty {
-            return backend.memories.prefix(5).map { MemoryEntry(note: $0, tag: "live", confidence: 0.9) }
-        }
-        return localMemories
-    }
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -174,29 +176,59 @@ struct DigitalMeView: View {
                                 Text("Persistent identity & memory").font(.caption).foregroundStyle(Tactical.muted)
                             }
                             Spacer()
-                            StatusDot(color: Tactical.ok)
+                            StatusDot(color: backend.connected ? Tactical.ok : Tactical.warn)
                         }
                     }
                     TacticalPanel {
                         VStack(alignment: .leading, spacing: 10) {
-                            MonoLabel(text: "PLAYBOOKS")
+                            MonoLabel(text: "PROFILE")
                             HStack {
-                                statBlock("3", "playbooks")
-                                statBlock("47", "memories")
-                                statBlock("0.9", "avg confidence")
+                                statBlock("\(backend.memoryEntries)", "memories")
+                                statBlock("\(backend.playbooks)", "playbooks")
+                            }
+                            if let p = backend.brainProfile as String?, !p.isEmpty {
+                                Text(p).font(.subheadline).foregroundStyle(Tactical.ink)
+                            }
+                        }
+                    }
+                    if !backend.brainTopics.isEmpty {
+                        TacticalPanel {
+                            VStack(alignment: .leading, spacing: 10) {
+                                MonoLabel(text: "TOPICS")
+                                FlowChips(items: backend.brainTopics)
                             }
                         }
                     }
                     TacticalPanel {
                         VStack(alignment: .leading, spacing: 10) {
                             MonoLabel(text: "MEMORY")
-                            ForEach(memories) { m in
-                                HStack(alignment: .top, spacing: 10) {
-                                    Image(systemName: "brain").foregroundStyle(Tactical.accent)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(m.note).font(.subheadline).foregroundStyle(Tactical.ink)
-                                        Text("\(m.tag) · \(Int(m.confidence * 100))%")
-                                            .font(.caption2.monospaced()).foregroundStyle(Tactical.muted)
+                            if backend.memories.isEmpty {
+                                Text("No notes ingested yet.").font(.subheadline).foregroundStyle(Tactical.muted)
+                            } else {
+                                ForEach(backend.memories.prefix(6)) { m in
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Image(systemName: "brain").foregroundStyle(Tactical.accent)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(m.note).font(.subheadline).foregroundStyle(Tactical.ink)
+                                            Text(m.notebook ?? "").font(.caption2.monospaced()).foregroundStyle(Tactical.muted)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    TacticalPanel {
+                        VStack(alignment: .leading, spacing: 10) {
+                            MonoLabel(text: "PLAYBOOKS")
+                            if backend.playbookList.isEmpty {
+                                Text("No playbooks yet.").font(.subheadline).foregroundStyle(Tactical.muted)
+                            } else {
+                                ForEach(backend.playbookList.prefix(4)) { pb in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(pb.title).font(.subheadline.bold()).foregroundStyle(Tactical.ink)
+                                        if let when = pb.when {
+                                            Text(when).font(.caption).foregroundStyle(Tactical.muted)
+                                        }
                                     }
                                 }
                             }
@@ -218,32 +250,61 @@ struct DigitalMeView: View {
     }
 }
 
+struct FlowChips: View {
+    let items: [String]
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], alignment: .leading, spacing: 8) {
+            ForEach(items, id: \.self) { item in
+                Text(item)
+                    .font(.caption).foregroundStyle(Tactical.ink)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Tactical.surface2, in: Capsule())
+            }
+        }
+    }
+}
+
 // MARK: - Lab
 struct LabView: View {
+    @EnvironmentObject private var backend: Concept2Backend
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     TacticalPanel {
                         VStack(alignment: .leading, spacing: 8) {
-                            MonoLabel(text: "PRODUCT LAB")
-                            Text("Enclosure v3").font(.title3.bold()).foregroundStyle(Tactical.ink)
-                            Text("STEP → STL → DXF export ready").font(.caption).foregroundStyle(Tactical.muted)
-                        }
-                    }
-                    TacticalPanel {
-                        VStack(alignment: .leading, spacing: 8) {
-                            MonoLabel(text: "GRANTS")
-                            Text("3 programme routes").font(.headline).foregroundStyle(Tactical.ink)
-                            Text("Deadline 02 Dec 2026").font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                            MonoLabel(text: "CAPABILITIES")
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(backend.capabilities) { cap in
+                                    HStack(alignment: .top, spacing: 10) {
+                                        StatusDot(color: cap.enabled ? Tactical.ok : Tactical.muted)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(cap.name).font(.subheadline.bold()).foregroundStyle(Tactical.ink)
+                                            if let f = cap.features {
+                                                Text(f).font(.caption).foregroundStyle(Tactical.muted)
+                                            }
+                                            Text("\(cap.runs) runs · \(Int(cap.routingScore * 100))% route")
+                                                .font(.caption2.monospaced()).foregroundStyle(Tactical.muted)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     TacticalPanel {
                         VStack(alignment: .leading, spacing: 8) {
                             MonoLabel(text: "INTEGRATIONS")
-                            integrationRow("Gmail", connected: true)
-                            integrationRow("Composio", connected: true)
-                            integrationRow("Notion", connected: false)
+                            VStack(alignment: .leading, spacing: 10) {
+                                ForEach(backend.integrationList) { int in
+                                    HStack {
+                                        Text(int.name).font(.subheadline).foregroundStyle(Tactical.ink)
+                                        Spacer()
+                                        Text(int.status.replacingOccurrences(of: "_", with: " ").uppercased())
+                                            .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                            .foregroundStyle(int.status == "connected" || int.status == "configured" ? Tactical.ok : Tactical.muted)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -253,18 +314,12 @@ struct LabView: View {
             .navigationTitle("Lab")
         }
     }
-    private func integrationRow(_ name: String, connected: Bool) -> some View {
-        HStack {
-            Text(name).font(.subheadline).foregroundStyle(Tactical.ink)
-            Spacer()
-            StatusDot(color: connected ? Tactical.ok : Tactical.muted)
-        }
-    }
 }
 
 // MARK: - More
 struct MoreView: View {
     @Binding var offline: Bool
+    @EnvironmentObject private var backend: Concept2Backend
     var body: some View {
         NavigationStack {
             List {
@@ -272,8 +327,20 @@ struct MoreView: View {
                     Toggle(isOn: $offline) { Label("Simulate offline", systemImage: "wifi.slash") }
                         .tint(Tactical.accent)
                 }
+                Section("Connection") {
+                    HStack {
+                        Label("Backend", systemImage: "network")
+                        Spacer()
+                        Text(backend.connected ? "connected" : "offline")
+                            .font(.caption.monospaced()).foregroundStyle(backend.connected ? Tactical.ok : Tactical.danger)
+                    }
+                    HStack {
+                        Label("Runtime", systemImage: "cpu")
+                        Spacer()
+                        Text(backend.runtime).font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                    }
+                }
                 Section("Settings") {
-                    Label("Connection", systemImage: "network")
                     Label("Keyboard", systemImage: "keyboard")
                     Label("Billing", systemImage: "creditcard")
                 }

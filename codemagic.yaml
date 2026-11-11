@@ -230,18 +230,27 @@ workflows:
           command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
           cd "$CM_BUILD_DIR/ios_concepts/concept2"
           xcodegen generate --spec project.yml
-      - name: Run Concept 2 UI tests
+      - name: Run Concept 2 UI tests + export screenshots
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept2"
           set -e
+          rm -rf build/test-output
           xcodebuild test -project SuperCraftOSConcept2.xcodeproj \
             -scheme Concept2UITests -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=iPhone 17" \
+            -resultBundlePath build/test-output/concept2.xcresult \
             CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
             2>&1 | tee /tmp/concept2.log
+          mkdir -p build/screens
+          # Export the XCTAttachment screenshots as PNGs.
+          xcrun xcresulttool export attachments \
+            --path build/test-output/concept2.xcresult \
+            --output-path build/screens 2>/dev/null || echo "attachment export skipped"
         test_report: /tmp/concept2.log
     artifacts:
       - /tmp/concept2.log
+      - concept2/build/screens/**/*.png
+      - ios_concepts/concept2/build/screens/**/*.png
     publishing: {}
 
   concept6-verify:
@@ -258,16 +267,24 @@ workflows:
           command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
           cd "$CM_BUILD_DIR/ios_concepts/concept6"
           xcodegen generate --spec project.yml
-      - name: Run Concept 6 UI tests
+      - name: Run Concept 6 UI tests + export screenshots
         script: |
           cd "$CM_BUILD_DIR/ios_concepts/concept6"
           set -e
+          rm -rf build/test-output
           xcodebuild test -project SuperCraftOSConcept6.xcodeproj \
             -scheme Concept6UITests -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=iPhone 17" \
+            -resultBundlePath build/test-output/concept6.xcresult \
             CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
             2>&1 | tee /tmp/concept6.log
+          mkdir -p build/screens
+          xcrun xcresulttool export attachments \
+            --path build/test-output/concept6.xcresult \
+            --output-path build/screens 2>/dev/null || echo "attachment export skipped"
         test_report: /tmp/concept6.log
     artifacts:
       - /tmp/concept6.log
+      - concept6/build/screens/**/*.png
+      - ios_concepts/concept6/build/screens/**/*.png
     publishing: {}

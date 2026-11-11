@@ -48,42 +48,15 @@ struct StatusDot: View {
     }
 }
 
-// MARK: - Models
-struct AgentRun: Identifiable {
-    let id = UUID()
-    let name: String
-    var step: Int = 0
-    let steps: [String] = ["Plan scope", "Gather sources", "Draft output", "Verify & cite", "Hand off"]
-    var active = true
-    var started = Date()
-}
-
-struct TaskItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let status: TaskStatus
-    let progress: Double
-    let evidence: [String]
-    var paused = false
-}
-
-enum TaskStatus: String {
-    case running = "Running", done = "Done", queued = "Queued", blocked = "Blocked"
-    var color: Color {
-        switch self {
-        case .running: return Tactical.accent
-        case .done: return Tactical.ok
-        case .queued: return Tactical.muted
-        case .blocked: return Tactical.danger
+enum JobStatusColor {
+    static func color(_ name: String) -> Color {
+        switch name {
+        case "ok": return Tactical.ok
+        case "danger": return Tactical.danger
+        case "accent": return Tactical.accent
+        default: return Tactical.muted
         }
     }
-}
-
-struct MemoryEntry: Identifiable {
-    let id = UUID()
-    let note: String
-    let tag: String
-    let confidence: Double
 }
 
 // MARK: - Root + Tab Bar
@@ -94,10 +67,10 @@ struct Concept2Root: View {
     var body: some View {
         TabView(selection: $tab) {
             MissionView(offline: $offline).environmentObject(backend).tabItem { Label("Mission", systemImage: "scope") }.tag(0)
-            TasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
+            TasksView().environmentObject(backend).tabItem { Label("Tasks", systemImage: "checklist") }.tag(1)
             DigitalMeView().environmentObject(backend).tabItem { Label("Digital Me", systemImage: "brain.head.profile") }.tag(2)
-            LabView().tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
-            MoreView(offline: $offline).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
+            LabView().environmentObject(backend).tabItem { Label("Lab", systemImage: "cube.transparent") }.tag(3)
+            MoreView(offline: $offline).environmentObject(backend).tabItem { Label("More", systemImage: "ellipsis") }.tag(4)
         }
         .tint(Tactical.accent)
         .preferredColorScheme(.dark)
@@ -130,8 +103,8 @@ struct OfflineBanner: View {
 struct MissionView: View {
     @Binding var offline: Bool
     @EnvironmentObject private var backend: Concept2Backend
-    @State private var runs: [AgentRun] = [AgentRun(name: "Yuki", step: 2), AgentRun(name: "Quill", step: 0)]
     @State private var showCompose = false
+    @State private var dispatchMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -139,8 +112,20 @@ struct MissionView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     Text("Command Dashboard").font(.largeTitle.bold())
                     MonoLabel(text: "MISSION / CORE")
-                    workersGrid
+
+                    if let err = backend.error, !backend.connected {
+                        TacticalPanel {
+                            VStack(alignment: .leading, spacing: 8) {
+                                MonoLabel(text: "CONNECTION")
+                                Text(err).font(.subheadline).foregroundStyle(Tactical.danger)
+                                Button("Retry") { Task { await backend.refresh() } }
+                                    .buttonStyle(.bordered).tint(Tactical.accent)
+                            }
+                        }
+                    }
+
                     healthPanel
+                    usagePanel
                     feedPanel
                 }
                 .padding(16)
@@ -160,28 +145,11 @@ struct MissionView: View {
                 .padding(.horizontal, 16).padding(.bottom, 8)
                 .disabled(offline)
             }
-            .sheet(isPresented: $showCompose) { ComposeSheet { run in withAnimation { runs.insert(run, at: 0) } } }
-        }
-    }
-
-    private var workersGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            ForEach(runs.prefix(4)) { run in
-                TacticalPanel {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            StatusDot(color: offline ? Tactical.muted : Tactical.accent)
-                            MonoLabel(text: run.name.uppercased())
-                            Spacer()
-                            Text(run.active ? "RUN" : "IDLE")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .foregroundStyle(offline ? Tactical.muted : Tactical.accent)
-                        }
-                        Text(run.steps[min(run.step, run.steps.count - 1)])
-                            .font(.callout.weight(.medium)).foregroundStyle(Tactical.ink)
-                        TimelineView(.periodic(from: run.started, by: 1)) { ctx in
-                            MonoLabel(text: "ELAPSED \(Int(ctx.date.timeIntervalSince(run.started)))s")
-                        }
+            .sheet(isPresented: $showCompose) {
+                ComposeSheet { prompt in
+                    Task {
+                        let ok = await backend.dispatchJob(prompt)
+                        dispatchMessage = ok ? "Dispatched to your backend." : backend.error
                     }
                 }
             }
@@ -190,57 +158,84 @@ struct MissionView: View {
 
     private var healthPanel: some View {
         TacticalPanel {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 MonoLabel(text: "SYSTEM HEALTH")
                 HStack(spacing: 20) {
-                    healthBar("AGENTS", 0.82)
-                    healthBar("TOOLS", 0.94)
-                    healthBar("MEMORY", 0.71)
+                    statBlock("\(backend.tools)", "tools")
+                    statBlock("\(backend.integrations)", "integrations")
+                    statBlock("\(backend.healthyIntegrations)", "healthy")
+                    statBlock("\(backend.workflows)", "workflows")
+                }
+                HStack {
+                    Text("RUNTIME").font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                    Spacer()
+                    StatusDot(color: backend.runtime == "running" ? Tactical.ok : Tactical.warn)
+                    Text(backend.runtime.uppercased()).font(.caption.monospaced()).foregroundStyle(Tactical.ink)
                 }
             }
         }
     }
 
-    private func healthBar(_ name: String, _ v: Double) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            MonoLabel(text: name)
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Tactical.surface2)
-                    Capsule().fill(Tactical.accent).frame(width: geo.size.width * v)
+    private var usagePanel: some View {
+        TacticalPanel {
+            VStack(alignment: .leading, spacing: 10) {
+                MonoLabel(text: "USAGE")
+                HStack {
+                    statSmall("Requests", "\(backend.usageRequests)")
+                    statSmall("Tokens", "\(backend.usageTokens)")
+                    statSmall("Cost", String(format: "$%.2f", backend.usageCost))
                 }
             }
-            .frame(height: 6)
-            Text("\(Int(v * 100))%").font(.caption.monospaced()).foregroundStyle(Tactical.muted)
         }
     }
 
     private var feedPanel: some View {
         TacticalPanel {
             VStack(alignment: .leading, spacing: 10) {
-                MonoLabel(text: "EXECUTION FEED")
-                ForEach(0..<3, id: \.self) { i in
-                    HStack(spacing: 8) {
-                        Image(systemName: ["doc.text", "globe", "checkmark.circle"][i])
-                            .foregroundStyle(Tactical.accent)
-                        Text(["Retrieved 3 sources", "Verified references", "Drafted reply"][i])
-                            .font(.subheadline).foregroundStyle(Tactical.ink)
-                        Spacer()
-                        Text(String(format: "%.1fs", Double.random(in: 0.4...2.4)))
-                            .font(.caption.monospaced()).foregroundStyle(Tactical.muted)
+                MonoLabel(text: "RECENT TASKS")
+                if backend.jobs.isEmpty {
+                    Text("No tasks yet.").font(.subheadline).foregroundStyle(Tactical.muted)
+                } else {
+                    ForEach(backend.jobs.prefix(3)) { job in
+                        HStack(spacing: 8) {
+                            Image(systemName: job.isRunning ? "bolt.fill" : (job.isCompleted ? "checkmark.circle.fill" : "circle"))
+                                .foregroundStyle(JobStatusColor.color(job.statusColorName))
+                            Text(job.query).font(.subheadline).foregroundStyle(Tactical.ink)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(job.status.uppercased())
+                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                .foregroundStyle(JobStatusColor.color(job.statusColorName))
+                        }
                     }
                 }
             }
         }
     }
+
+    private func statBlock(_ v: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(v).font(.system(size: 24, weight: .bold, design: .rounded)).foregroundStyle(Tactical.accent)
+            Text(label).font(.caption).foregroundStyle(Tactical.muted)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func statSmall(_ label: String, _ v: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label).font(.caption).foregroundStyle(Tactical.muted)
+            Text(v).font(.headline.monospaced()).foregroundStyle(Tactical.ink)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 }
 
-// MARK: - Compose sheet (true bottom sheet)
+// MARK: - Compose sheet (dispatches a real job)
 struct ComposeSheet: View {
     @Environment(\.dismiss) private var dismiss
-    let onRun: (AgentRun) -> Void
+    let onDispatch: (String) -> Void
     @State private var prompt = ""
-    @State private var agent = "Yuki"
+    @State private var submitting = false
 
     var body: some View {
         NavigationStack {
@@ -251,20 +246,16 @@ struct ComposeSheet: View {
                     .scrollContentBackground(.hidden)
                     .padding(10)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Tactical.surface2))
-                Picker("Agent", selection: $agent) {
-                    Text("Yuki").tag("Yuki")
-                    Text("Quill").tag("Quill")
-                }
-                .pickerStyle(.segmented)
                 Button {
-                    let run = AgentRun(name: agent, step: 0)
-                    onRun(run)
+                    submitting = true
+                    onDispatch(prompt)
                     dismiss()
                 } label: {
-                    Text("Dispatch run").font(.headline).frame(maxWidth: .infinity).padding(.vertical, 12)
+                    Text(submitting ? "Dispatching…" : "Dispatch run")
+                        .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 12)
                 }
                 .buttonStyle(.borderedProminent).tint(Tactical.accent)
-                .disabled(prompt.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(prompt.trimmingCharacters(in: .whitespaces).isEmpty || submitting)
             }
             .padding(20)
             .background(Tactical.bg)
