@@ -29,3 +29,6 @@ skills-lock.json
 release/
 tools/
 data/apple-docs/raw/
+
+# Local signing credentials (never commit)
+.signing/

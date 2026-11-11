@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>ai.supercraftos.free-team-refresh</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/hsk/scos-repo/scripts/free_team_refresh.sh</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <!-- Run at 03:00 daily; the free profile is valid 7 days, so a daily
+             run keeps a fresh signed+installed build within expiry. -->
+        <key>Hour</key><integer>3</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/Users/hsk/scos-repo/build/free_team_refresh.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/hsk/scos-repo/build/free_team_refresh.log</string>
+</dict>
+</plist>
