@@ -19,6 +19,11 @@ LOGIN = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 
 
 def load_access_key(path=ROOT/'data/access.key'):
+    # A provisioned key (e.g. from the cloud deployment) takes precedence so the
+    # same key can be baked into the iOS app build.
+    env_key = os.getenv('SUPERCRAFTOS_ACCESS_KEY', '')
+    if len(env_key) >= 32:
+        return env_key
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     try:

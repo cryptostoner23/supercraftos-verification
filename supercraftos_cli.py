@@ -320,7 +320,8 @@ class Handler(BaseHTTPRequestHandler):
                   "/api/workflows": lambda: {"workflows": workflow_rows()},
                   "/api/digital_me/profile": lambda: (lambda dm: dm.api_profile_get())(__import__('digital_me')),
                   "/api/digital_me/memory": lambda: (lambda dm: dm.api_memory_get())(__import__('digital_me')),
-                  "/api/digital_me/reasoning": lambda: {"status": "ready"}}
+                  "/api/digital_me/reasoning": lambda: {"status": "ready"},
+                  "/api/digital_me/brain/status": lambda: __import__('digital_me_brain').brain_status()}
         if path in routes:
             try: value = routes[path]()
             except (OSError, ValueError, TypeError, AttributeError): return self.send_json({"error": "state_unavailable"}, 503)
@@ -464,6 +465,18 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(digital_me.api_reasoning_post(payload))
             if path == "/api/digital_me/planning":
                 return self.send_json(digital_me.api_planning_post(payload))
+            if path == "/api/digital_me/brain/status":
+                from digital_me_brain import brain_status
+                return self.send_json(brain_status())
+            if path == "/api/digital_me/brain/ingest":
+                from digital_me_brain import ingest_notes
+                return self.send_json(asyncio.run(ingest_notes()))
+            if path == "/api/digital_me/brain/synthesize":
+                from digital_me_brain import synthesize_understanding
+                return self.send_json(asyncio.run(synthesize_understanding()))
+            if path == "/api/digital_me/brain/proactive":
+                from digital_me_brain import proactive_step
+                return self.send_json(asyncio.run(proactive_step()))
             if path == "/api/digital_me/planning/{}":
                 parts = path.strip("/").split("/")
                 if len(parts) == 5 and parts[3] == "planning" and len(parts) == 5:

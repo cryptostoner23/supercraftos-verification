@@ -40,15 +40,27 @@ $DEVELOPER_DIR/usr/bin/devicectl list devices --json 2>/dev/null | grep -q "$DEV
   && echo "   device seen" || echo "   WARNING: device not listed; will retry via devicectl discovery"
 
 echo "==>[2/4] Building signed app via Xcode automatic personal-team signing"
-# Xcode's free-team automatic signing will use the Apple ID account previously
-# added in Xcode's Accounts pane (Signing & Capabilities). If not yet added,
-# the first run must add it once in Xcode GUI.
-xcodebuild -project "$ROOT/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj" \
+# Xcode's free-team automatic signing uses the Apple ID account previously added
+# in Xcode -> Settings -> Accounts (Signing & Capabilities). If the account is
+# not yet present, the FIRST run must add it once in the Xcode GUI (it cannot be
+# done headlessly). For cryptostoner94@icloud.com the Personal Team is already
+# present with team ID 9GXQGAM6KB.
+#
+# We build for the *generic* iOS device platform, NOT "-destination id=$UDID":
+# the device destination would force Xcode to mount a Developer Disk Image to
+# "prepare the device for development", which Xcode 15.4 cannot do on this iOS
+# version and times out. Auto-registration of the connected device's UDID into
+# the free-team provisioning profile still happens for a generic destination.
+# The project.yml base setting CODE_SIGNING_ALLOWED=NO must be overridden.
+TEAM_ID="${DEVELOPMENT_TEAM:-9GXQGAM6KB}"
+"$DEVELOPER_DIR/usr/bin/xcodebuild" -project "$ROOT/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj" \
   -scheme SuperCraftOS -configuration Release \
-  -destination "id=$DEVICE_UDID" \
+  -destination 'generic/platform=iOS' \
   -allowProvisioningUpdates \
   -derivedDataPath "$ROOT/build/signed" \
-  DEVELOPMENT_TEAM="" CODE_SIGN_STYLE="Automatic" \
+  CODE_SIGN_STYLE="Automatic" \
+  CODE_SIGNING_ALLOWED=YES \
+  DEVELOPMENT_TEAM="$TEAM_ID" \
   | tail -20
 
 echo "==>[3/4] Packaging signed IPA"
@@ -58,10 +70,15 @@ STAGE="$ROOT/build/signed-ipa-staging"; rm -rf "$STAGE"; mkdir -p "$STAGE/Payloa
 cp -R "$APP" "$STAGE/Payload/"
 (cd "$STAGE" && zip -r -q "$ROOT/build/SuperCraftOS-signed.ipa" Payload)
 
-echo "==>[4/4] Installing to iPhone (USB or Wi-Fi)"
+echo "==>[4/4] Installing to iPhone (USB) via pymobiledevice3"
+# devicectl cannot install here: Xcode 15.4 has no Developer Disk Image for this
+# iOS version (0xe8000076, "Could not support development"). pymobiledevice3
+# uses the device's InstallationProxy service, which does not require the DDI
+# and verifies the code signature on-device.
 INSTALL_IPA="$ROOT/build/SuperCraftOS-signed.ipa"
 if [ -n "$ONLY_INSTALL" ]; then INSTALL_IPA="$ONLY_INSTALL"; fi
-$DEVELOPER_DIR/usr/bin/devicectl device install app --device "$DEVICE_UDID" "$INSTALL_IPA" \
+"$ROOT/.venv/bin/pymobiledevice3" apps install \
+  --udid "$DEVICE_UDID" "$INSTALL_IPA" \
   && echo "OK: signed app installed" || echo "FAILED: install (is device unlocked/trusted?)"
 
 echo "done"
