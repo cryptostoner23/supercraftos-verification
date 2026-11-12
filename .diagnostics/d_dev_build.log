@@ -1,0 +1,625 @@
+Command line invocation:
+    /Applications/Xcode-26.6.app/Contents/Developer/usr/bin/xcodebuild -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj -scheme SuperCraftOS -configuration Release -sdk iphoneos -destination generic/platform=iOS -derivedDataPath /Users/builder/clone/build/PersonalDevice CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    SDKROOT = iphoneos26.5
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'SuperCraftOS' in project 'SuperCraftOS' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode-26.6.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/builder/clone/ios_app_dist/ci_xcode/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode-26.6.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 4e5a6195216c68ac9e09170b86e29335
+Build description path: /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/XCBuildData/4e5a6195216c68ac9e09170b86e29335.xcbuilddata
+ClangStatCache /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /Users/builder/clone/build/PersonalDevice/SDKStatCaches.noindex/iphoneos26.5-23F81a-9b79862d1ee423bbce42b1c7888a0e7e.sdkstatcache
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /Users/builder/clone/build/PersonalDevice/SDKStatCaches.noindex/iphoneos26.5-23F81a-9b79862d1ee423bbce42b1c7888a0e7e.sdkstatcache
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Products
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Products
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/ExplicitPrecompiledModules
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    builtin-create-build-directory /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS-b93f8e69ee2b46351c87e3bb214ad275-VFS-iphoneos/all-product-headers.yaml
+    cd /Users/builder/clone/ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS-b93f8e69ee2b46351c87e3bb214ad275-VFS-iphoneos/all-product-headers.yaml
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.DependencyStaticMetadataFileList (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-own-target-headers.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-project-headers.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-project-headers.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.DependencyMetadataFileList (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-generated-files.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-generated-files.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-target-headers.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-non-framework-target-headers.hmap (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS_const_extract_protocols.json (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftFileList (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftFileList
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftConstValuesFileList (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.LinkFileList (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.LinkFileList
+
+WriteAuxiliaryFile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-OutputFileMap.json (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    write-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-OutputFileMap.json
+
+MkDir /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    /bin/mkdir -p /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app
+
+MkDir /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_output/unthinned (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    /bin/mkdir -p /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_output/unthinned
+
+CpResource /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app/PrivacyInfo.xcprivacy /Users/builder/clone/ios_app_dist/ci_xcode/PrivacyInfo.xcprivacy (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/builder/clone/ios_app_dist/ci_xcode/PrivacyInfo.xcprivacy /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app
+
+MkDir /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_output/thinned (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    /bin/mkdir -p /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/builder/clone/ios_app_dist/ci_xcode/Assets.xcassets (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    /Applications/Xcode-26.6.app/Contents/Developer/usr/bin/actool /Users/builder/clone/ios_app_dist/ci_xcode/Assets.xcassets --compile /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_dependencies --output-partial-info-plist /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_generated_info.plist --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 17.0 --platform iphoneos --bundle-identifier com.supercraftos.control --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CompileAssetCatalogVariant thinned /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/SuperCraftOS.app /Users/builder/clone/ios_app_dist/ci_xcode/Assets.xcassets (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    /Applications/Xcode-26.6.app/Contents/Developer/usr/bin/actool /Users/builder/clone/ios_app_dist/ci_xcode/Assets.xcassets --compile /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 17.0 --platform iphoneos
+
+SwiftDriver SuperCraftOS normal arm64 com.apple.xcode.tools.swift.compiler (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    builtin-SwiftDriver -- /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name SuperCraftOS -O -whole-module-optimization @/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -F /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64 -c -num-threads 7 -Xcc -ivfsstatcache -Xcc /Users/builder/clone/build/PersonalDevice/SDKStatCaches.noindex/iphoneos26.5-23F81a-9b79862d1ee423bbce42b1c7888a0e7e.sdkstatcache -output-file-map /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -sdk-module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS_const_extract_protocols.json -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-generated-files.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-own-target-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-target-headers.hmap -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-project-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/include -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources-normal/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-Swift.h -working-directory /Users/builder/clone/ios_app_dist/ci_xcode -no-emit-module-separately-wmo
+
+SwiftDriver\ Compilation SuperCraftOS normal arm64 com.apple.xcode.tools.swift.compiler (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    builtin-Swift-Compilation -- /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name SuperCraftOS -O -whole-module-optimization @/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -F /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64 -c -num-threads 7 -Xcc -ivfsstatcache -Xcc /Users/builder/clone/build/PersonalDevice/SDKStatCaches.noindex/iphoneos26.5-23F81a-9b79862d1ee423bbce42b1c7888a0e7e.sdkstatcache -output-file-map /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -sdk-module-cache-path /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS_const_extract_protocols.json -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-generated-files.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-own-target-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-target-headers.hmap -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-project-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/include -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources-normal/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-Swift.h -working-directory /Users/builder/clone/ios_app_dist/ci_xcode -no-emit-module-separately-wmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DeveloperToolsSupport-4C8T1SF41WEQ8U3GV778RZS9Z.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdbool-9C1Y9Z4DF6PEWV5NJ8MNK0G89.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdarg-BWGYLI4LZSZ818MYWVG0XAQ8H.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftShims-37S5V7XW67V9PNH61GNQYRN0K.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_float-4NZHM4A518I7R7EXBTDV9L9R1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrcheck-BAYNV8UXV9F9PB99H7QDM2WGS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_SwiftConcurrencyShims-4Q0WD7NY4Q9T7ESQTTUTHBZY5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_AvailabilityInternal-8NMSQFC5XH6BKR2B18P6Q7UCA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrauth-A5Q5VL1OUVPHJF1EX6ELYENTD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stddef-8WNQROJKP48Z9DOMBSFZ5D2Y9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation1-EXTN30I5W50T2ENVHG3ASU8BL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ExtensionFoundation-BTPSW5C8OJ5EC0T4WQTFNWUNT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_limits-B8HW3M8HSI7AM16W4REXPFBOR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation2-8DVUYL37WGD1ZBTG9ZBCR2LS6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdint-3VR7RBKBBGMWP7BUREPX6I3WF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/sys_types-9141X6BCWCXUNZC5XSDDTBH8P.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_tgmath-7XYUDHBZSW3S4S89JOM9A1OKQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_intrinsics-87B934A39L08MQ85CYTMFKP02.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation3-1IUPMYECPNFNYJ1JFSLT4IO0F.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdatomic-115NXAE7PYPNVVSVFL5RRBQVG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_inttypes-1RS9UCRLLK779NDENBLHN88EJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Darwin-95DEJ815H0KM6LJJZNFRU3Y7G.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/simd-A7M5LSN554XAAN23XYGNYC5R8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ObjectiveC-6UYDXDWUENZOUZ88GQ9EUDK73.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/MachO-AGQL5NDUWPFIIYP1W11WDBEZE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_object-7BQK9Z45P0I9IIDCOCX43DJSH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_workgroup-A82KFHOI6QN6Z26S4W68XANPC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Dispatch-7OA9OTVQZYJB41UAKLDW8K9VT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Spatial-6JLP30330Q3YGT46HLVAEO807.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/dnssd-CRK1SIH8IQK090I7HEMUIB1WD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/XPC-9UBA8Z2BTY35T4YHY5VKPRMEY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreFoundation-B4TELNRNC2CBHU7UQK9F88WEL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os-CPO0RGENU6T7Q4K7V0JEKW9T1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreGraphics-9F1SPYRGZVZ0ED9PCBA09LYZ9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Security-AOOY474B7NLZ21ORAT07KX2ZR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CFNetwork-C1EZ3BS281CDKV7K7R13IN0XG.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Foundation-73SSQSB7U0Q3KFMCB0VEPFBUD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ImageIO-9QR3PMDSB56G13MSAJSILMUMD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreText-7EY3P4TTJC5GLLGOZ8V57G0V6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/LocalAuthentication-9NOXBFHEXS6FRD99QWZQND2UL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/RelevanceKit-BHI7HWINGJ93QF4Z5CSA6P0QM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/AppIntents-8DCZRBQQ7F2CDKY3D0Q996CCQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DataDetection-42H8MVI0PY2R4UFSUXJ88UUKI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Symbols-9XDYDTXXBXW67EB85O3YHED0E.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ModelIO-3JX83R4EHZRB5L8GPKUOJMAZA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UniformTypeIdentifiers-8QVC8HP3TV3DD72E8NLDHU57S.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_LocationEssentials-7AMIQZSWXTB2X5Q3SSTXX7UI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OSLog-6DM7SJ976ISH3OIM731FC37GM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreData-1F8CQWPAJ20OHMK1NOUIP41DM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/FileProvider-5QOYM2NEC83QOBELF0FJL24NO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Accessibility-E9VO5I1C7VFQKYWQYJF00PXRE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Network-DO0J5TBZ61UE0S17XJNO669Z4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/IOSurface-4W7002J0ZH8C5LPH5A8YXXPXY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreSpotlight-41CJESOSFUYH6HG2TZECXVLG4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreTransferable-6M0HMR6XS38NAXYIPK7VVOZ5J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreLocation-2OWYWOI9Z7DWOFPXHK5VBOM86.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIUtilities-53DT9K1UD16LUUPOBT2OY6KPR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UserNotifications-9IVQEUIOYJJ2SURIL84XME4R9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OpenGLES-53SLJXM85AXC81KGWFL2XQLRP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Metal-46LNL0FHGYIR3QJ6VYX3F39OS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreVideo-428Q3AVWE1CMDE6Y36S3ODG7M.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreImage-4RP7PW60FUS8VMXC4JB8HOFD5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/QuartzCore-3XMGP0EBLJ8VLAF2J3GXA5SUM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUICore-DSAASJ8PE4483NQMXCYDRHBKU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIKit-L5UC01NRC5YULE6UIHXPVLA2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUI-5T9Y595AEWBDF0KK3GABMXS07.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/GLKit-44D2AMOJOF39TYXL22SWVB3JY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SceneKit-JCSSWAOD0992B0QD5PDQZAYD.pcm
+
+SwiftCompile normal arm64 Compiling\ AccountOperationsView.swift,\ AgentModels.swift,\ App.swift,\ AppConfig.swift,\ AppleNotesView.swift,\ AutonomousTasksView.swift,\ BackendClient.swift,\ CIBackendFixture.swift,\ ContentView.swift,\ CredentialStore.swift,\ DigitalMeView.swift,\ KeyboardCatalog.swift,\ LearningView.swift,\ MissionConversation.swift,\ QuestOperationsView.swift,\ ShortcutActions.swift,\ UnifiedAPIClient.swift,\ GeneratedAssetSymbols.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AccountOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AgentModels.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/App.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppConfig.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AutonomousTasksView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/BackendClient.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CIBackendFixture.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CredentialStore.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift /Users/builder/clone/swift-verification/Sources/ControlCore/KeyboardCatalog.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/LearningView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/MissionConversation.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/QuestOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ShortcutActions.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreText.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Builtin_float.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SceneKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LocalAuthentication.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Foundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/QuartzCore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/os.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_StringProcessing.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Combine.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Observation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreSpotlight.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UIKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UniformTypeIdentifiers.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/GLKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Accessibility.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ObjectiveC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Distributed.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreImage.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation3.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Swift.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AppIntents.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DataDetection.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreVideo.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/RelevanceKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Spatial.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUICore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/XPC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreGraphics.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Symbols.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreData.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_SceneKit_SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DeveloperToolsSupport.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Concurrency.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CryptoKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Metal.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/FileProvider.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LightweightCodeRequirements.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreLocation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/OSLog.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/simd.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ExtensionFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Dispatch.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreTransferable.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/System.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ModelIO.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Charts.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Network.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation1.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Darwin.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_AppIntents_SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation2.swiftmodule/arm64e-apple-ios.swiftmodule /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Metal-46LNL0FHGYIR3QJ6VYX3F39OS.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrauth-A5Q5VL1OUVPHJF1EX6ELYENTD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_SwiftConcurrencyShims-4Q0WD7NY4Q9T7ESQTTUTHBZY5.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUICore-DSAASJ8PE4483NQMXCYDRHBKU.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/sys_types-9141X6BCWCXUNZC5XSDDTBH8P.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreTransferable-6M0HMR6XS38NAXYIPK7VVOZ5J.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_inttypes-1RS9UCRLLK779NDENBLHN88EJ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreText-7EY3P4TTJC5GLLGOZ8V57G0V6.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CFNetwork-C1EZ3BS281CDKV7K7R13IN0XG.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ModelIO-3JX83R4EHZRB5L8GPKUOJMAZA.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Accessibility-E9VO5I1C7VFQKYWQYJF00PXRE.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/AppIntents-8DCZRBQQ7F2CDKY3D0Q996CCQ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftShims-37S5V7XW67V9PNH61GNQYRN0K.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DataDetection-42H8MVI0PY2R4UFSUXJ88UUKI.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/dnssd-CRK1SIH8IQK090I7HEMUIB1WD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/RelevanceKit-BHI7HWINGJ93QF4Z5CSA6P0QM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_AvailabilityInternal-8NMSQFC5XH6BKR2B18P6Q7UCA.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OpenGLES-53SLJXM85AXC81KGWFL2XQLRP.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UserNotifications-9IVQEUIOYJJ2SURIL84XME4R9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_LocationEssentials-7AMIQZSWXTB2X5Q3SSTXX7UI.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdarg-BWGYLI4LZSZ818MYWVG0XAQ8H.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/MachO-AGQL5NDUWPFIIYP1W11WDBEZE.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/LocalAuthentication-9NOXBFHEXS6FRD99QWZQND2UL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ObjectiveC-6UYDXDWUENZOUZ88GQ9EUDK73.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/IOSurface-4W7002J0ZH8C5LPH5A8YXXPXY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation2-8DVUYL37WGD1ZBTG9ZBCR2LS6.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stddef-8WNQROJKP48Z9DOMBSFZ5D2Y9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ExtensionFoundation-BTPSW5C8OJ5EC0T4WQTFNWUNT.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SceneKit-JCSSWAOD0992B0QD5PDQZAYD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/simd-A7M5LSN554XAAN23XYGNYC5R8.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_object-7BQK9Z45P0I9IIDCOCX43DJSH.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ImageIO-9QR3PMDSB56G13MSAJSILMUMD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdbool-9C1Y9Z4DF6PEWV5NJ8MNK0G89.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/QuartzCore-3XMGP0EBLJ8VLAF2J3GXA5SUM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIKit-L5UC01NRC5YULE6UIHXPVLA2.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Security-AOOY474B7NLZ21ORAT07KX2ZR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os-CPO0RGENU6T7Q4K7V0JEKW9T1.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_float-4NZHM4A518I7R7EXBTDV9L9R1.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Symbols-9XDYDTXXBXW67EB85O3YHED0E.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreData-1F8CQWPAJ20OHMK1NOUIP41DM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreSpotlight-41CJESOSFUYH6HG2TZECXVLG4.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Network-DO0J5TBZ61UE0S17XJNO669Z4.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_limits-B8HW3M8HSI7AM16W4REXPFBOR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UniformTypeIdentifiers-8QVC8HP3TV3DD72E8NLDHU57S.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdint-3VR7RBKBBGMWP7BUREPX6I3WF.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OSLog-6DM7SJ976ISH3OIM731FC37GM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUI-5T9Y595AEWBDF0KK3GABMXS07.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Foundation-73SSQSB7U0Q3KFMCB0VEPFBUD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_workgroup-A82KFHOI6QN6Z26S4W68XANPC.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/XPC-9UBA8Z2BTY35T4YHY5VKPRMEY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_tgmath-7XYUDHBZSW3S4S89JOM9A1OKQ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrcheck-BAYNV8UXV9F9PB99H7QDM2WGS.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIUtilities-53DT9K1UD16LUUPOBT2OY6KPR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Spatial-6JLP30330Q3YGT46HLVAEO807.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/GLKit-44D2AMOJOF39TYXL22SWVB3JY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation1-EXTN30I5W50T2ENVHG3ASU8BL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Darwin-95DEJ815H0KM6LJJZNFRU3Y7G.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreImage-4RP7PW60FUS8VMXC4JB8HOFD5.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreVideo-428Q3AVWE1CMDE6Y36S3ODG7M.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/FileProvider-5QOYM2NEC83QOBELF0FJL24NO.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreLocation-2OWYWOI9Z7DWOFPXHK5VBOM86.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Dispatch-7OA9OTVQZYJB41UAKLDW8K9VT.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DeveloperToolsSupport-4C8T1SF41WEQ8U3GV778RZS9Z.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreGraphics-9F1SPYRGZVZ0ED9PCBA09LYZ9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_intrinsics-87B934A39L08MQ85CYTMFKP02.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation3-1IUPMYECPNFNYJ1JFSLT4IO0F.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreFoundation-B4TELNRNC2CBHU7UQK9F88WEL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdatomic-115NXAE7PYPNVVSVFL5RRBQVG.pcm /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-dependencies-1.json (in target 'SuperCraftOS' from project 'SuperCraftOS')
+Failed frontend command:
+/Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AccountOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AgentModels.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/App.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppConfig.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AutonomousTasksView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/BackendClient.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CIBackendFixture.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CredentialStore.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift /Users/builder/clone/swift-verification/Sources/ControlCore/KeyboardCatalog.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/LearningView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/MissionConversation.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/QuestOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ShortcutActions.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.swift -supplementary-output-file-map /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/supplementaryOutputs-1 -emit-localized-strings -emit-localized-strings-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64 -target arm64-apple-ios17.0 -module-can-import-version AppIntents 300.5.12 300.5.12 -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -module-can-import-version Security 61901.120.67 61901.120.67 -module-can-import-version SwiftUI 7.5.3 7.5.3 -disable-cross-import-overlay-search -swift-module-cross-import AppIntents /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import RelevanceKit /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/RelevanceKit.framework/Modules/RelevanceKit.swiftcrossimport/MapKit.swiftoverlay -swift-module-cross-import RelevanceKit /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/RelevanceKit.framework/Modules/RelevanceKit.swiftcrossimport/MapKit.swiftoverlay -swift-module-cross-import SceneKit /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/SceneKit.framework/Modules/SceneKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-dependencies-1.json -debug-module-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS.swiftmodule -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode-26.6.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -I /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -F /Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -O -serialize-debugging-options -const-gather-protocols-file /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/builder/clone/ios_app_dist/ci_xcode -file-compilation-dir /Users/builder/clone/ios_app_dist/ci_xcode -Xcc -ivfsstatcache -Xcc /Users/builder/clone/build/PersonalDevice/SDKStatCaches.noindex/iphoneos26.5-23F81a-9b79862d1ee423bbce42b1c7888a0e7e.sdkstatcache -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-generated-files.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-own-target-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-all-target-headers.hmap -Xcc -iquote -Xcc /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/SuperCraftOS-project-headers.hmap -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Products/Release-iphoneos/include -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources-normal/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/arm64 -Xcc -I/Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources -no-auto-bridging-header-chaining -module-name SuperCraftOS -frontend-parseable-output -disable-clang-spi -clang-target arm64-apple-ios26.5 -target-sdk-version 26.5 -target-sdk-name iphoneos26.5 -in-process-plugin-server-path /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -enable-default-cmo -num-threads 7 -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AccountOperationsView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AgentModels.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/App.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AppConfig.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AppleNotesView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AutonomousTasksView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/BackendClient.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/CIBackendFixture.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/ContentView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/CredentialStore.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/DigitalMeView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/KeyboardCatalog.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/LearningView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/MissionConversation.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/QuestOperationsView.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/ShortcutActions.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/UnifiedAPIClient.o -o /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/GeneratedAssetSymbols.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AccountOperationsView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AgentModels.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/App.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AppConfig.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AppleNotesView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/AutonomousTasksView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/BackendClient.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/CIBackendFixture.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/ContentView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/CredentialStore.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/DigitalMeView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/KeyboardCatalog.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/LearningView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/MissionConversation.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/QuestOperationsView.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/ShortcutActions.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/UnifiedAPIClient.o -index-unit-output-path /SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/GeneratedAssetSymbols.o
+
+CompileSwift normal arm64 (in target 'SuperCraftOS' from project 'SuperCraftOS')
+    cd /Users/builder/clone/ios_app_dist/ci_xcode
+    
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:23:38: error: cannot find type 'AppleNote' in scope
+    @State private var selectedNote: AppleNote?
+                                     ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:90:34: error: cannot find type 'AppleNote' in scope
+    private func noteRow(_ note: AppleNote) -> some View {
+                                 ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:180:15: error: cannot find type 'AppleNote' in scope
+    let note: AppleNote
+              ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:185:37: error: cannot find type 'AppleNote' in scope
+    init(store: BackendStore, note: AppleNote) {
+                                    ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:37:37: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        .background(ConsoleStyle.cyan, in: RoundedRectangle(cornerRadius: 14))
+                                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:56:33: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                                ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:57:72: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                                       ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:69:39: error: cannot infer type of closure parameter 'note' without a type annotation
+        .sheet(item: $selectedNote) { note in
+                                      ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:86:21: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:87:60: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:94:52: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .foregroundStyle(note.pinned ? ConsoleStyle.pink : ConsoleStyle.cyan)
+                                                   ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:94:72: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .foregroundStyle(note.pinned ? ConsoleStyle.pink : ConsoleStyle.cyan)
+                                                                       ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:104:89: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        Text(note.notebook).font(.caption.monospaced()).foregroundStyle(ConsoleStyle.cyan)
+                                                                                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:116:25: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+            .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:117:64: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+            .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                               ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:140:25: error: value of type 'BackendStore' has no dynamic member 'ingestNote' using key path from root type 'BackendStore'
+            await store.ingestNote(title: title.isEmpty ? "Imported Apple Note" : title,
+                  ~~~~~ ^~~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:140:19: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+            await store.ingestNote(title: title.isEmpty ? "Imported Apple Note" : title,
+                  ^
+                  $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:140:25: error: cannot call value of non-function type 'Binding<Subject>'
+            await store.ingestNote(title: title.isEmpty ? "Imported Apple Note" : title,
+                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:170:21: error: value of type 'BackendStore' has no dynamic member 'loadNotes' using key path from root type 'BackendStore'
+        await store.loadNotes()
+              ~~~~~ ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:170:15: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+        await store.loadNotes()
+              ^
+              $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:170:21: error: cannot call value of non-function type 'Binding<Subject>'
+        await store.loadNotes()
+                    ^        ~~
+                             
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:171:43: error: value of type 'BackendStore' has no dynamic member 'notes' using key path from root type 'BackendStore'
+        if let error = store.error, store.notes.isEmpty { localError = error }
+                                    ~~~~~ ^~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:171:37: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+        if let error = store.error, store.notes.isEmpty { localError = error }
+                                    ^
+                                    $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:198:108: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    TextField("Notebook", text: $notebook).font(.subheadline.monospaced()).foregroundStyle(ConsoleStyle.cyan)
+                                                                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:202:37: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        .background(ConsoleStyle.background, in: RoundedRectangle(cornerRadius: 12))
+                                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:203:76: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(ConsoleStyle.line))
+                                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:212:73: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                                        .foregroundStyle(item.checked ? ConsoleStyle.pink : .secondary)
+                                                                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:220:25: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+            .background(ConsoleStyle.background)
+                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:221:22: error: trailing closure passed to parameter of type 'Visibility' that does not accept a closure
+            .toolbar {
+                     ^
+SwiftUI.View.toolbar:6:27: note: 'toolbar(_:for:)' declared here
+  nonisolated public func toolbar(_ visibility: Visibility, for bars: ToolbarPlacement...) -> some View
+                          ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:239:28: error: value of type 'BackendStore' has no dynamic member 'updateNote' using key path from root type 'BackendStore'
+        Task { await store.updateNote(id: note.id, title: t, body: noteBody, notebook: notebook) }
+                     ~~~~~ ^~~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:239:22: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+        Task { await store.updateNote(id: note.id, title: t, body: noteBody, notebook: notebook) }
+                     ^
+                     $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:239:28: error: cannot call value of non-function type 'Binding<Subject>'
+        Task { await store.updateNote(id: note.id, title: t, body: noteBody, notebook: notebook) }
+                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:256:104: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                TextField("Notebook", text: $notebook).font(.subheadline.monospaced()).foregroundStyle(ConsoleStyle.cyan)
+                                                                                                       ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:258:33: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .background(ConsoleStyle.background, in: RoundedRectangle(cornerRadius: 12))
+                                ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:259:72: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(ConsoleStyle.line))
+                                                                       ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:262:25: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+            .background(ConsoleStyle.background)
+                        ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:266:21: error: generic parameter 'Label' could not be inferred
+                    Button("Save") {
+                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:266:21: note: explicitly specify the generic arguments to fix this issue
+                    Button("Save") {
+                    ^
+                          <<#Label: View#>>
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:266:27: error: missing argument label 'action:' in call
+                    Button("Save") {
+                          ^
+                           action: 
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:266:28: error: cannot convert value of type 'String' to expected argument type '@MainActor () -> Void'
+                    Button("Save") {
+                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:268:49: error: cannot use explicit 'return' statement in the body of result builder 'ViewBuilder'
+                        guard !t.isEmpty else { return }
+                                                ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift:268:49: note: remove 'return' statements to apply the result builder
+                        guard !t.isEmpty else { return }
+                                                ^~~~~~~
+                                                
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:26:37: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:27:76: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:16:41: error: value of type 'BackendStore' has no dynamic member 'digitalMe' using key path from root type 'BackendStore'
+                if let identity = store.digitalMe?.identity {
+                                  ~~~~~ ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:16:35: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+                if let identity = store.digitalMe?.identity {
+                                  ^
+                                  $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:16:50: error: cannot use optional chaining on non-optional value of type 'Binding<Subject>'
+                if let identity = store.digitalMe?.identity {
+                                  ~~~~~~~~~~~~~~~^
+                                                 
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:50:21: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:51:60: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:39:36: error: value of type 'BackendStore' has no dynamic member 'digitalMe' using key path from root type 'BackendStore'
+            if let profile = store.digitalMe {
+                             ~~~~~ ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:39:30: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+            if let profile = store.digitalMe {
+                             ^
+                             $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:72:68: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+                        Image(systemName: "brain").foregroundStyle(ConsoleStyle.cyan)
+                                                                   ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:81:21: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .background(ConsoleStyle.panel, in: RoundedRectangle(cornerRadius: 18))
+                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:82:60: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(ConsoleStyle.line))
+                                                           ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:60:17: error: generic parameter 'Label' could not be inferred
+                Button("Save") {
+                ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:60:17: note: explicitly specify the generic arguments to fix this issue
+                Button("Save") {
+                ^
+                      <<#Label: View#>>
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:60:23: error: missing argument label 'action:' in call
+                Button("Save") {
+                      ^
+                       action: 
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:60:24: error: cannot convert value of type 'String' to expected argument type '@MainActor () -> Void'
+                Button("Save") {
+                       ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:62:48: error: cannot use explicit 'return' statement in the body of result builder 'ViewBuilder'
+                    guard !note.isEmpty else { return }
+                                               ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:62:48: note: remove 'return' statements to apply the result builder
+                    guard !note.isEmpty else { return }
+                                               ^~~~~~~
+                                               
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:87:103: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+            Text("\(value)").font(.system(size: 28, weight: .bold, design: .rounded)).foregroundStyle(ConsoleStyle.pink)
+                                                                                                      ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:92:21: error: 'ConsoleStyle' is inaccessible due to 'private' protection level
+        .background(ConsoleStyle.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 12))
+                    ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift:7:14: note: 'ConsoleStyle' declared here
+private enum ConsoleStyle {
+             ^
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:99:39: error: value of type 'BackendStore' has no dynamic member 'digitalMe' using key path from root type 'BackendStore'
+        if let e = store.error, store.digitalMe == nil { self.error = e }
+                                ~~~~~ ^~~~~~~~~
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift:99:33: error: referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject<BackendStore>.Wrapper'
+        if let e = store.error, store.digitalMe == nil { self.error = e }
+                                ^
+                                $
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift:96:8: warning: left side of nil coalescing operator '??' has non-optional type 'Data', so the right side is never used
+    ]) ?? Data()
+~~~~~~~^~~~~~~~~
+      
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift:105:100: warning: left side of nil coalescing operator '??' has non-optional type 'Data', so the right side is never used
+    let requestBody = try? JSONSerialization.data(withJSONObject: ["query": query, "top_k": topK]) ?? Data()
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+                                                                                                  
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift:119:9: warning: initialization of immutable value 'data' was never used; consider replacing with assignment to '_' or removing it
+    let data = try await client.data("/api/v1/unified/agents")
+    ~~~~^~~~
+    _
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift:127:9: warning: initialization of immutable value 'data' was never used; consider replacing with assignment to '_' or removing it
+    let data = try await client.data("/api/v1/unified/model/route", body: requestBody)
+    ~~~~^~~~
+    _
+/Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift:134:9: warning: initialization of immutable value 'data' was never used; consider replacing with assignment to '_' or removing it
+    let data = try await client.data("/api/v1/unified/health/detailed")
+    ~~~~^~~~
+    _
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ AccountOperationsView.swift,\ AgentModels.swift,\ App.swift,\ AppConfig.swift,\ AppleNotesView.swift,\ AutonomousTasksView.swift,\ BackendClient.swift,\ CIBackendFixture.swift,\ ContentView.swift,\ CredentialStore.swift,\ DigitalMeView.swift,\ KeyboardCatalog.swift,\ LearningView.swift,\ MissionConversation.swift,\ QuestOperationsView.swift,\ ShortcutActions.swift,\ UnifiedAPIClient.swift,\ GeneratedAssetSymbols.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AccountOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AgentModels.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/App.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppConfig.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AppleNotesView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/AutonomousTasksView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/BackendClient.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CIBackendFixture.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ContentView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/CredentialStore.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/DigitalMeView.swift /Users/builder/clone/swift-verification/Sources/ControlCore/KeyboardCatalog.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/LearningView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/MissionConversation.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/QuestOperationsView.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/ShortcutActions.swift /Users/builder/clone/ios_app_dist/YourApp.swiftpm/UnifiedAPIClient.swift /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/DerivedSources/GeneratedAssetSymbols.swift /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreText.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Builtin_float.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SceneKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LocalAuthentication.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Foundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/QuartzCore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/os.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_StringProcessing.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Combine.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Observation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreSpotlight.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UIKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/UniformTypeIdentifiers.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/GLKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Accessibility.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ObjectiveC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Distributed.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreImage.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation3.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Swift.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/AppIntents.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DataDetection.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreVideo.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/RelevanceKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Spatial.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/SwiftUICore.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/XPC.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreGraphics.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Symbols.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreData.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_SceneKit_SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/DeveloperToolsSupport.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_Concurrency.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CryptoKit.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Metal.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/FileProvider.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/LightweightCodeRequirements.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreLocation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/OSLog.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/simd.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ExtensionFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Dispatch.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreTransferable.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/System.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/ModelIO.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Charts.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Network.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation1.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/Darwin.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/CoreFoundation.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_AppIntents_SwiftUI.swiftmodule/arm64e-apple-ios.swiftmodule /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos/prebuilt-modules/26.5/_DarwinFoundation2.swiftmodule/arm64e-apple-ios.swiftmodule /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Metal-46LNL0FHGYIR3QJ6VYX3F39OS.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrauth-A5Q5VL1OUVPHJF1EX6ELYENTD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_SwiftConcurrencyShims-4Q0WD7NY4Q9T7ESQTTUTHBZY5.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUICore-DSAASJ8PE4483NQMXCYDRHBKU.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/sys_types-9141X6BCWCXUNZC5XSDDTBH8P.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreTransferable-6M0HMR6XS38NAXYIPK7VVOZ5J.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_inttypes-1RS9UCRLLK779NDENBLHN88EJ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreText-7EY3P4TTJC5GLLGOZ8V57G0V6.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CFNetwork-C1EZ3BS281CDKV7K7R13IN0XG.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ModelIO-3JX83R4EHZRB5L8GPKUOJMAZA.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Accessibility-E9VO5I1C7VFQKYWQYJF00PXRE.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/AppIntents-8DCZRBQQ7F2CDKY3D0Q996CCQ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftShims-37S5V7XW67V9PNH61GNQYRN0K.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DataDetection-42H8MVI0PY2R4UFSUXJ88UUKI.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/dnssd-CRK1SIH8IQK090I7HEMUIB1WD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/RelevanceKit-BHI7HWINGJ93QF4Z5CSA6P0QM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_AvailabilityInternal-8NMSQFC5XH6BKR2B18P6Q7UCA.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OpenGLES-53SLJXM85AXC81KGWFL2XQLRP.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UserNotifications-9IVQEUIOYJJ2SURIL84XME4R9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_LocationEssentials-7AMIQZSWXTB2X5Q3SSTXX7UI.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdarg-BWGYLI4LZSZ818MYWVG0XAQ8H.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/MachO-AGQL5NDUWPFIIYP1W11WDBEZE.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/LocalAuthentication-9NOXBFHEXS6FRD99QWZQND2UL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ObjectiveC-6UYDXDWUENZOUZ88GQ9EUDK73.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/IOSurface-4W7002J0ZH8C5LPH5A8YXXPXY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation2-8DVUYL37WGD1ZBTG9ZBCR2LS6.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stddef-8WNQROJKP48Z9DOMBSFZ5D2Y9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ExtensionFoundation-BTPSW5C8OJ5EC0T4WQTFNWUNT.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SceneKit-JCSSWAOD0992B0QD5PDQZAYD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/simd-A7M5LSN554XAAN23XYGNYC5R8.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_object-7BQK9Z45P0I9IIDCOCX43DJSH.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ImageIO-9QR3PMDSB56G13MSAJSILMUMD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdbool-9C1Y9Z4DF6PEWV5NJ8MNK0G89.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/QuartzCore-3XMGP0EBLJ8VLAF2J3GXA5SUM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIKit-L5UC01NRC5YULE6UIHXPVLA2.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Security-AOOY474B7NLZ21ORAT07KX2ZR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os-CPO0RGENU6T7Q4K7V0JEKW9T1.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_float-4NZHM4A518I7R7EXBTDV9L9R1.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Symbols-9XDYDTXXBXW67EB85O3YHED0E.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreData-1F8CQWPAJ20OHMK1NOUIP41DM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreSpotlight-41CJESOSFUYH6HG2TZECXVLG4.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Network-DO0J5TBZ61UE0S17XJNO669Z4.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_limits-B8HW3M8HSI7AM16W4REXPFBOR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UniformTypeIdentifiers-8QVC8HP3TV3DD72E8NLDHU57S.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdint-3VR7RBKBBGMWP7BUREPX6I3WF.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/OSLog-6DM7SJ976ISH3OIM731FC37GM.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/SwiftUI-5T9Y595AEWBDF0KK3GABMXS07.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Foundation-73SSQSB7U0Q3KFMCB0VEPFBUD.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/os_workgroup-A82KFHOI6QN6Z26S4W68XANPC.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/XPC-9UBA8Z2BTY35T4YHY5VKPRMEY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_tgmath-7XYUDHBZSW3S4S89JOM9A1OKQ.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/ptrcheck-BAYNV8UXV9F9PB99H7QDM2WGS.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/UIUtilities-53DT9K1UD16LUUPOBT2OY6KPR.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Spatial-6JLP30330Q3YGT46HLVAEO807.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/GLKit-44D2AMOJOF39TYXL22SWVB3JY.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation1-EXTN30I5W50T2ENVHG3ASU8BL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Darwin-95DEJ815H0KM6LJJZNFRU3Y7G.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreImage-4RP7PW60FUS8VMXC4JB8HOFD5.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreVideo-428Q3AVWE1CMDE6Y36S3ODG7M.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/FileProvider-5QOYM2NEC83QOBELF0FJL24NO.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreLocation-2OWYWOI9Z7DWOFPXHK5VBOM86.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/Dispatch-7OA9OTVQZYJB41UAKLDW8K9VT.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/DeveloperToolsSupport-4C8T1SF41WEQ8U3GV778RZS9Z.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreGraphics-9F1SPYRGZVZ0ED9PCBA09LYZ9.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_intrinsics-87B934A39L08MQ85CYTMFKP02.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_DarwinFoundation3-1IUPMYECPNFNYJ1JFSLT4IO0F.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/CoreFoundation-B4TELNRNC2CBHU7UQK9F88WEL.pcm /Users/builder/clone/build/PersonalDevice/ModuleCache.noindex/_Builtin_stdatomic-115NXAE7PYPNVVSVFL5RRBQVG.pcm /Users/builder/clone/build/PersonalDevice/Build/Intermediates.noindex/SuperCraftOS.build/Release-iphoneos/SuperCraftOS.build/Objects-normal/arm64/SuperCraftOS-dependencies-1.json (in target 'SuperCraftOS' from project 'SuperCraftOS')
+	CompileSwift normal arm64 (in target 'SuperCraftOS' from project 'SuperCraftOS')
+	Building project SuperCraftOS with scheme SuperCraftOS and configuration Release
+(3 failures)

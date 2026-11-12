@@ -1,0 +1,18 @@
+metadata:
+  name: document-ingestion-and-retrieval
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - document
+blocks:
+  - step_type: tap
+    description: Navigate to the document ingestion screen
+  - step_type: tap
+    description: Upload or import a document
+  - step_type: tap
+    description: Verify document is processed and indexed
+  - step_type: tap
+    description: Search for the document content
+  - step_type: tap
+    description: Verify document appears in search results

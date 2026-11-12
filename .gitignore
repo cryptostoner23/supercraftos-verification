@@ -1,0 +1,39 @@
+.env
+.env.*
+!.env.example
+.venv/
+data/
+data
+data/notes.key
+__pycache__/
+*.pyc
+agent-core/target/
+.cad-venv/
+agent-brain/
+# Swift build artifacts
+build/
+.swiftpm/
+.swiftpm/xcode/package_resolution/
+*.swiftmodule/
+*.swiftdoc
+*.pcm
+swift-verification/.build/
+swift-verification/build/
+.agents/
+.claude/
+.commandcode/
+agent/
+skills-lock.json
+
+# Local release build output, not tracked in git.
+release/
+tools/
+data/apple-docs/raw/
+
+# Local signing credentials (never commit)
+.signing/
+
+# Generated Xcode artifacts (concept apps) — never commit
+ios_concepts/*/SuperCraftOSConcept*.xcodeproj/
+ios_concepts/*/Info.plist
+ios_concepts/*/build/

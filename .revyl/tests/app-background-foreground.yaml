@@ -1,0 +1,18 @@
+# Revyl Test Definition
+
+_meta:
+    remote_id: fa6ae898-0a1c-421c-a61c-c7d6dd3b2308
+    remote_version: 1
+    local_version: 1
+    last_synced_at: "2026-11-07T14:14:03+01:00"
+    checksum: c7dd019d52e967758e4c7ef96ede74b8bb6144d02eaf6a566027b7161f3b246a
+test:
+    metadata:
+        name: app-background-foreground
+        platform: ios
+    build:
+        name: SuperCraftOS iOS
+        branch_id: 64080c36-46b1-41a1-a682-dea2774b6608
+        build_selection: pinned
+        pinned_build_id: 834300f6-ff12-4a10-bf70-84eba1392252
+    blocks: []

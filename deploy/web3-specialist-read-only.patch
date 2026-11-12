@@ -1,0 +1,33 @@
+--- /opt/web3-agent/web3agent/brain/agent.py
++++ /opt/web3-agent/web3agent/brain/agent.py
+@@ -220,10 +220,12 @@
+ LLM_TIMEOUT_S = float(os.getenv("W3A_LLM_TIMEOUT_S", "25"))
+ 
+ 
+-async def ask(text: str, conv_id: str | None = None, use_llm: bool = True) -> dict:
++async def ask(text: str, conv_id: str | None = None, use_llm: bool = True, read_only: bool = False) -> dict:
+     cid = memory.ensure(conv_id, text)
+     hist = memory.history(cid)
+-    tools = {t.name: t for t in all_tools()}
++    tools = {t.name: t for t in all_tools() if not read_only or t.name in {
++        'brain_token_scan', 'brain_trending_pools', 'brain_contract_security', 'brain_yields',
++        'brain_gas', 'brain_wallet_portfolio', 'brain_market_overview', 'brain_research_report', 'brain_address_lookup'}}
+     memory.add(cid, "user", text)
+     be = await backend() if use_llm else None
+     mode, answer, trace = "intent", "", []
+--- /opt/web3-agent/web3agent/brain/__init__.py
++++ /opt/web3-agent/web3agent/brain/__init__.py
+@@ -45,11 +45,12 @@
+     message: str
+     conversation_id: str | None = None
+     use_llm: bool = True
++    read_only: bool = False
+ 
+ @router.post("/chat")
+ async def chat(body: ChatIn):
+     if not body.message.strip(): raise HTTPException(400, "empty message")
+-    return await agent.ask(body.message, body.conversation_id, body.use_llm)
++    return await agent.ask(body.message, body.conversation_id, body.use_llm, body.read_only)
+ 
+ @router.get("/tools")
+ async def list_tools():

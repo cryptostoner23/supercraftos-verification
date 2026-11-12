@@ -1,0 +1,326 @@
+# ============================================================================
+# codemagic.yaml — SuperCraftOS iOS delivery pipeline (single platform)
+#
+# Covers the whole remaining workflow in ONE platform (Codemagic):
+#   XcodeGen generate -> Swift contract tests -> iOS unit/UI/backend/interaction
+#   suites on a simulator -> build unsigned IPA + unsigned simulator .app slice
+#   (for cloud-device testing / sideloading).
+#
+# Code signing: because the owner is NOT a paid Apple Developer Program member
+# and has no App Store Connect API key, automatic provisioning is NOT used.
+# Distribution is therefore limited to:
+#   - unsigned IPA for sideloading (Sideloadly / AltStore),
+#   - simulator .app for cloud-device (simulator) testing via Revyl/Firebase,
+#   - optional free "Personal Team" manual signing on the developer's own Mac
+#     (7-day expiry; documented in docs/FREE_APPLE_INSTALL.md).
+# To enable MANUAL signing on Codemagic once a .p12 + .mobileprovision exist,
+# uncomment the `signing` block in `ios-release` and set the secrets below.
+#
+# No real secrets appear in this file. All values are placeholders managed as
+# Codemagic environment/secret groups (see the table at the bottom).
+# ============================================================================
+
+workflows:
+  # --------------------------------------------------------------------------
+  # Workflow 1: CI verification + simulator .app slice (free tier, always green)
+  # Builds from the XcodeGen spec, runs every test suite on a simulator, and
+  # emits an UNSIGNED simulator .app for cloud-device testing.
+  # --------------------------------------------------------------------------
+  ios-verify-and-sim-app:
+    name: iOS Verify + Simulator .app
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+    environment:
+      xcode: latest            # Xcode 26/27; pin if the stack reports issues
+      groups:
+        - ios_config           # non-secret build config (scheme, project, test sim)
+        - backend_credentials  # secrets: backend URL + access key (runtime-injected)
+    scripts:
+      - name: Install XcodeGen and generate the Xcode project
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR"
+          xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
+
+      - name: Swift contract tests (SPM)
+        script: |
+          cd "$CM_BUILD_DIR"
+          set -e
+          mkdir -p build
+          # The CLI contract tests invoke the supercraftos-check binary; point
+          # them at the freshly built one (same as build_ios.sh does).
+          export SUPERCRAFTOS_CLI_BINARY="$(swift build --package-path swift-verification --show-bin-path)/supercraftos-check"
+          swift test --package-path swift-verification 2>&1 | tee build/contract-tests.log
+        test_report: build/contract-tests.log
+
+      - name: iOS unit / UI / backend / interaction tests on simulator
+        script: |
+          cd "$CM_BUILD_DIR"
+          set -e
+          mkdir -p build/ios
+          PROJECT=ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj
+          xcodebuild test -project "$PROJECT" -scheme SuperCraftOSTests \
+            -sdk iphonesimulator -destination "platform=iOS Simulator,name=$TEST_SIMULATOR" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/ios/unit.log
+          xcodebuild test -project "$PROJECT" -scheme SuperCraftOSBackendTests \
+            -sdk iphonesimulator -destination "platform=iOS Simulator,name=$TEST_SIMULATOR" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/ios/backend.log
+          xcodebuild test -project "$PROJECT" -scheme SuperCraftOSInteractionTests \
+            -sdk iphonesimulator -destination "platform=iOS Simulator,name=$TEST_SIMULATOR" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/ios/interaction.log
+          xcodebuild test -project "$PROJECT" -scheme SuperCraftOSUITests \
+            -sdk iphonesimulator -destination "platform=iOS Simulator,name=$TEST_SIMULATOR" \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee build/ios/ui.log
+        test_report: build/ios/*.log
+
+      - name: Build unsigned simulator .app slice (for cloud-device testing)
+        script: |
+          cd "$CM_BUILD_DIR"
+          mkdir -p build/simulator
+          xcodebuild build \
+            -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj \
+            -scheme SuperCraftOS \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/derived \
+            CODE_SIGNING_ALLOWED=NO
+          APP=$(find build/derived/Build/Products -name "SuperCraftOS.app" -maxdepth 2 | head -1)
+          ditto -c -k --keepParent "$APP" build/simulator/SuperCraftOS-simulator.app.zip
+    artifacts:
+      - build/simulator/*.zip
+      - build/ios/*.log
+      - build/contract-tests.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing: {}
+    # Add email/notification publishing here if desired.
+
+  # --------------------------------------------------------------------------
+  # Workflow 2: Release — unsigned IPA (sideloadable) + optional manual signing
+  # --------------------------------------------------------------------------
+  ios-release:
+    name: iOS Release (unsigned IPA + optional manual signing)
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+    environment:
+      xcode: latest
+      groups:
+        - ios_config
+        - backend_credentials
+      # Manual signing (free "Personal Team" route) — uncomment ONLY when the
+      # .p12 and .mobileprovision secrets are set. No automatic provisioning
+      # is attempted (no paid Apple Developer Program membership).
+      # signing:
+      #   certificate: $IOS_DIST_CERT          # base64 .p12
+      #   certificate_password: $IOS_DIST_CERT_PASSWORD
+      #   provisioning_profile: $IOS_APP_PROFILE # base64 .mobileprovision
+    scripts:
+      - name: Install XcodeGen, generate project, apply backend runtime env
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR"
+          xcodegen generate --spec ios_app_dist/ci_xcode/project.yml
+          # Bake the real backend endpoint/access key so the app shows live data.
+          # (Only the env var is injected; the access key is a secret.)
+          # If using a specific backend:
+          # xcodebuild SUPERCRAFTOS_BACKEND_URL="$BACKEND_URL" \
+          #   SUPERCRAFTOS_ACCESS_KEY="$ACCESS_KEY" ...
+
+      - name: Apply manual provisioning profiles (free Personal Team route only)
+        script: |
+          # Only runs if signing secrets are present.
+          if [ -n "${IOS_DIST_CERT:-}" ] && [ -n "${IOS_APP_PROFILE:-}" ]; then
+            cd "$CM_BUILD_DIR"
+            echo "$IOS_DIST_CERT" | base64 --decode > /tmp/dist.p12
+            echo "$IOS_APP_PROFILE" | base64 --decode > /tmp/profile.mobileprovision
+            xcode-project use-profiles 2>/dev/null || echo "manual profile apply skipped (xcode-project may not be configured)"
+          else
+            echo "Skipping signing: no free personal-team signing secrets provided (unsigned IPA)."
+          fi
+
+      - name: Build and export IPA (unsigned unless signing secrets present)
+        script: |
+          cd "$CM_BUILD_DIR"
+          mkdir -p build/ios/ipa
+          if [ -n "${IOS_DIST_CERT:-}" ] && [ -n "${IOS_APP_PROFILE:-}" ]; then
+            xcodebuild archive \
+              -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj \
+              -scheme SuperCraftOS -configuration Release \
+              -archivePath build/ios/Release.xcarchive
+            xcodebuild -exportArchive -archivePath build/ios/Release.xcarchive \
+              -exportPath build/ios/ipa -exportOptionsPlist ios_app_dist/ci_xcode/ExportOptions-development.plist
+          else
+            # Unsigned IPA (payload zip) for sideloading.
+            xcodebuild build \
+              -project ios_app_dist/ci_xcode/SuperCraftOS.xcodeproj \
+              -scheme SuperCraftOS -configuration Release \
+              -sdk iphoneos -destination 'generic/platform=iOS' \
+              -derivedDataPath build/device \
+              CODE_SIGNING_ALLOWED=NO
+            APP=$(find build/device/Build/Products -name "SuperCraftOS.app" -maxdepth 2 | head -1)
+            mkdir -p build/ipa-staging/Payload
+            cp -R "$APP" build/ipa-staging/Payload/
+            (cd build/ipa-staging && zip -r ../ios/ipa/SuperCraftOS-unsigned.ipa Payload)
+          fi
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      # Tester groups (direct email artifact to internal testers) and public
+      # build-dashboard links are configured in the Codemagic UI, not here.
+      email:
+        recipients:
+          - $BUILD_NOTIFY_EMAIL
+        notify:
+          success: true
+          failure: true
+
+# ============================================================================
+# Environment variables / secret groups required (managed in Codemagic UI)
+# ============================================================================
+# Group `ios_config` (non-secret):
+#   XCODE_PROJECT          -> SuperCraftOS.xcodeproj (under ios_app_dist/ci_xcode)
+#   XCODE_SCHEME           -> SuperCraftOS
+#   TEST_SIMULATOR         -> iPhone 16  (or whichever simulator is available)
+#   BACKEND_URL             -> https://agent.commetai.ca  (runtime-injected)
+#   BUILD_NOTIFY_EMAIL      -> your email (notifications)
+#
+# Group `backend_credentials` (Secret / encrypted, injected at runtime):
+#   ACCESS_KEY              -> the gateway access key (from server data/access.key)
+#   REVYL_API_KEY           -> optional, only to push simulator .app to Revyl
+#   GCLOUD_KEY_FILE         -> optional, only for Firebase Test Lab real devices
+#   FIREBASE_PROJECT        -> optional, only for Firebase Test Lab / App Distribution
+#
+# Manual-signing group `ios_signing` (Secret; only for the free Personal Team route):
+#   IOS_DIST_CERT          -> base64 of .p12 (exported from the dev Mac keychain)
+#   IOS_DIST_CERT_PASSWORD -> the .p12 passphrase
+#   IOS_APP_PROFILE        -> base64 of .mobileprovision (from Xcode free team)
+# ============================================================================
+
+# --------------------------------------------------------------------------
+# Concept apps (visual design prototypes) — build + UI-test on the simulator
+# --------------------------------------------------------------------------
+  concept-apps-build:
+    name: Concept Apps Build (simulator .app for Autosana)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      groups:
+        - backend_credentials
+    scripts:
+      - name: Build Concept 2 simulator app
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR/ios_concepts/concept2"
+          xcodegen generate --spec project.yml
+          xcodebuild build -project SuperCraftOSConcept2.xcodeproj \
+            -scheme SuperCraftOSConcept2 -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}"
+          APP=$(find build/Build/Products -name "SuperCraftOSConcept2.app" -maxdepth 2 | head -1)
+          ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/concept2-sim.app.zip"
+      - name: Build Concept 6 simulator app
+        script: |
+          cd "$CM_BUILD_DIR/ios_concepts/concept6"
+          xcodegen generate --spec project.yml
+          xcodebuild build -project SuperCraftOSConcept6.xcodeproj \
+            -scheme SuperCraftOSConcept6 -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}"
+          APP=$(find build/Build/Products -name "SuperCraftOSConcept6.app" -maxdepth 2 | head -1)
+          ditto -c -k --keepParent "$APP" "$CM_BUILD_DIR/concept6-sim.app.zip"
+    artifacts:
+      - concept2-sim.app.zip
+      - concept6-sim.app.zip
+    publishing: {}
+
+  concept2-verify:
+    name: Concept 2 Verify
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      groups:
+        - backend_credentials
+    scripts:
+      - name: Generate Concept 2 Xcode project
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR/ios_concepts/concept2"
+          xcodegen generate --spec project.yml
+      - name: Run Concept 2 UI tests + export screenshots
+        script: |
+          cd "$CM_BUILD_DIR/ios_concepts/concept2"
+          set -e
+          rm -rf build/test-output
+          xcodebuild test -project SuperCraftOSConcept2.xcodeproj \
+            -scheme Concept2UITests -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            -resultBundlePath build/test-output/concept2.xcresult \
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
+            2>&1 | tee /tmp/concept2.log
+          mkdir -p build/screens
+          # Export the XCTAttachment screenshots as PNGs.
+          xcrun xcresulttool export attachments \
+            --path build/test-output/concept2.xcresult \
+            --output-path build/screens 2>/dev/null || echo "attachment export skipped"
+        test_report: /tmp/concept2.log
+    artifacts:
+      - /tmp/concept2.log
+      - concept2/build/screens/**/*.png
+      - ios_concepts/concept2/build/screens/**/*.png
+    publishing: {}
+
+  concept6-verify:
+    name: Concept 6 Verify
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      groups:
+        - backend_credentials
+    scripts:
+      - name: Generate Concept 6 Xcode project
+        script: |
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd "$CM_BUILD_DIR/ios_concepts/concept6"
+          xcodegen generate --spec project.yml
+      - name: Run Concept 6 UI tests + export screenshots
+        script: |
+          cd "$CM_BUILD_DIR/ios_concepts/concept6"
+          set -e
+          rm -rf build/test-output
+          xcodebuild test -project SuperCraftOSConcept6.xcodeproj \
+            -scheme Concept6UITests -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            -resultBundlePath build/test-output/concept6.xcresult \
+            CODE_SIGNING_ALLOWED=NO SUPERCRAFTOS_ACCESS_KEY="${ACCESS_KEY:?}" \
+            2>&1 | tee /tmp/concept6.log
+          mkdir -p build/screens
+          xcrun xcresulttool export attachments \
+            --path build/test-output/concept6.xcresult \
+            --output-path build/screens 2>/dev/null || echo "attachment export skipped"
+        test_report: /tmp/concept6.log
+    artifacts:
+      - /tmp/concept6.log
+      - concept6/build/screens/**/*.png
+      - ios_concepts/concept6/build/screens/**/*.png
+    publishing: {}

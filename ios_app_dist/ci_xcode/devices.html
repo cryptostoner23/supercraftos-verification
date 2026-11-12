@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SuperCraftOS — Device setup</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#121016; color:#f2f2f7;
+         font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+         padding: 20px 16px 60px; }
+  .wrap { max-width: 620px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 800; margin: 4px 0 2px; letter-spacing: -0.4px; }
+  .sub { color:#a0a0aa; font-size: 14px; margin: 0 0 22px; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+       color:#f5428c; margin: 30px 0 10px; }
+  h3 { margin:0 0 4px; font-size:16px; font-weight:700; }
+  .card { background:#1e1b24; border:1px solid #2f2b38; border-radius:16px; padding:16px; margin-bottom:12px; }
+  .card p { margin:4px 0 0; color:#a0a0aa; font-size:14px; }
+  .a { display:block; background:#f5428c; color:#121016; font-weight:700; text-decoration:none;
+       border-radius:12px; padding:14px 16px; margin-top:12px; text-align:center; font-size:16px; }
+  .a.ghost { background:#2f2b38; color:#f2f2f7; font-weight:600; }
+  .a.cyan { background:#38d1c7; }
+  .a.alt { background:#a36bff; }
+  .steps { counter-reset: s; list-style:none; padding:0; margin:0; }
+  .steps li { counter-increment: s; position:relative; padding-left:38px; margin:0 0 16px; }
+  .steps li::before { content: counter(s); position:absolute; left:0; top:1px; width:26px; height:26px;
+        border-radius:50%; background:#f5428c; color:#121016; font-weight:800; font-size:14px;
+        display:flex; align-items:center; justify-content:center; }
+  .steps b { color:#fff; }
+  .path { display:block; background:#121016; border:1px solid #38d1c7; color:#38d1c7; border-radius:10px;
+         padding:10px 12px; margin:6px 0 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:13px; }
+  ol.plain { margin:6px 0 0; padding-left:20px; }
+  ol.plain li { margin:0 0 8px; }
+  code, .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  .pill { display:inline-block; background:#2f2b38; color:#38d1c7; border-radius:999px;
+          padding:2px 9px; font-size:11px; font-weight:700; letter-spacing:0.5px; }
+  .note { background:#1a2620; border:1px solid #24402f; border-radius:12px; padding:12px 14px;
+          font-size:14px; color:#b8d8c4; margin:14px 0; }
+  .warn { background:#2a1d1d; border:1px solid #4a2b2b; border-radius:12px; padding:14px;
+          font-size:14px; color:#e8b8b8; margin:14px 0; }
+  .warn b { color:#ffb4b4; }
+  .sep { height:1px; background:#2f2b38; margin:26px 0; }
+  .mini { font-size:13px; color:#8b8b95; }
+  table { width:100%; border-collapse:collapse; margin:6px 0 0; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid #2f2b38; font-size:14px; }
+  th { color:#38d1c7; font-weight:600; }
+  .dev { border:1px solid #2f2b38; border-radius:16px; overflow:hidden; margin-bottom:16px; }
+  .dev > .hd { padding:14px 16px; font-weight:800; font-size:17px; display:flex; align-items:center; gap:10px; }
+  .dev.a .hd { background:rgba(245,66,140,.16); }
+  .dev.b .hd { background:rgba(163,107,255,.16); }
+  .dev > .bd { padding:4px 16px 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SuperCraftOS</h1>
+  <p class="sub">Device setup &middot; one Apple account per device &middot; free, no payment</p>
+
+  <div class="note">
+    <b>Two accounts, one device each, and never the same account twice.</b> A free Apple
+    account may register only <b>10 App IDs per 7 days</b> and install only <b>3 apps per
+    device</b>. SideStore, SuperCraftOS and the keyboard extension are three separate
+    registrations. Splitting the two devices across your two accounts means neither
+    account comes close to the cap, and their 7 day clocks run in parallel so the app is
+    never broken on both at once.
+  </div>
+
+  <div class="warn">
+    <b>The one thing that cannot be avoided.</b> A free Apple account has no access to
+    Certificates, Identifiers and Profiles in the developer portal, so <b>you cannot add
+    your device there yourself</b>. The device registers itself, automatically, during the
+    signing session. That session needs the device <b>plugged into a computer once</b>,
+    through USB. After that it is all wireless, for the life of the app.
+  </div>
+
+  <h2>One, on a computer</h2>
+  <p class="mini">iloader is the official tool for this. It is open source, it registers
+     the device for you, it installs SideStore, and it places the pairing file. It runs on
+     Windows, Linux and macOS.</p>
+  <a class="a" href="https://github.com/nab138/iloader/releases/download/v2.3.10/iloader-windows-x64.exe">Windows &middot; iloader (.exe)</a>
+  <a class="a ghost" href="https://github.com/nab138/iloader/releases/download/v2.3.10/iloader-linux-x86_64.deb">Linux &middot; iloader (.deb)</a>
+  <a class="a ghost" href="https://github.com/nab138/iloader/releases/download/v2.3.10/iloader-darwin-universal.dmg">macOS &middot; iloader (.dmg)</a>
+  <a class="a ghost" href="https://iloader.app/">iloader.app, the official site</a>
+  <p class="mini">On Linux you also need <span class="mono">usbmuxd</span>. On Windows you
+     need iTunes from Apple, not the Microsoft Store version.</p>
+
+  <div class="sep"></div>
+
+  <h2>Device A &middot; the iPad</h2>
+  <div class="dev a">
+    <div class="hd"><span class="pill">APPLE ID A</span> the iPad</div>
+    <div class="bd">
+      <ol class="steps">
+        <li>Plug the <b>iPad</b> into the computer with USB. Tap <b>Trust</b> on the iPad.</li>
+        <li>Open <b>iloader</b>, sign in with <b>Apple ID A</b>, select the iPad, and choose
+            <b>Install SideStore</b>. It registers the device and the App ID for you.
+            <p class="mini">On iOS 26.4 and later pick the <b>nightly</b> option.</p></li>
+        <li>On the iPad, install <b>LocalDevVPN</b> from the App Store and <b>connect</b> it.</li>
+        <li><span class="path">Settings → General → VPN &amp; Device Management → [Apple ID A] → Trust</span>
+            <p class="mini">Be on cellular data. iOS calls Apple to verify the certificate.</p></li>
+        <li><span class="path">Settings → Privacy &amp; Security → Developer Mode → on</span>
+            Restart, then confirm <b>Turn On</b>.</li>
+        <li>Open <b>SideStore</b>, sign in with <b>Apple ID A</b>, tap the <b>7 DAYS</b> counter once.</li>
+        <li>In SideStore tap <b>+</b> and install
+            <a href="SuperCraftOS-iOS-Device-unsigned.ipa">the app</a>.
+            <span class="pill">1 APP ID</span></li>
+        <li>When you want the keyboard, install
+            <a href="SuperCraftOS-iOS-Device-WithKeyboard-unsigned.ipa">app + keyboard</a>
+            instead. <span class="pill">2 APP IDS</span>
+            <p class="mini">Do the app first, so you have a working install before you spend
+               a second App ID on the extension.</p></li>
+        <li>Open the app, <b>Connection</b> &rarr; <span class="mono">https://agent.commetai.ca</span></li>
+        <li>Settings &rarr; General &rarr; Keyboard &rarr; Add New Keyboard &rarr; <b>SuperCraftOS</b>,
+            globe to switch, <b>Allow Full Access</b> on.</li>
+      </ol>
+    </div>
+  </div>
+
+  <h2>Device B &middot; the iPhone</h2>
+  <div class="dev b">
+    <div class="hd"><span class="pill">APPLE ID B</span> the iPhone</div>
+    <div class="bd">
+      <ol class="steps">
+        <li>Plug the <b>iPhone</b> into the computer with USB. Tap <b>Trust</b> on the iPhone.</li>
+        <li>Open <b>iloader</b>, sign in with <b>Apple ID B</b>, select the iPhone, and choose
+            <b>Install SideStore</b>.</li>
+        <li>On the iPhone, install <b>LocalDevVPN</b> from the App Store and <b>connect</b> it.</li>
+        <li><span class="path">Settings → General → VPN &amp; Device Management → [Apple ID B] → Trust</span></li>
+        <li><span class="path">Settings → Privacy &amp; Security → Developer Mode → on</span>
+            Restart, then confirm <b>Turn On</b>.</li>
+        <li>Open <b>SideStore</b>, sign in with <b>Apple ID B</b>, tap the <b>7 DAYS</b> counter once.</li>
+        <li>In SideStore tap <b>+</b> and install
+            <a href="SuperCraftOS-iOS-Device-unsigned.ipa">the app</a>.
+            <span class="pill">1 APP ID</span></li>
+        <li>When you want the keyboard, install
+            <a href="SuperCraftOS-iOS-Device-WithKeyboard-unsigned.ipa">app + keyboard</a> instead.</li>
+        <li>Open the app, <b>Connection</b> &rarr; <span class="mono">https://agent.commetai.ca</span></li>
+        <li>Settings &rarr; General &rarr; Keyboard &rarr; Add New Keyboard &rarr; <b>SuperCraftOS</b>,
+            globe to switch, <b>Allow Full Access</b> on.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>Your budget</h2>
+  <div class="card">
+    <table>
+      <tr><th>Account</th><th>Signs</th><th>App IDs</th><th>Of 10 per week</th></tr>
+      <tr><td>Apple ID A</td><td>SideStore, on the iPad</td><td>1, or 2 with the keyboard</td><td>1</td></tr>
+      <tr><td>Apple ID B</td><td>SideStore, on the iPhone</td><td>1, or 2 with the keyboard</td><td>1</td></tr>
+    </table>
+    <p>Each device holds 2 apps, or 3 with the keyboard, which is the limit of 3 per device.
+       If an install fails, you have burned an App ID. If you hit the cap, wait 7 days or
+       switch to the other account.</p>
+  </div>
+
+  <div class="sep"></div>
+  <h2>After the first install</h2>
+  <div class="card">
+    <p>Nothing. SideStore re-signs the app in the background over Wi-Fi every 7 days. Keep
+       LocalDevVPN connected when you are on Wi-Fi, and you never touch a cable again.</p>
+  </div>
+
+  <div class="sep"></div>
+  <h2>The iPad, if you would rather not do any of that</h2>
+  <div class="card">
+    <h3><span class="pill">NO SIGNING AT ALL</span> Swift Playgrounds</h3>
+    <p>No Apple account, no USB, no App IDs, no Developer Mode, no expiry. The app only, no
+       keyboard.</p>
+    <ol class="plain">
+      <li>Install <b>Swift Playgrounds</b> from the App Store.</li>
+      <li>Open <a href="SuperCraftOS-Swift-Playgrounds.swiftpm.zip">the Playgrounds bundle</a>
+          in Safari, save it to Files.</li>
+      <li>Files &rarr; tap the zip &rarr; <b>Open with &rarr; Swift Playgrounds</b> &rarr; <b>Run</b>.</li>
+      <li>In the app, <b>Connection</b> &rarr; <span class="mono">https://agent.commetai.ca</span></li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>

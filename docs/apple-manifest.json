@@ -1,0 +1,162 @@
+[
+  {
+    "path": "CustomKeyboard.html",
+    "url": "https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html",
+    "title": "CustomKeyboard.html",
+    "sha256": "9ccf1d235be1849aded6bc2f7641ee76724b993495eb831abc75f48cf30ab713",
+    "fetched": "2026-10-20T00:53:23+00:00",
+    "file": "docs/apple/customkeyboard-html.md"
+  },
+  {
+    "path": "ExtensionCreation.html",
+    "url": "https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionCreation.html",
+    "title": "ExtensionCreation.html",
+    "sha256": "9ca15d2ea6e6a4fa7dfca6074435210d2f9495f0b0dc8af42d29adc6d85aef50",
+    "fetched": "2026-10-20T00:53:51+00:00",
+    "file": "docs/apple/extensioncreation-html.md"
+  },
+  {
+    "path": "ExtensionScenarios.html",
+    "url": "https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html",
+    "title": "ExtensionScenarios.html",
+    "sha256": "ece63524ffbfef71915744d85bc2ec051c862a702ede8a6535f61d8fc220c991",
+    "fetched": "2026-10-20T00:53:52+00:00",
+    "file": "docs/apple/extensionscenarios-html.md"
+  },
+  {
+    "path": "_index.html",
+    "url": "https://developer.apple.com/library/archive/technotes/tn2407/_index.html",
+    "title": "_index.html",
+    "sha256": "069e9d59b436a20a9a561e97f14c192b425f49bc6386c4343d20f7d3e91ffb03",
+    "fetched": "2026-10-20T00:53:24+00:00",
+    "file": "docs/apple/index-html.md"
+  },
+  {
+    "path": "appintents/appshortcut",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/appshortcut.json",
+    "title": "AppShortcut",
+    "sha256": "2c57a156cada493edf1169ddb567e3026fd61448d89885e87bc83371f4ab3e1b",
+    "fetched": "2026-10-20T03:22:34+00:00",
+    "file": "docs/apple/appintents-appshortcut.md"
+  },
+  {
+    "path": "appintents/appshortcutphrase",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/appshortcutphrase.json",
+    "title": "AppShortcutPhrase",
+    "sha256": "c9ecd8280d0aec2fd3683cddb1b14ab0fa50ae2977263db2a5be3a048790e2eb",
+    "fetched": "2026-10-20T03:20:45+00:00",
+    "file": "docs/apple/appintents-appshortcutphrase.md"
+  },
+  {
+    "path": "appintents/appshortcutphrase/init(_:)",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/appshortcutphrase/init(_:).json",
+    "title": "init(_:)",
+    "sha256": "91e0e06da524bbda4503f091e342b5d06600931cd33b6e28b8bd934bc2686c0e",
+    "fetched": "2026-10-20T03:22:18+00:00",
+    "file": "docs/apple/appintents-appshortcutphrase-init.md"
+  },
+  {
+    "path": "appintents/appshortcutphrasetoken",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/appshortcutphrasetoken.json",
+    "title": "AppShortcutPhraseToken",
+    "sha256": "165b8015e73cd01fcc379b34243fbd52438a4983fbf5c99387ae4fe034e3f5c6",
+    "fetched": "2026-10-20T03:20:44+00:00",
+    "file": "docs/apple/appintents-appshortcutphrasetoken.md"
+  },
+  {
+    "path": "appintents/appshortcutsprovider",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/appshortcutsprovider.json",
+    "title": "AppShortcutsProvider",
+    "sha256": "3904d6e09c78811b9310d9891c31a4a9e71c42758007414a318ce1a58d355f9f",
+    "fetched": "2026-10-20T03:13:14+00:00",
+    "file": "docs/apple/appintents-appshortcutsprovider.md"
+  },
+  {
+    "path": "appintents/creating-your-first-app-intent",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/creating-your-first-app-intent.json",
+    "title": "Creating your first app intent",
+    "sha256": "df64b067d8fad362163b193ae47564d86453bf7be561fee4762dc396a3601ce1",
+    "fetched": "2026-10-20T03:13:13+00:00",
+    "file": "docs/apple/appintents-creating-your-first-app-intent.md"
+  },
+  {
+    "path": "appintents/intentparameter",
+    "url": "https://developer.apple.com/tutorials/data/documentation/appintents/intentparameter.json",
+    "title": "IntentParameter",
+    "sha256": "2691d6084e870a8df3271152a10bc1625360a01c1629a3a28e42d3a91557e719",
+    "fetched": "2026-10-20T03:25:40+00:00",
+    "file": "docs/apple/appintents-intentparameter.md"
+  },
+  {
+    "path": "bundleresources/entitlements",
+    "url": "https://developer.apple.com/tutorials/data/documentation/bundleresources/entitlements.json",
+    "title": "Entitlements",
+    "sha256": "2fa664f646c5018ac7b60527890a7999b2536d95507379fa17b1e7cae085f14e",
+    "fetched": "2026-10-20T00:53:00+00:00",
+    "file": "docs/apple/bundleresources-entitlements.md"
+  },
+  {
+    "path": "bundleresources/information-property-list/nsextension",
+    "url": "https://developer.apple.com/tutorials/data/documentation/bundleresources/information-property-list/nsextension.json",
+    "title": "NSExtension",
+    "sha256": "b2dfbabbd7406a026ff7cab2a4c7798ac87d4ba302244e73c6dc3fd6675d529e",
+    "fetched": "2026-10-20T00:52:57+00:00",
+    "file": "docs/apple/bundleresources-information-property-list-nsextension.md"
+  },
+  {
+    "path": "developer-apple-com-library-archive-technotes-tn2319-index-html",
+    "url": "https://developer.apple.com/library/archive/technotes/tn2319/_index.html",
+    "title": "developer-apple-com-library-archive-technotes-tn2319-index-html",
+    "sha256": "755c711258afefdd81c526153c39c83bc00bcdcebf7e1ffaa971b5a5b991d8e5",
+    "fetched": "2026-10-20T00:54:36+00:00",
+    "file": "docs/apple/developer-apple-com-library-archive-technotes-tn2319-index-html.md"
+  },
+  {
+    "path": "developer-apple-com-library-archive-technotes-tn2407-index-html",
+    "url": "https://developer.apple.com/library/archive/technotes/tn2407/_index.html",
+    "title": "developer-apple-com-library-archive-technotes-tn2407-index-html",
+    "sha256": "069e9d59b436a20a9a561e97f14c192b425f49bc6386c4343d20f7d3e91ffb03",
+    "fetched": "2026-10-20T00:54:37+00:00",
+    "file": "docs/apple/developer-apple-com-library-archive-technotes-tn2407-index-html.md"
+  },
+  {
+    "path": "foundationmodels",
+    "url": "https://developer.apple.com/tutorials/data/documentation/foundationmodels.json",
+    "title": "Foundation Models",
+    "sha256": "5bbb1726f7df1d27fd6bb2cf23f17a6d62e9b1ea0b36b9175a8efeea48fdf89e",
+    "fetched": "2026-10-20T00:52:58+00:00",
+    "file": "docs/apple/foundationmodels.md"
+  },
+  {
+    "path": "support-apple-com-en-us-102654",
+    "url": "https://support.apple.com/en-us/102654",
+    "title": "support-apple-com-en-us-102654",
+    "sha256": "ed418d7c754508a177270ef40c5f0fc62e143c21ae3e4a6d5bfef7571f7b15ae",
+    "fetched": "2026-10-20T01:50:34+00:00",
+    "file": "docs/apple/support-apple-com-en-us-102654.md"
+  },
+  {
+    "path": "supported-capabilities-ios",
+    "url": "https://developer.apple.com/help/account/reference/supported-capabilities-ios",
+    "title": "supported-capabilities-ios",
+    "sha256": "351260078bc5a6ab1ede7b19bd979faec78669f8aa86d69981a5682b59623483",
+    "fetched": "2026-10-20T00:53:25+00:00",
+    "file": "docs/apple/supported-capabilities-ios.md"
+  },
+  {
+    "path": "uikit/uiinputviewcontroller",
+    "url": "https://developer.apple.com/tutorials/data/documentation/uikit/uiinputviewcontroller.json",
+    "title": "UIInputViewController",
+    "sha256": "9999b76775a6aa962949bc65f4d1f6d89642aedb8385b7d66a3b64faedaf58d0",
+    "fetched": "2026-10-20T00:52:55+00:00",
+    "file": "docs/apple/uikit-uiinputviewcontroller.md"
+  },
+  {
+    "path": "xcode/distributing-your-app-for-beta-testing-and-releases",
+    "url": "https://developer.apple.com/tutorials/data/documentation/xcode/distributing-your-app-for-beta-testing-and-releases.json",
+    "title": "Distributing your app for beta testing and releases",
+    "sha256": "e8d012776237f3171798fd9c6b8e54a3143c2d59732b0994c018154bcb8a901c",
+    "fetched": "2026-10-20T00:52:59+00:00",
+    "file": "docs/apple/xcode-distributing-your-app-for-beta-testing-and-releases.md"
+  }
+]

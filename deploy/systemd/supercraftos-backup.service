@@ -1,0 +1,16 @@
+[Unit]
+Description=SuperCraftOS private state backup
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/SuperCraftOS
+ExecStart=/root/SuperCraftOS/.venv/bin/python /root/SuperCraftOS/scripts/backup_state.py --destination /var/backups/supercraftos --environment /etc/supercraftos.env --keep 7
+UMask=0077
+Nice=10
+IOSchedulingClass=idle
+PrivateTmp=true
+ProtectHome=tmpfs
+BindReadOnlyPaths=/root/SuperCraftOS
+NoNewPrivileges=true
+MemoryMax=512M

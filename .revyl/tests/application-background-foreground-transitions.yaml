@@ -1,0 +1,20 @@
+metadata:
+  name: application-background-foreground-transitions
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - lifecycle
+blocks:
+  - step_type: tap
+    description: Start an activity in the app
+  - step_type: tap
+    description: Background the app (press home button)
+  - step_type: tap
+    description: Wait in background for 30 seconds
+  - step_type: tap
+    description: Return app to foreground
+  - step_type: tap
+    description: Verify app state is preserved
+  - step_type: tap
+    description: Verify activity can continue after return

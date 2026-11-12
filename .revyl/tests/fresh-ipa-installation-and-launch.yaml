@@ -1,0 +1,18 @@
+metadata:
+  name: fresh-ipa-installation-and-launch
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - installation
+blocks:
+  - step_type: tap
+    description: Install the SuperCraftOS IPA on the device
+  - step_type: tap
+    description: Launch the app from the home screen
+  - step_type: tap
+    description: Verify the app launches successfully without crashing
+  - step_type: tap
+    description: Verify the main dashboard or welcome screen appears
+  - step_type: tap
+    description: Confirm app is responsive to touch interactions

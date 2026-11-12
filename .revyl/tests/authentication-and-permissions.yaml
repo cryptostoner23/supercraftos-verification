@@ -1,0 +1,18 @@
+metadata:
+  name: authentication-and-permissions
+build:
+  version_id: 834300f6-ff12-4a10-bf70-84eba1392252
+tags:
+  - smoke
+  - auth
+blocks:
+  - step_type: tap
+    description: Navigate to the authentication settings screen
+  - step_type: tap
+    description: Test login/logout flow
+  - step_type: tap
+    description: Request necessary permissions (camera, microphone, etc.)
+  - step_type: tap
+    description: Verify permission grants are respected
+  - step_type: tap
+    description: Verify authenticated API calls succeed

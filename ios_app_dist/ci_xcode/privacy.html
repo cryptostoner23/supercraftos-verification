@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperCraftOS — Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; background:#f6f6f8; color:#1c1c1e;
+         font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  @media (prefers-color-scheme: dark) { body { background:#121016; color:#f2f2f7; } }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; margin: 0 0 6px; }
+  .lede { color:#8a8a92; margin: 0 0 32px; font-size: 15px; }
+  h2 { font-size: 18px; font-weight: 700; margin: 34px 0 8px; }
+  p, li { margin: 0 0 12px; }
+  ul { padding-left: 22px; }
+  .box { background:#fff; border:1px solid #e2e2e6; border-radius:14px; padding: 18px 20px; }
+  @media (prefers-color-scheme: dark) { .box { background:#1e1b24; border-color:#2f2b38; } }
+  table { width:100%; border-collapse: collapse; margin: 6px 0 14px; }
+  th, td { text-align:left; padding: 9px 10px; border-bottom:1px solid #e2e2e6; vertical-align: top; font-size: 15px; }
+  @media (prefers-color-scheme: dark) { th, td { border-color:#2f2b38; } }
+  th { font-weight: 700; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; }
+  .none { color:#30a46c; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SuperCraftOS Privacy Policy</h1>
+  <p class="lede">Last updated 19 October 2026</p>
+
+  <div class="box">
+    <p><b>SuperCraftOS does not collect, store, sell, or transmit your personal
+    data.</b> The app is a control surface for a self-hosted agent system that you
+    run. Nothing in this app sends your information to the developer.</p>
+  </div>
+
+  <h2>What the app stores on your device</h2>
+  <ul>
+    <li><b>Backend address</b> — the address of your own SuperCraftOS control
+      center, so the app can connect to it. Stored in the app's own preferences
+      on your device.</li>
+    <li><b>Saved endpoints</b> — the list of backend addresses you bookmark, also
+      stored only on your device.</li>
+  </ul>
+  <p>Both are removed when you delete the app. Neither is sent anywhere by the
+  app itself.</p>
+
+  <h2>What the app sends, and where</h2>
+  <p>Everything the app sends goes <b>only to the backend address you
+  configured</b>. That is a server you control. The app sends:</p>
+  <table>
+    <tr><th>Data</th><th>Where it goes</th></tr>
+    <tr><td>Control session token</td><td>Your backend, over HTTPS</td></tr>
+    <tr><td>Agent queries you start</td><td>Your backend, over HTTPS</td></tr>
+    <tr><td>Approval decisions, grants, quests, product requests</td><td>Your backend, over HTTPS</td></tr>
+    <tr><td>Text you select for a keyboard action</td><td>Your backend, over HTTPS, or to the on-device model</td></tr>
+  </table>
+  <p>The developer of this app has no access to that traffic and no access to
+  your backend.</p>
+
+  <h2>On-device model</h2>
+  <p>The custom keyboard can rewrite, correct, or explain text using Apple's
+  on-device language model, <b>without sending it anywhere</b>. That is the
+  fallback used when your backend cannot be reached. Text processed on-device
+  does not leave your device.</p>
+
+  <h2>Third-party services</h2>
+  <p>The app itself contacts no third-party analytics, advertising, or
+  attribution service. Model providers, search providers, and any other service
+  your agent uses are contacted by <b>your backend</b>, not by this app, and
+  are configured by you.</p>
+
+  <h2>Permissions</h2>
+  <table>
+    <tr><th>Permission</th><th>Why</th></tr>
+    <tr><td>Allow Full Access (keyboard only)</td><td>Apple requires it for a keyboard that uses the network. It is needed to reach your backend. It is off until you turn it on.</td></tr>
+    <tr><td>Network</td><td>To reach your backend.</td></tr>
+  </table>
+  <p>The app requests no location, camera, microphone, contacts, photo library,
+  or health permissions.</p>
+
+  <h2>Children</h2>
+  <p>The app is not directed at children and collects no data from anyone.</p>
+
+  <h2>Your rights</h2>
+  <p>Because no data is collected, there is nothing for us to disclose, correct,
+  or delete. All data that exists lives on your own device and your own
+  server.</p>
+
+  <h2>Changes</h2>
+  <p>Any change to this policy will be published on this page with a new date,
+  and the app's App Store listing will point here.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy can be sent through the support page.</p>
+</div>
+</body>
+</html>

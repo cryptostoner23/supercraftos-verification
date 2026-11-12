@@ -1,0 +1,275 @@
+name: SuperCraftOS
+options:
+  bundleIdPrefix: com.supercraftos
+  deploymentTarget:
+    iOS: "17.0"
+  # Sources live both one and two levels above this spec. Synthesizing their
+  # ancestor groups can give ios_app_dist two parents and corrupt every app path.
+  createIntermediateGroups: false
+  postGenCommand: python3 ../../scripts/verify_xcode_project.py SuperCraftOS.xcodeproj
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    # xcodegen's setting presets are not applied by every version (notably
+    # 2.43). Explicitly define DEBUG and testability so #if DEBUG blocks (the
+    # offline fixture client) compile and @testable imports work in Debug builds
+    # on any toolchain.
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) DEBUG"
+    ENABLE_TESTABILITY: YES
+    TARGETED_DEVICE_FAMILY: "1,2"
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+    INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    CODE_SIGNING_ALLOWED: NO
+    # The backend the app and the keyboard extension talk to. Baked into both
+    # bundles as the initial address; users supply their private access key. Override it with
+    #   xcodebuild SUPERCRAFTOS_BACKEND_URL=https://other-host
+    SUPERCRAFTOS_BACKEND_URL: "https://agent.commetai.ca"
+    # Provisioned gateway access key. NEVER hardcode a real key here: it becomes
+    # readable by anyone with the source. Inject it at build time instead, e.g.
+    #   xcodebuild SUPERCRAFTOS_ACCESS_KEY="$(cat data/access.key)"
+    # An empty value keeps the app on the manual "enter access key" path.
+    SUPERCRAFTOS_ACCESS_KEY: ""
+targets:
+  SuperCraftOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ../YourApp.swiftpm/App.swift
+      - path: ../YourApp.swiftpm/AppConfig.swift
+      - path: ../YourApp.swiftpm/ContentView.swift
+      - path: ../../swift-verification/Sources/ControlCore/KeyboardCatalog.swift
+      - path: ../YourApp.swiftpm/AccountOperationsView.swift
+      - path: ../YourApp.swiftpm/AgentModels.swift
+      - path: ../YourApp.swiftpm/MissionConversation.swift
+      - path: ../YourApp.swiftpm/AutonomousTasksView.swift
+      - path: ../YourApp.swiftpm/BackendClient.swift
+      - path: ../YourApp.swiftpm/CIBackendFixture.swift
+      - path: ../YourApp.swiftpm/CredentialStore.swift
+      - path: ../YourApp.swiftpm/LearningView.swift
+      - path: ../YourApp.swiftpm/QuestOperationsView.swift
+      - path: ../YourApp.swiftpm/ShortcutActions.swift
+      - path: ../YourApp.swiftpm/UnifiedAPIClient.swift
+      - path: ../YourApp.swiftpm/DigitalMeView.swift
+      - path: ../YourApp.swiftpm/AppleNotesView.swift
+      - path: Assets.xcassets
+        buildPhase: resources
+      - path: PrivacyInfo.xcprivacy
+        buildPhase: resources
+    # BEGIN KEYBOARD DEPENDENCY
+    # The custom keyboard extension is deliberately NOT embedded by default.
+    #
+    # Embedding it makes the host app require a second App ID
+    # (com.supercraftos.control.keyboard) and, with the App Group enabled, a
+    # group on the app's own provisioning profile. The app ships as a single
+    # target so it needs one App ID and no special entitlement.
+    #
+    # The extension target below is still built by CI on every push, so it
+    # never bit rots against the current SDK. To ship the keyboard again,
+    # activate this block with
+    #   python3 scripts/xcode_project.py --embed-keyboard
+    # or uncomment the dependency by hand.
+    # END KEYBOARD DEPENDENCY
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control
+        PRODUCT_NAME: SuperCraftOS
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        INFOPLIST_FILE: Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+  SuperCraftOSKeyboard:
+    type: app-extension
+    platform: iOS
+    # iOS 26 is the floor for Apple's on-device model, which the keyboard uses
+    # as its offline fallback. An extension may target a higher version than
+    # its host app, so the app still runs on iOS 17 and later.
+    deploymentTarget: "26.0"
+    sources:
+      - path: ../BackendClient.swift
+      - path: ../CredentialStore.swift
+      - path: ../KeyboardExtension
+        excludes:
+          - "Info.plist"
+      - path: ../../swift-verification/Sources/ControlCore/KeyboardCatalog.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.keyboard
+        PRODUCT_NAME: SuperCraftOSKeyboard
+        INFOPLIST_FILE: ../KeyboardExtension/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        SKIP_INSTALL: YES
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # The keyboard stores an independent gateway key in its own Keychain.
+        # It needs no App Group or shared credential entitlement.
+  SuperCraftOSShare:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ../BackendClient.swift
+      - path: ../CredentialStore.swift
+      - path: ../ShareExtension
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.share
+        PRODUCT_NAME: SaveToSuperCraftOS
+        INFOPLIST_FILE: ../ShareExtension/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        SKIP_INSTALL: YES
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # The share extension reuses the app's gateway credential from the
+        # Keychain when the app and extension share an access group; otherwise
+        # the key must be provisioned for the extension (see docs).
+  SuperCraftOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ../KeyboardExtension/KeyboardTheme.swift
+      - path: ../KeyboardExtension/KeyboardBadgeView.swift
+      - path: ../KeyboardExtension/KeyboardToolbar.swift
+      - path: ../KeyboardExtension/KeyboardActionGrid.swift
+      - path: ../KeyboardExtension/KeyboardFnGrid.swift
+      - path: ../KeyboardExtension/KeyboardInputBar.swift
+      - path: ../../swift-verification/Sources/ControlCore/KeyboardCatalog.swift
+      - path: tests/KeyboardRenderTests.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.tests
+        PRODUCT_NAME: SuperCraftOSTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+  SuperCraftOSBackendTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: test_support/BackendTestConfiguration.swift
+      - path: backend_tests/LiveBackendContractTests.swift
+      - path: backend_tests/ScreenInteractionTests.swift
+    dependencies:
+      - target: SuperCraftOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.backendtests
+        PRODUCT_NAME: SuperCraftOSBackendTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # Host the test bundle in the app so @testable import SuperCraftOS links.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SuperCraftOS.app/SuperCraftOS"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  # The keyboard is driven for real: every tile is fired through the
+  # extension actor using authenticated deterministic HTTP fixtures.
+  SuperCraftOSInteractionTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ../BackendClient.swift
+      - path: ../CredentialStore.swift
+      - path: ../CIBackendFixture.swift
+      - path: test_support/BackendTestConfiguration.swift
+      - path: ../KeyboardExtension/KeyboardBackend.swift
+      - path: ../../swift-verification/Sources/ControlCore/KeyboardCatalog.swift
+      - path: interaction_tests/KeyboardInteractionTests.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.interactiontests
+        PRODUCT_NAME: SuperCraftOSInteractionTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # Host the test bundle in the app so @testable import SuperCraftOS links.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SuperCraftOS.app/SuperCraftOS"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  # The app is driven for real: every screen is opened by tapping it, on a
+  # simulator, using deterministic fixtures by default.
+  SuperCraftOSUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: ui_tests/SuperCraftOSUITests.swift
+    dependencies:
+      - target: SuperCraftOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.supercraftos.control.uitests
+        PRODUCT_NAME: SuperCraftOSUITests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        TEST_TARGET_NAME: SuperCraftOS
+schemes:
+  SuperCraftOSBackendTests:
+    build:
+      targets:
+        SuperCraftOSBackendTests: [test]
+    test:
+      config: Debug
+      environmentVariables:
+        SUPERCRAFTOS_UI_FIXTURES: "1"
+      targets:
+        - SuperCraftOSBackendTests
+  SuperCraftOSInteractionTests:
+    build:
+      targets:
+        SuperCraftOSInteractionTests: [test]
+    test:
+      config: Debug
+      targets:
+        - SuperCraftOSInteractionTests
+  SuperCraftOSUITests:
+    build:
+      targets:
+        SuperCraftOSUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - SuperCraftOSUITests
+  SuperCraftOSTests:
+    build:
+      targets:
+        SuperCraftOSTests: [test]
+    test:
+      config: Debug
+      targets:
+        - SuperCraftOSTests
+  SuperCraftOS:
+    build:
+      targets:
+        SuperCraftOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+  SuperCraftOSKeyboard:
+    build:
+      targets:
+        SuperCraftOSKeyboard: build
+  SuperCraftOSShare:
+    build:
+      targets:
+        SuperCraftOSShare: build
